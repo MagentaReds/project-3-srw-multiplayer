@@ -1,0 +1,27 @@
+{
+  "name": "project-3-project-harder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MagentaReds/project-3-project-harder.git"
+  },
+  "author": "Grant Daniels",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MagentaReds/project-3-project-harder/issues"
+  },
+  "homepage": "https://github.com/MagentaReds/project-3-project-harder#readme",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mongoose": "^4.10.0",
+    "morgan": "^1.8.1",
+    "socket.io": "^2.0.1"
+  }
+}
