@@ -1,0 +1,1 @@
+//A unit is a pilot/mecha combined class, with upgrades taken into account, and equipped with weapons and items based on the slots availble to the mecha
