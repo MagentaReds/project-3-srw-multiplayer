@@ -657,5 +657,477 @@ var pilots = [
         effect: "+12% damage to enemies"
       }
     ]
+  },
+  {
+    name: "Gilliam Yager",
+    stats: {
+      mel: [.8049, 137], rng: [.7561, 140], hit: [2, 180], 
+      evd: [2, 181], def: [.7439, 102], man: [.7439, 143], sp:[1.6585, 43]
+    },
+    terrain: "ASAS",
+    spiritCommands: [
+      ["Resolve", 10], ["Focus", 10], ["Strike", 10], 
+      ["Valor", 40], ["Alert", 10], ["Zeal", 55]
+    ], 
+    aceBonus: "Evade +15%",
+    willGain: [1,1,1,1,1,5],
+    pilotSkills: [
+      ["Prophesy", 1], ["Sp Regenerate", 1], ["Hit & Away", 1], ["Off.Support", 2]
+    ],
+    relationships: [
+      {
+        people: ["Sanger", "Ratsel", "Kai"], 
+        type: "Friendship",
+        level: 3,
+        effect: "+15% hit and evade"
+      },
+      {
+        people: ["Lamia"], 
+        type: "Rivalry",
+        level: 1,
+        effect: "+4% damage to enemies"
+      }
+    ]
+  },
+  {
+    name: "Radha Byraban",
+    stats: {
+      mel: [.506, 117], rng: [.494, 134], hit: [1.6988, 172], 
+      evd: [1.6506, 176], def: [.6024, 143], man: [.5542, 129], sp:[2, 66]
+    },
+    terrain: "AABA",
+    spiritCommands: [
+      ["Focus", 10], ["Alert", 10], ["Bless", 30], 
+      ["Attune", 35], ["Pray", 10], ["Enable", 80]
+    ], 
+    aceBonus: "Dodge +10%, SP +20",
+    willGain: [0,0,1,1,1,5],
+    pilotSkills: [
+      ["Prophesy", 1], ["SP Regenerate", 1], ["Def.Support", 3]
+    ],
+    relationships: [
+      {
+        people: ["Rio", "Ryoto", "Ring"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Arado Balanga",
+    stats: {
+      mel: [.988, 130], rng: [.6265, 121], hit: [2.0482, 169], 
+      evd: [1.8916, 168], def: [.9036, 138], man: [.7831, 114], sp:[1.7108, 70]
+    },
+    terrain: "AABA",
+    spiritCommands: [
+      ["Alert", 10], ["Strike", 15], ["Guts", 20], 
+      ["Focus", 15], ["Valor", 35], ["Spirit", 30]
+    ], 
+    aceBonus: "Melee +5%, money +10%",
+    willGain: [0,3,1,2,0,5],
+    pilotSkills: [
+      ["Fortune", 1], ["Lucky", 1], ["Def.Support", 4]
+    ],
+    relationships: [
+      {
+        people: ["Seolla"], 
+        type: "Love",
+        level: 3,
+        effect: "+12% damage to enemies"
+      },
+      {
+        people: ["Ouka", "Latooni"], 
+        type: "Friendship",
+        level: 3,
+        effect: "+10% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Ring Mao",
+    stats: {
+      mel: [.8072, 136], rng: [.759, 139], hit: [2, 176], 
+      evd: [2, 175], def: [.747, 118], man: [.747, 138], sp:[1.6627, 65]
+    },
+    terrain: "AAAS",
+    spiritCommands: [
+      ["Strike", 10], ["Focus", 15], ["Alert", 10], 
+      ["Valor", 40], ["Rouse", 50], ["Enable", 70]
+    ], 
+    aceBonus: "Accuracy +10%, Evade +10%, Critical +10%",
+    willGain: [0,0,0,1,0,5],
+    pilotSkills: [
+      ["Off.Supprt", 3], ["Hit & Away", 1], ["Focus", 1], ["Predict", 1]
+    ],
+    relationships: [
+      {
+        people: ["Irm"], 
+        type: "Love",
+        level: 3,
+        effect: "+12% damage to enemies"
+      },
+      {
+        people: ["Radha", "Rio", "Ryoto"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Rio Meilong",
+    stats: {
+      mel: [.8072, 133], rng: [.8313, 135], hit: [2, 175], 
+      evd: [2, 172], def: [.6386, 124], man: [.747, 133], sp:[1.6627, 48]
+    },
+    terrain: "AABA",
+    spiritCommands: [
+      ["Alert", 10], ["Gain", 15], ["Valor", 35], 
+      ["Strike", 20], ["Focus", 15], ["Accel", 5]
+    ], 
+    aceBonus: "EXP +10%, Kills +10%",
+    willGain: [2,-1,0,2,2,5],
+    pilotSkills: [
+      ["Telekinesis", 8], ["Prevail", 9], ["Morale", 1]
+    ],
+    relationships: [
+      {
+        people: ["Ring", "Radha"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      },
+      {
+        people: ["Ryoto"], 
+        type: "Love",
+        level: 2,
+        effect: "+8% damage to enemies"
+      }
+    ]
+  },
+  {
+    name: "Ryoto Hikawa",
+    stats: {
+      mel: [.8072, 136], rng: [.759, 134], hit: [2, 176], 
+      evd: [2, 176], def: [.747, 99], man: [.747, 136], sp:[1.6627, 41]
+    },
+    terrain: "AABA",
+    spiritCommands: [
+      ["Focus", 15], ["Alert", 10], ["Mercy", 5], 
+      ["Strike", 15], ["Valor", 40], ["Zeal", 60]
+    ], 
+    aceBonus: "Damage Dealt +5%, Damage Taken -5%",
+    willGain: [0,0,1,1,1,5],
+    pilotSkills: [
+      ["Telekinesis", 9], ["Def.Support", 3], ["Predict", 1]
+    ],
+    relationships: [
+      {
+        people: ["Ring", "Radha"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      },
+      {
+        people: ["Rio"], 
+        type: "Love",
+        level: 2,
+        effect: "+8% damage to enemies"
+      }
+    ]
+  },
+  {
+    name: "Kusuha Mizuha",
+    stats: {
+      mel: [.8095, 136], rng: [.75, 137], hit: [2, 175], 
+      evd: [2, 161], def: [.75, 114], man: [.75, 131], sp:[1.6667, 52]
+    },
+    terrain: "AAAA",
+    spiritCommands: [
+      ["Strike", 15], ["Guard", 25], ["Focus", 15], 
+      ["valor", 45], ["Zeal", 60], ["Love", 65]
+    ], 
+    aceBonus: "Support Defence +10%, EXP +10% ",
+    willGain: [1,1,1,1,1,5],
+    pilotSkills: [
+      ["Telekinesis", 9], ["Def.Support", 2], ["Focus", 1]
+    ],
+    relationships: [
+      {
+        people: ["Bullet"], 
+        type: "Love",
+        level: 2,
+        effect: "+8% damage to enemies"
+      },
+      {
+        people: ["Ryusei"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Ratsel Feinschmecker",
+    stats: {
+      mel: [.8049, 133], rng: [.7561, 141], hit: [2, 185], 
+      evd: [2, 172], def: [.7439, 136], man: [.7439, 144], sp:[1.6585, 45]
+    },
+    terrain: "AAAS",
+    spiritCommands: [
+      ["Focus", 10], ["Strike", 10], ["Alert", 10], 
+      ["Accel", 5], ["Valor", 40], ["Fury", 15]
+    ], 
+    aceBonus: "Shooting +10%",
+    willGain: [1,1,1,1,1,5],
+    pilotSkills: [
+      ["Genius", 1], ["Gunfight", 9], ["Focus", 1], ["Hit & Away", 1]
+    ],
+    relationships: [
+      {
+        people: ["Rai", "Leona"], 
+        type: "Friendship",
+        level: 1,
+        effect: "+5% hit and evade"
+      },
+      {
+        people: ["Sanger", "Gilliam", "Kai"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Masaki Andoh",
+    stats: {
+      mel: [.8072, 139], rng: [.8313, 136], hit: [2, 176], 
+      evd: [2, 177], def: [.6386, 107], man: [.747, 137], sp:[1.6627, 41]
+    },
+    terrain: "AABA",
+    spiritCommands: [
+      ["Focus", 15], ["Alert", 10], ["Luck", 40], 
+      ["Valor", 35], ["Spirit", 35], ["Strike", 10]
+    ], 
+    aceBonus: "Damage +5%, Accuracy +10%",
+    willGain: [2,-1,0,2,2,5],
+    pilotSkills: [
+      ["Prevail", 9], ["In0fight", 8], ["Chain Attack", 4]
+    ],
+    relationships: [
+      {
+        people: ["Lune"], 
+        type: "Love",
+        level: 2,
+        effect: "+8% damage to enemies"
+      }
+    ]
+  },
+  {
+    name: "Sanger Zonvolt",
+    stats: {
+      mel: [.875, 145], rng: [.6, 130], hit: [2, 177], 
+      evd: [1.675, 163], def: [.8375, 129], man: [.8375, 153], sp:[1.6625, 46]
+    },
+    terrain: "ASAS",
+    spiritCommands: [
+      ["Strike", 10], ["Drive", 45], ["Guard", 30], 
+      ["Resolve", 10], ["Valor", 35], ["Alert", 10]
+    ], 
+    aceBonus: "Melee +10%",
+    willGain: [2,-1,0,2,2,5],
+    pilotSkills: [
+      ["Prevail", 9], ["Counter", 9], ["In-fight", 9], ["Predict", 1]
+    ],
+    relationships: [
+      {
+        people: ["Kyosuke", "Excellen", "Bullet"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      },
+      {
+        people: ["Ratsel", "Gilliam", "Kai"], 
+        type: "Friendship",
+        level: 3,
+        effect: "+15% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Shine Hausen",
+    stats: {
+      mel: [.8667, 122], rng: [.8933, 120], hit: [2.08, 169], 
+      evd: [2.0533, 170], def: [.7867, 121], man: [.7867, 115], sp:[2.1467, 59]
+    },
+    terrain: "AACA",
+    spiritCommands: [
+      ["Alert", 10], ["Cheer", 25], ["Focus", 20], 
+      ["Bless", 50], ["Valor", 40], ["Strike", 15]
+    ], 
+    aceBonus: "Money +20%",
+    willGain: [0,0,0,1,0,5],
+    pilotSkills: [
+      ["Prophesy", 1], ["Fortune", 1], ["Focus", 1], ["Off.Support", 3]
+    ],
+    relationships: [
+      {
+        people: ["Rai"], 
+        type: "Love",
+        level: 3,
+        effect: "+12% damage to enemies"
+      },
+      {
+        people: ["Latooni"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Aya Kobayashi",
+    stats: {
+      mel: [.6053, 125], rng: [.7368, 137], hit: [1.6711, 176], 
+      evd: [2, 174], def: [.6053, 126], man: [.6447, 133], sp:[1.6579, 64]
+    },
+    terrain: "AABA",
+    spiritCommands: [
+      ["Alert", 10], ["Pray", 15], ["Focus", 15], 
+      ["Attune", 30], ["Valor", 40], ["Renew", 60]
+    ], 
+    aceBonus: "Accuracy +10%, SP +20",
+    willGain: [0,0,1,1,1,5],
+    pilotSkills: [
+      ["Telekinesis", 7], ["Def.Support", 3], ["Off.Support", 3], ["Focus", 1]
+    ],
+    relationships: [
+      {
+        people: ["Ryusei", "Rai", "Villeta"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      },
+      {
+        people: ["Mai"], 
+        type: "Friendship",
+        level: 3,
+        effect: "+15% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Mai Kobayashi",
+    stats: {
+      mel: [.8026, 124], rng: [.75, 139], hit: [2, 177], 
+      evd: [2, 177], def: [.75, 114], man: [.75, 130], sp:[1.6579, 57]
+    },
+    terrain: "AABA",
+    spiritCommands: [
+      ["Strike", 10], ["Focus", 15], ["Attune", 30], 
+      ["Alert", 10], ["Valor", 45], ["Zeal", 55]
+    ], 
+    aceBonus: "Accuracy +10%, SP +20",
+    willGain: [1,1,1,1,1,5],
+    pilotSkills: [
+      ["Telekinesis", 9], ["SP Regenerate", 1], ["Fortune", 1], ["Off.Support", 3]
+    ],
+    relationships: [
+      {
+        people: ["Ryusei", "Rai", "Villeta"], 
+        type: "Friendship",
+        level: 2,
+        effect: "+10% hit and evade"
+      },
+      {
+        people: ["Aya"], 
+        type: "Friendship",
+        level: 3,
+        effect: "+15% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Carla Borgnine",
+    stats: {
+      mel: [.6667, 134], rng: [.8406, 130], hit: [2, 173], 
+      evd: [2, 171], def: [.7391, 148], man: [.7536, 134], sp:[1.6667, 57]
+    },
+    terrain: "AAAA",
+    spiritCommands: [
+      ["Assail", 25], ["Focus", 15], ["Strike", 15], 
+      ["Rouse", 40], ["Valor", 35], ["Love", 60]
+    ], 
+    aceBonus: "Accuracy +10%, Kills +10%",
+    willGain: [0,3,1,2,0,5],
+    pilotSkills: [
+      ["Telekinesis", 8], ["Fortune", 1], ["Def.Support", 3], ["Off.Support", 3]
+    ],
+    relationships: [
+      {
+        people: ["Yuuki"], 
+        type: "Love",
+        level: 2,
+        effect: "+8% damage to enemies"
+      }
+    ]
+  },
+  {
+    name: "Yuuki Jaggar",
+    stats: {
+      mel: [.8088, 136], rng: [.8235, 138], hit: [2, 176], 
+      evd: [2, 177], def: [.6324, 133], man: [.75, 139], sp:[1.6618, 61]
+    },
+    terrain: "AAAA",
+    spiritCommands: [
+      ["Focus", 15], ["Strike", 10], ["Alert", 10], 
+      ["Accel", 5], ["Valor", 40], ["Drive", 45]
+    ], 
+    aceBonus: "Evade +10%, Critical +10%",
+    willGain: [2,0,2,1,2,3],
+    pilotSkills: [
+      ["Telekinesis", 8], ["Hit & Away", 1], ["Off.Support", 2], ["Predict", 1]
+    ],
+    relationships: [
+      {
+        people: ["Carla"], 
+        type: "Love",
+        level: 2,
+        effect: "+8% damage to enemies"
+      }
+    ]
+  },
+  {
+    name: "Seolla Schweizer",
+    stats: {
+      mel: [.597, 125], rng: [.7463, 138], hit: [1.6716, 178], 
+      evd: [2, 178], def: [.597, 113], man: [.6567, 140], sp:[1.6567, 46]
+    },
+    terrain: "AAAA",
+    spiritCommands: [
+      ["Focus", 15], ["Guard", 30], ["Strike", 10], 
+      ["Snipe", 10], ["Valor", 35], ["Love", 60]
+    ], 
+    aceBonus: "Shooting +5%, EXP +10%",
+    willGain: [2,-1,0,2,2,5],
+    pilotSkills: [
+      ["Off.Support", 3], ["Def.Support", 4], ["Hit & Away", 1], ["Gunfight", 8]
+    ],
+    relationships: [
+      {
+        people: ["Arado"], 
+        type: "Love",
+        level: 3,
+        effect: "+12% damage to enemies"
+      },
+      {
+        people: ["Ouka", "Latooni"], 
+        type: "Friendship",
+        level: 3,
+        effect: "+15% to hit and evade"
+      }
+    ]
   }
 ];
