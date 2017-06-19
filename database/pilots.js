@@ -1129,5 +1129,56 @@ var pilots = [
         effect: "+15% to hit and evade"
       }
     ]
+  },
+  {
+    name: "Ouka Nagisa",
+    stats: {
+      mel: [.8033,141], rng: [.7541, 141], hit: [2, 199], 
+      evd: [2, 194], def: [.7377, 145], man: [.7541, 142], sp:[1.6557, 72]
+    },
+    terrain: "SSAS",
+    spiritCommands: [
+      ["Focus", 10], ["Alert", 5], ["Rouse", 20], 
+      ["Strike", 10], ["Valor", 30], ["Drive", 50]
+    ], 
+    aceBonus: "Counterstrike +10%",
+    willGain: [2,0,2,1,2,3],
+    pilotSkills: [
+      ["Genius", 1], ["Guard", 1], ["Predict", 1], ["Prevail", 9], ["Gunfight", 9], ["In-fight", 9]
+    ],
+    relationships: [
+      {
+        people: ["Arado", "Seolla", "Latooni"], 
+        type: "Friendship",
+        level: 3,
+        effect: "+15% hit and evade"
+      }
+    ]
+  },
+  {
+    name: "Alfimi",
+    stats: {
+      mel: [.54, 145], rng: [.64, 150], hit: [1.76, 200], 
+      evd: [1.74, 195], def: [.58, 124], man: [.8, 136], sp:[2, 60]
+    },
+    terrain: "SSSS",
+    spiritCommands: [
+      ["Attune", 5], ["Hope", 50], ["Rouse", 40], 
+      ["Enable", 40], ["Pray", 10], ["Love", 50]
+    ], 
+    aceBonus: "Off.Support and Def.Support +10%",
+    willGain: [2,-1,0,2,2,5],
+    pilotSkills: [
+      ["Prohphesy", 1], ["Off.Support", 3], ["SP Regenerate", 1], ["Chain Attack", 4], ["Prevail", 9], ["Def.Support", 3]
+    ],
+    relationships: [
+      {
+        people: ["Kyosuke"], 
+        type: "Love",
+        level: 3,
+        effect: "+12% damage to enemies"
+      }
+    ]
   }
+  
 ];
