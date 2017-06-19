@@ -610,7 +610,7 @@ var wp_spaec = [
     en: 0,
     crit: 0,
     will: 0,
-    category: "Will Drain",
+    category: "Anti-Spirit",
     skill: "",
   },
   {
@@ -628,7 +628,7 @@ var wp_spaec = [
     en: 0,
     crit: 0,
     will: 0,
-    category: "Immobilize",
+    category: "Net",
     skill: "",
   },
   {
