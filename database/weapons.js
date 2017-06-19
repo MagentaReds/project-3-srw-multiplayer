@@ -578,7 +578,7 @@ var wp_spaec = [
     skill: "",
   },
   {
-    name: "Steal Wing",
+    name: "Stealth Wing",
     upgradeRate: "M",
     upgradeCost: "M",
     wpSpace: 40,
@@ -617,7 +617,7 @@ var wp_spaec = [
     name: "Spider Net",
     upgradeRate: "",
     upgradeCost: "",
-    wpSpace: 35,
+    wpSpace: 30,
     type: "",
     properties: ["P"],
     damage: 2000,
