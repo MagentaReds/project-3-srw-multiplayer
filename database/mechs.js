@@ -552,8 +552,8 @@ var srg_dgg = {
     weapons: ["Eye Laser", "Boost Knuckle", "Maxiblaster", "Doom Blade"],
     equipedWeapons: []
   },
-  G_Wing: {
-    name: "G-Wing",
+  G_Hawk: {
+    name: "G-Hawk",
     stats: [7000, 190, 95, 1600],
     upgrade: [6,6,10,6],
     move: 8,
