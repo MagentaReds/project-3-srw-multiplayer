@@ -201,9 +201,8 @@ var ptx = {
     weapons: ["Autocannon", "Heat Horn", "Revolver Stake", "Heavy Claymore", '"Trump Card"'],
     equipedWeapons: []
   },
-  //need to check this, I think he has the wrong stats
-  Alteisen_Reise: {
-    name: "Alteisen Reise",
+  Alteisen_Riese: {
+    name: "Alteisen Riese",
     stats: [6929, 130, 110, 1911],
     upgrade: [6, 8, 8, 7],
     move: 7,
@@ -247,8 +246,8 @@ var ptx = {
     weapons: ["Split Missile", "3-Barrel Beam Cannon", "Howling Launcher E", "Howling Launher B", "Howling Launher X"],
     equipedWeapons: []
   },
-  Schultzwald: {
-    name: "Schultzwald",
+  Schutzwald: {
+    name: "Schutzwald",
     stats: [4400, 150, 85, 1600],
     upgrade: [10,10,10,10],
     move: 5,
