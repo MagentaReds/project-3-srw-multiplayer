@@ -42,6 +42,10 @@ var apiRoutes = require("./routes/apiRoutes.js");
 app.use("/", apiRoutes);
 
 
+//Testing stuff
+var testing= require("./database/import_script.js");
+testing();
+
 
 // Listen on port 3000
 app.listen(PORT, function() {

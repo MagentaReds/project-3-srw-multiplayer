@@ -1,6 +1,7 @@
 //stats [hp, en, mob, arm]
 //upgrade [#hp, #en, #mob, #arm]
 
+/*
   var blank = {
     name: "",
     stats: [],
@@ -15,7 +16,8 @@
     abilities: [],
     weapons: [],
     equipedWeapons: []
-  }
+  };
+*/
 
 var battleships = {
   Shirogane: {

@@ -1,25 +1,27 @@
-// Require mongoose
 var mongoose = require("mongoose");
-// Create a schema class
 var Schema = mongoose.Schema;
 
-// Create the Note schema
 var MechaSchema = new Schema({
-  // Just a string
-  name: {
-    type: String
+  name: String,
+  stats: {
+    type: [Number],
+    length: 4
   },
-  // Just a string
-  body: {
-    type: String
-  }
+  upgrade: {
+    type: [Number],
+    length: 4
+  },
+  move: Number,
+  type: String,
+  size: String,
+  wpSpace: Number,
+  partSlots: Number,
+  fub: String,
+  abilities: [String],
+  weapons: [String],
+  equipedWeapons: [String]
 });
 
-// Remember, Mongoose will automatically save the ObjectIds of the notes
-// These ids are referred to in the Article model
-
-// Create the Note model with the NoteSchema
 var Mecha = mongoose.model("Mecha", MechaSchema);
 
-// Export the Note model
 module.exports = Mecha;

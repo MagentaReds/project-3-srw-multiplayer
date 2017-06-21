@@ -1,3 +1,4 @@
+/*
 var blank = 
     {
       name: "",
@@ -17,6 +18,7 @@ var blank =
       category: "",
       skill: "",
     };
+*/
 
 var wp_space = [
   {
@@ -5134,7 +5136,7 @@ var misc_built_in = {
       skill: "",
     }
   ],
-  Cy_Bird: [
+  Cybird: [
     {
       name: "Caloric Missile",
       upgradeRate: "M",
@@ -5397,6 +5399,6 @@ var misc_built_in = {
 };
 
 module.exports = {
-  w_space, battleships_built_in, ptx_built_in, rtx_built_in, srg_dgg_built_in, 
+  wp_space, battleships_built_in, ptx_built_in, rtx_built_in, srg_dgg_built_in, 
   r_series_built_in, am_built_in, shadow_mirrors_built_in, misc_built_in
 };

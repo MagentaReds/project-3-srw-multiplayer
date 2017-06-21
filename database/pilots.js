@@ -4,6 +4,7 @@
 // willgains [attack hit, attack missed, dodge success, dodge fail, ally defeated, kill]
 // pilot skills (at max level) [name, level]
 
+/*
 var blank =  
   {
     name: "",
@@ -29,7 +30,8 @@ var blank =
         effect: ""
       }
     ]
-  }
+  };
+*/
 
 var pilots = [
   {
