@@ -1182,3 +1182,5 @@ var pilots = [
   }
   
 ];
+
+module.exports = pilots;

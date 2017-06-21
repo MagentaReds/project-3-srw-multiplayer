@@ -1000,3 +1000,7 @@ var misc = {
     equipedWeapons: []
   }
 };
+
+module.exports = {
+  battleships, ptx, rtx, srg_dgg, r_series, am, shadow_mirrors, misc
+};
