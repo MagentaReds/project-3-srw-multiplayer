@@ -1181,6 +1181,24 @@ var pilots = [
         effect: "+12% damage to enemies"
       }
     ]
+  },
+  {
+    name: "Bob Johnson",
+    stats: {
+      mel: [.75, 130], rng: [.75, 130], hit: [2, 170], 
+      evd: [2, 170], def: [.75, 120], man: [.75, 120], sp:[2, 30]
+    },
+    terrain: "AAAA",
+    spiritCommands: [
+      ["Focus", 15], ["Alert", 10], ["Strike", 20], 
+      ["Valor", 45], ["Guard", 25], ["Drive", 55]
+    ], 
+    aceBonus: "None",
+    willGain: [1,1,1,1,1,5],
+    pilotSkills: [
+    ],
+    relationships: [
+    ]
   }
   
 ];

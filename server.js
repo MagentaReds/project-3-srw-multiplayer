@@ -46,6 +46,11 @@ app.use("/", apiRoutes);
 var testing= require("./database/import_script.js");
 testing();
 
+//game engine teseting
+var clientList = [{name: "bob", units:[]}, {name:"Grant", units:[]}];
+var Game =require("./game/gameEngine.js");
+var game = new Game(clientList);
+
 
 // Listen on port 3000
 app.listen(PORT, function() {

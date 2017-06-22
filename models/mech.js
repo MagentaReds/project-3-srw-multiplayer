@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var MechaSchema = new Schema({
+var MechSchema = new Schema({
   name: String,
   stats: {
     type: [Number],
@@ -22,6 +22,6 @@ var MechaSchema = new Schema({
   equipedWeapons: [String]
 });
 
-var Mecha = mongoose.model("Mecha", MechaSchema);
+var Mech = mongoose.model("Mech", MechSchema);
 
-module.exports = Mecha;
+module.exports = Mech;

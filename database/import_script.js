@@ -5,7 +5,7 @@ var mechs = require("./mechs.js");
 var weapons = require("./weapons.js");
 
 var Pilot = require("../models/pilot.js");
-var Mecha = require("../models/mecha.js");
+var Mech = require("../models/mech.js");
 var Weapon = require("../models/weapon.js");
 
 

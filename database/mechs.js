@@ -1000,6 +1000,21 @@ var misc = {
     abilities: [],
     weapons: ["Gatling Gun", "Anti-Air Missile"],
     equipedWeapons: []
+  },
+  Not_Gundam: {
+    name: "Totally Not a Gundam",
+    stats: [4000, 150, 120, 1000],
+    upgrade: [9,9,9,9],
+    move: 6,
+    type: "Grd",
+    terrain: "AAAA",
+    size: "M",
+    wpSpace: 100,
+    partSlots: 4,
+    fub: "+10% Armor, EN, Mobility, HP",
+    abilities: [],
+    weapons: ["Attack"],
+    equipedWeapons: []
   }
 };
 
