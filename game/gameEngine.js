@@ -17,7 +17,7 @@ var Player = require("./player.js")
 
 class Game  {
   constructor(clientList) {
-    this.map = new Map(10,10);
+    this.map = new Map(50,50);
     this.players=new Array(clientList.length);
     for(var i = 0; i<clientList.length; ++i)
       players[i] = new Player(clientList[i]);
@@ -26,8 +26,10 @@ class Game  {
     this.currentPlayer = 0;
     this.turn =0;
   }
-  requestActions(player, unit=null) {
-
+  requestActions(player, x, y) {
+    //cases, empty square: skip turn, surrender
+    //active unit and is yours: move, attack, spirit commands, status, skip turn.
+    //any other unit: status
   }
   
 

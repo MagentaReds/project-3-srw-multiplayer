@@ -8,7 +8,8 @@
 
 class Player {
   constructor(client) {
-
+    this.name=client.name;
+    this.units=client.units;
   }
 
   isDefeated(){
