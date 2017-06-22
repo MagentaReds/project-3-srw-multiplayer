@@ -5,6 +5,10 @@
 //each "tile" in the map will hold an object of {player, unit} or null if there is no unit there.
 //player and unit are just indecies for the respective arrays that are in the game class.
 
+//later on, map will be extended to hold actual tile objects, that can have properties and whatnnot
+//like def bonuses, types, if it counts as difficult terrain or not.
+//rather than just holding a unit.
+
 class Map {
   constructor(width, height, fileNamme="") {
     this.width = width;
@@ -19,7 +23,6 @@ class Map {
   //returns an array with the list of available spots and what is in them
   //each element has the form {x,y,objectAtXY}
   //take account of literal edge casses at edges of maps
-  //this algorithim does not take into account any blocked squares
   getRadius(x,y,r) {
     if(r===0 && this.isInBounds(x,y))
       return [{x:x,y:y, unit:this.tiles[x][y]}];
@@ -49,6 +52,13 @@ class Map {
 
   isInBounds(x,y) {
     return ((x>=0 && x<this.width) && (y>=0 && y<this.height));
+  }
+
+  //get's the possible movement squares from the unit at tile x,y
+  //probably solved with recursion to fill out the availbe map tiles
+  //will be extended later to account for difficult terrain.
+  getPossibleMovement(x,y) {
+
   }
 }
 
