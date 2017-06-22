@@ -22,8 +22,9 @@ class Game  {
     for(var i = 0; i<clientList.length; ++i)
       players[i] = new Player(clientList[i]);
 
-    //first player goes
+    //first player goes first
     this.currentPlayer = 0;
+    this.curentUnit = players[0].units[0];
     this.turn =0;
   }
   requestActions(player, x, y) {
