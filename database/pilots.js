@@ -363,7 +363,7 @@ var pilots = [
     ]
   },
   {
-    name: "Daitetsi Minase",
+    name: "Daitetsu Minase",
     stats: {
       mel: [.6067, 130], rng: [.7416, 131], hit: [1.6742, 156], 
       evd: [2, 97], def: [.6067, 104], man: [.6517, 145], sp:[1.6629, 46]
