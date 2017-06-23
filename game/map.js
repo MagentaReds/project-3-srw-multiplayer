@@ -10,12 +10,12 @@
 //rather than just holding a unit.
 
 class Map {
-  constructor(width, height, fileNamme="") {
-    this.width = width;
-    this.height = height;
-    this.tiles=new Array(height);
-    for(let i=0; i<height; ++i)
-      this.tiles[i] = new Array(width);
+  constructor(rows, cols, fileNamme="") {
+    this.rows = rows;
+    this.cols = cols;
+    this.tiles=new Array(cols);
+    for(let i=0; i<cols; ++i)
+      this.tiles[i] = new Array(rows);
 
     this.getRadius = this.getRadius.bind(this);
     this.isInBounds = this.isInBounds.bind(this);
@@ -24,30 +24,9 @@ class Map {
   //earh element has the form {r,c,objertAtrc}
   //take arrount of literal edge rasses at edges of maps
   getRadius(r,c,ra) {
-    if(r===0 && this.isInBounds(r,c))
-      return [{r:r,c:c, unit:this.tiles[r][c]}];
-    
-    var array=[];
-    //home row r+-r, c
-    for(var i=(-1*ra); i<=ra; ++i)
-      if(this.isInBounds(r+i, c))
-        array.push({r: r+i ,c: c, unit: this.tiles[r+i][c]});
-
-    //j = 1, 2... r
-    //asrending r+-(r-j), c+j
-    for(var j=1; j<=ra; ++j)
-      for(var i=(-1*(r-j)); i<=(r-j); ++i)
-        if(this.isInBounds(r+i, c+j))
-          array.push({r: r+i ,c: c+j, unit: this.tiles[r+i][c+j]});
-
-    //j = 1, 2... r
-    //desrending r+-(r-j), c-j
-    for(var j=1; j<=ra; ++j)
-      for(var i=(-1*(r-j)); i<=(r-j); ++i)
-        if(this.isInBounds(r+i, c-j))
-          array.push({r: r+i ,c: c-j, unit: this.tiles[r+i][c-j]});
-
-    return array;
+    var history = [];
+    this.getPTHelper(r,c,0,ra,r,c,ra,history);
+    return history;
   }
 
   //returns an aray of possible target tiles, with a min and maximum range
@@ -82,7 +61,7 @@ class Map {
   }
 
   isInBounds(r,c) {
-    return ((r>=0 && r<this.width) && (c>=0 && c<this.height));
+    return ((r>=0 && r<this.rows) && (c>=0 && c<this.cols));
   }
 
   //get's the possible movement squares from the unit at tile r,c
