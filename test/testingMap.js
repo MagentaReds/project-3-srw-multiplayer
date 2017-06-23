@@ -65,3 +65,20 @@ map.tiles[4][5]="X";
 // console.log(displayArray(map.getPossibleMovement(5,5,3)));
 console.log("===============Get Movement 5,5,4=================");
 console.log(displayArray(map.getPossibleMovement(5,5,4)));
+
+
+
+console.log("===============Get Possible Targets 5,5,1,1=================");
+console.log(displayArray(map.getPossibleTargets(5,5,1,1)));
+
+console.log("===============Get Possible Targets 5,5,0,2=================");
+console.log(displayArray(map.getPossibleTargets(5,5,0,2)));
+
+console.log("===============Get Possible Targets 5,5,2,4=================");
+console.log(displayArray(map.getPossibleTargets(5,5,2,4)));
+
+console.log("===============Get Possible Targets 5,5,3,4=================");
+console.log(displayArray(map.getPossibleTargets(5,5,3,4)));
+
+console.log("===============Get Possible Targets 5,5,4,4=================");
+console.log(displayArray(map.getPossibleTargets(5,5,4,4)));

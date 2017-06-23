@@ -50,6 +50,37 @@ class Map {
     return array;
   }
 
+  //returns an aray of possible target tiles, with a min and maximum range
+  getPossibleTargets(r,c,min,max) {
+    var history = [];
+    this.getPTHelper(r,c,min,max,r,c,max,history);
+    return history;
+  }
+
+  getPTHelper(r,c,min,max,oR,oC,m,history, history_2) {
+    //since m counts down from max, only add history if it has moved at least min squares
+    if((max-m)>=min)
+      history.push([r,c]);
+
+    if(m===0)
+      return;
+    
+    if(this.isInBounds(r, c+1) && !history.includes([r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
+      this.getPTHelper(r, c+1, min, max, oR, oC, m-1, history);
+    if(this.isInBounds(r+1, c) && !history.includes([r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
+      this.getPTHelper(r+1, c, min, max, oR, oC, m-1, history);
+    if(this.isInBounds(r, c-1) && !history.includes([r, c-1]) && this.farther(oR,oC,r,c,r,c-1))
+      this.getPTHelper(r, c-1, min, max, oR, oC, m-1, history);
+    if(this.isInBounds(r-1, c) && !history.includes([r-1, c]) && this.farther(oR,oC,r,c,r-1,c))
+      this.getPTHelper(r-1, c, min, max, oR, oC, m-1, history);
+
+  }
+
+  //for detecting if the next step is not backtracking
+  farther(oR,oC,r1,c1,r2,c2) {
+    return (Math.abs(oR-r1) + Math.abs(oC-c1)) < (Math.abs(oR-r2) + Math.abs(oC-c2));
+  }
+
   isInBounds(r,c) {
     return ((r>=0 && r<this.width) && (c>=0 && c<this.height));
   }
@@ -59,7 +90,7 @@ class Map {
   //will be ertended later to arrount for diffirult terrain.
   getPossibleMovement(r,c,m) {
     var history = [];
-    var possible = this.getPMHelper(r,c,m,history);
+    this.getPMHelper(r,c,m,history);
     return history;
   }
 
