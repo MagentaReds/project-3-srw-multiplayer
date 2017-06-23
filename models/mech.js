@@ -6,6 +6,10 @@ var MechSchema = new Schema({
     type: String,
     unqiue: true
   },
+  mechCodeName: {
+    type: String,
+    unique: true
+  },
   stats: {
     type: [Number],
     length: 4
@@ -15,9 +19,6 @@ var MechSchema = new Schema({
     length: 4
   },
   move: Number,
-  type: {
-    type: String,
-  },
   type: [Schema.Types.Mixed],
   terrain: {
     type: String,
@@ -28,7 +29,10 @@ var MechSchema = new Schema({
   partSlots: Number,
   fub: String,
   abilities: [String],
-  weapons: [String],
+  weapons: [{
+    type: Schema.Types.ObjectId,
+    ref: "Weapon"
+  }],
   equipedWeapons: [String]
 });
 

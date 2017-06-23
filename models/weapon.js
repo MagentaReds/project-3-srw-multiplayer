@@ -21,6 +21,13 @@ var WeaponSchema = new Schema({
   will: Number,
   category: String,
   skill: String,
+  builtIn: {
+    type: Boolean,
+    default: false
+  },
+  mechCodeName: {
+    type: String
+  }
 });
 
 
