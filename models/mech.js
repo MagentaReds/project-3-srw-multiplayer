@@ -2,7 +2,10 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var MechSchema = new Schema({
-  name: String,
+  name: {
+    type: String,
+    unqiue: true
+  },
   stats: {
     type: [Number],
     length: 4
@@ -12,7 +15,14 @@ var MechSchema = new Schema({
     length: 4
   },
   move: Number,
-  type: String,
+  type: {
+    type: String,
+  },
+  type: [Schema.Types.Mixed],
+  terrain: {
+    type: String,
+    validate: /[A-DS]{4}/
+  },
   size: String,
   wpSpace: Number,
   partSlots: Number,

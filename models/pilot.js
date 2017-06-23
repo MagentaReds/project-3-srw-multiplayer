@@ -7,11 +7,14 @@ var PilotSchema = new Schema({
     mel: [Number], rng: [Number], hit: [Number],
     evd: [Number], def: [Number], sp: [Number]
   },
-  terrain: String,
-  spiritCommands: [[Schema.Types.Mixed]],
+  terrain: {
+    type: String,
+    validate: /[A-DS]{4}/
+  },
+  spiritCommands: [Schema.Types.Mixed],
   aceBonus: String,
   willGain: [Number],
-  pilotSkills: [[Schema.Types.Mixed]],
+  pilotSkills: [Schema.Types.Mixed],
   relationships: [{}]
 });
 

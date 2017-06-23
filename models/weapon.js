@@ -11,7 +11,10 @@ var WeaponSchema = new Schema({
   damage: Number,
   range: [Number],
   hit: Number,
-  terrain: String,
+  terrain: {
+    type: String,
+    validate: /[A-DS]{4}/,
+  },
   ammo: Number,
   en: Number,
   crit: Number,
