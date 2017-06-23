@@ -7,28 +7,19 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
         <!-- CSS -->
-        <!-- <link type="text/css" rel="stylesheet" href="css/styles.css" />
-        <link type="text/css" rel="stylesheet" href="css/custom-theme/jquery-1.8.18.custom.css" /> -->
         <link rel="stylesheet" href="lib/jquery-ui-1.12.1/jquery-ui.css">
-
-        <style>
-            #feedback { font-size: 1.4em; }
-            #selectable .ui-selecting { background: #FECA40; }
-            #selectable .ui-selected { background: #F39814; color: white; }
-            #selectable { list-style-type: none; margin: 0; padding: 0; width: 1650px; }
-            #selectable li { margin: 0px; padding: 1px; float: left; width: 50px; height: 50px; font-size: 4em; text-align: center; }
-        </style>
+        <link rel="stylesheet" href="assets/css/grid.css">
 
         <!-- jQuery -->
         <script src="lib/jquery-3.2.1.min.js"></script>
         <script src="lib/jquery-ui-1.12.1/jquery-ui.js"></script>
 
         <!-- Game Scripts -->
-<!--         <script src="js/game.js"></script> -->
+        <!-- <script src="js/game.js"></script> -->
         <script>
-        $( function() {
-        $( "#selectable" ).selectable();
-        } );
+            $( function() {
+                $( "#grid" ).selectable();
+            } );
         </script>
 
     </head>
@@ -36,7 +27,7 @@
         <!-- <div id="game-block">
             <canvas id="game"></canvas>
         </div> -->
-        <ol id="selectable">
+        <ol id="grid">
         </ol>
     </body>
         <script src="assets/javascript/grid.js"></script>
