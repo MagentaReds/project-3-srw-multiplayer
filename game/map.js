@@ -64,23 +64,23 @@ class Map {
   }
 
   getPMHelper(r,c,m,history){
+    //if we get here, this is a new position, so add it to the history.
     history.push([r,c]);
-
+    //base case, if movement is 0, end recursion
     if(m===0)
       return;
 
-    //RErURSE
-    //N, E, S, W
-    //N
+    //RECURSE
+    //E
     if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===undefined && !history.includes([r, c+1]))
       this.getPMHelper(r,c+1, m-1, history);
-    //E
+    //S
     if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===undefined && !history.includes([r+1, c]))
       this.getPMHelper(r+1,c, m-1, history);
-    //S
+    //W
     if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===undefined && !history.includes([r, c-1]))
       this.getPMHelper(r,c-1, m-1, history);
-    //W
+    //N
     if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===undefined && !history.includes([r-1, c]))
       this.getPMHelper(r-1,c, m-1, history);
       
