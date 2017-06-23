@@ -17,3 +17,51 @@ console.log("============0,0,2==========");
 console.log(map.getRadius(0,0,2));
 console.log("============0,0,1==========");
 console.log(map.getRadius(0,0,1));
+
+
+console.log("===============Get Movement 5,5,1=================");
+console.log(map.getPossibleMovement(5,5,1));
+console.log("===============Get Movement 5,5,1=================");
+console.log(map.getPossibleMovement(5,5,2));
+
+function displayArray(array) {
+  var display=new Array(10);
+  for(var i=0; i<10; ++i){
+      display[i]=new Array(10);
+      for(var j=0; j<10; ++j){
+         display[i][j]=" ";
+    }  
+  }
+
+  var tempArray;
+  for(let y=0; y<array.length; ++y){
+    tempArray=array[y]
+    display[tempArray[0]][tempArray[1]] = "X";
+  } 
+
+  for(let x=0; x<display.length; ++x)
+    console.log(display[x]);
+} 
+
+console.log("===============Get Movement 5,5,1=================");
+console.log(displayArray(map.getPossibleMovement(5,5,1)));
+console.log("===============Get Movement 5,5,1=================");
+console.log(displayArray(map.getPossibleMovement(5,5,2)));
+console.log("===============Get Movement 5,5,4=================");
+console.log(displayArray(map.getPossibleMovement(5,5,4)));
+
+
+console.log("ADDING OBSTABLCES");
+map.tiles[5][6]="X";
+map.tiles[6][6]="X";
+map.tiles[4][5]="X";
+
+
+// console.log("===============Get Movement 5,5,1=================");
+// console.log(displayArray(map.getPossibleMovement(5,5,1)));
+// console.log("===============Get Movement 5,5,1=================");
+// console.log(displayArray(map.getPossibleMovement(5,5,2)));
+// console.log("===============Get Movement 5,5,3=================");
+// console.log(displayArray(map.getPossibleMovement(5,5,3)));
+console.log("===============Get Movement 5,5,4=================");
+console.log(displayArray(map.getPossibleMovement(5,5,4)));
