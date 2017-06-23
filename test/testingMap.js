@@ -1,6 +1,6 @@
 var Map = require("../game/map.js");
 
-var map = new Map(10,10);
+var map = new Map(20,20);
 
 console.log("============5,5,0==========");
 console.log(map.isInBounds(5,5));
@@ -25,11 +25,11 @@ console.log("===============Get Movement 5,5,1=================");
 console.log(map.getPossibleMovement(5,5,2));
 
 function displayArray(array) {
-  var display=new Array(10);
-  for(var i=0; i<10; ++i){
-      display[i]=new Array(10);
-      for(var j=0; j<10; ++j){
-         display[i][j]=" ";
+  var display=new Array(20);
+  for(var i=0; i<20; ++i){
+      display[i]=new Array(20);
+      for(var j=0; j<20; ++j){
+         display[i][j]=".";
     }  
   }
 
@@ -40,7 +40,7 @@ function displayArray(array) {
   } 
 
   for(let x=0; x<display.length; ++x)
-    console.log(display[x]);
+    console.log(display[x].join());
 } 
 
 console.log("===============Get Movement 5,5,1=================");
