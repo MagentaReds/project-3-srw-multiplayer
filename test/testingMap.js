@@ -1,6 +1,9 @@
 var Map = require("../game/map.js");
 
-var map = new Map(20,20);
+var rows = 10;
+var cols = 10;
+
+var map = new Map(rows,cols);
 
 console.log("============5,5,0==========");
 console.log(map.isInBounds(5,5));
@@ -44,11 +47,11 @@ function displayArray(r,c,array) {
 } 
 
 console.log("===============Get Movement 5,5,1=================");
-displayArray(20,20,map.getPossibleMovement(5,5,1));
+displayArray(rows,cols,map.getPossibleMovement(5,5,1));
 console.log("===============Get Movement 5,5,1=================");
-displayArray(20,20,map.getPossibleMovement(5,5,2));
+displayArray(rows,cols,map.getPossibleMovement(5,5,2));
 console.log("===============Get Movement 5,5,4=================");
-displayArray(20,20,map.getPossibleMovement(5,5,4));
+displayArray(rows,cols,map.getPossibleMovement(5,5,4));
 
 
 console.log("ADDING OBSTABLCES");
@@ -58,30 +61,30 @@ map.tiles[4][5]="X";
 
 
 // console.log("===============Get Movement 5,5,1=================");
-// console.log(displayArray(map.getPossibleMovement(5,5,1)));
+// displayArray(rows,cols,map.getPossibleMovement(5,5,1));
 // console.log("===============Get Movement 5,5,1=================");
-// console.log(displayArray(map.getPossibleMovement(5,5,2)));
+// displayArray(rows,cols,map.getPossibleMovement(5,5,2));
 // console.log("===============Get Movement 5,5,3=================");
-// console.log(displayArray(map.getPossibleMovement(5,5,3)));
+// displayArray(rows,cols,map.getPossibleMovement(5,5,3));
 console.log("===============Get Movement 5,5,4=================");
-displayArray(20,20,map.getPossibleMovement(5,5,4));
+displayArray(rows,cols,map.getPossibleMovement(5,5,4));
 
 
 
 console.log("===============Get Possible Targets 5,5,1,1=================");
-displayArray(20,20,map.getPossibleTargets(5,5,1,1));
+displayArray(rows,cols,map.getPossibleTargets(5,5,1,1));
 
 console.log("===============Get Possible Targets 5,5,0,2=================");
-displayArray(20,20,map.getPossibleTargets(5,5,0,2));
+displayArray(rows,cols,map.getPossibleTargets(5,5,0,2));
 
 console.log("===============Get Possible Targets 5,5,2,4=================");
-displayArray(20,20,map.getPossibleTargets(5,5,2,4));
+displayArray(rows,cols,map.getPossibleTargets(5,5,2,4));
 
 console.log("===============Get Possible Targets 5,5,3,4=================");
-displayArray(20,20,map.getPossibleTargets(5,5,3,4));
+displayArray(rows,cols,map.getPossibleTargets(5,5,3,4));
 
 console.log("===============Get Possible Targets 5,5,4,4=================");
-displayArray(20,20,map.getPossibleTargets(5,5,4,4));
+displayArray(rows,cols,map.getPossibleTargets(5,5,4,4));
 
 console.log("===============Get Possible Targets 5,5,4,4=================");
-displayArray(20,20,map.getPossibleTargets(0,0,4,4));
+displayArray(rows,cols,map.getPossibleTargets(0,0,4,4));
