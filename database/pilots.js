@@ -80,7 +80,7 @@ var pilots = [
     terrain: "AABA",
     spiritCommands: [
       ["Alert", 10], ["Focus", 15], ["Snipe", 10], 
-      ["valor", 40], ["Strike", 10], ["Love", 65]
+      ["Valor", 40], ["Strike", 10], ["Love", 65]
     ], 
     aceBonus: "Off. Support and Def. Support +10%",
     willGain: [0,3,1,2,0,5],
@@ -197,7 +197,7 @@ var pilots = [
     terrain: "AAAA",
     spiritCommands: [
       ["Accel", 5], ["Focus", 15], ["Alert", 10], 
-      ["Snipe", 20], ["valor", 30], ["Strike", 20]
+      ["Snipe", 20], ["Valor", 30], ["Strike", 20]
     ], 
     aceBonus: "+10% counterstrike chance",
     willGain: [1,1,1,1,1,5],
@@ -222,7 +222,7 @@ var pilots = [
     terrain: "AABA",
     spiritCommands: [
       ["Focus", 15], ["Strike", 20], ["Gain", 10], 
-      ["Alert", 10], ["valor", 40], ["Accel", 5]
+      ["Alert", 10], ["Valor", 40], ["Accel", 5]
     ], 
     aceBonus: "+1 mobility",
     willGain: [2,-1,0,2,2,5],
@@ -351,7 +351,7 @@ var pilots = [
     aceBonus: "Damage Received -10%",
     willGain: [1,1,1,1,1,5],
     pilotSkills: [
-      [], []
+      ["Command", 4], ["Off.Support", 3], ["Def.Support", 3]
     ],
     relationships: [
       {
@@ -395,7 +395,7 @@ var pilots = [
     aceBonus: "Critical +20%, SP +10",
     willGain: [2,0,2,1,2,3],
     pilotSkills: [
-      ["Gunfight", 9], ["Focus", 1], ["Def.Suppor", 2]
+      ["Gunfight", 9], ["Focus", 1], ["Def.Support", 2]
     ],
     relationships: [
       {
@@ -501,7 +501,7 @@ var pilots = [
     },
     terrain: "AABA",
     spiritCommands: [
-      ["Strike", 20], ["valor", 30], ["Assail", 5], 
+      ["Strike", 20], ["Valor", 30], ["Assail", 5], 
       ["Accel", 5], ["Alert", 10], ["Drive", 55]
     ], 
     aceBonus: "Accuracy +10%, Damage Received -10% ",
@@ -674,7 +674,7 @@ var pilots = [
     aceBonus: "Evade +15%",
     willGain: [1,1,1,1,1,5],
     pilotSkills: [
-      ["Prophesy", 1], ["Sp Regenerate", 1], ["Hit & Away", 1], ["Off.Support", 2]
+      ["Prophesy", 1], ["SP Regenerate", 1], ["Hit & Away", 1], ["Off.Support", 2]
     ],
     relationships: [
       {
@@ -700,7 +700,7 @@ var pilots = [
     terrain: "AABA",
     spiritCommands: [
       ["Focus", 10], ["Alert", 10], ["Bless", 30], 
-      ["Attune", 35], ["Pray", 10], ["Enable", 80]
+      ["Attune", 35], ["Prayer", 10], ["Enable", 80]
     ], 
     aceBonus: "Dodge +10%, SP +20",
     willGain: [0,0,1,1,1,5],
@@ -761,7 +761,7 @@ var pilots = [
     aceBonus: "Accuracy +10%, Evade +10%, Critical +10%",
     willGain: [0,0,0,1,0,5],
     pilotSkills: [
-      ["Off.Supprt", 3], ["Hit & Away", 1], ["Focus", 1], ["Predict", 1]
+      ["Off.Support", 3], ["Hit & Away", 1], ["Focus", 1], ["Predict", 1]
     ],
     relationships: [
       {
@@ -849,7 +849,7 @@ var pilots = [
     terrain: "AAAA",
     spiritCommands: [
       ["Strike", 15], ["Guard", 25], ["Focus", 15], 
-      ["valor", 45], ["Zeal", 60], ["Love", 65]
+      ["Valor", 45], ["Zeal", 60], ["Love", 65]
     ], 
     aceBonus: "Support Defence +10%, EXP +10% ",
     willGain: [1,1,1,1,1,5],
@@ -916,7 +916,7 @@ var pilots = [
     aceBonus: "Damage +5%, Accuracy +10%",
     willGain: [2,-1,0,2,2,5],
     pilotSkills: [
-      ["Prevail", 9], ["In0fight", 8], ["Chain Attack", 4]
+      ["Prevail", 9], ["In-fight", 8], ["Chain Attack", 4]
     ],
     relationships: [
       {
@@ -997,7 +997,7 @@ var pilots = [
     },
     terrain: "AABA",
     spiritCommands: [
-      ["Alert", 10], ["Pray", 15], ["Focus", 15], 
+      ["Alert", 10], ["Prayer", 15], ["Focus", 15], 
       ["Attune", 30], ["Valor", 40], ["Renew", 60]
     ], 
     aceBonus: "Accuracy +10%, SP +20",
@@ -1166,12 +1166,12 @@ var pilots = [
     terrain: "SSSS",
     spiritCommands: [
       ["Attune", 5], ["Hope", 50], ["Rouse", 40], 
-      ["Enable", 40], ["Pray", 10], ["Love", 50]
+      ["Enable", 40], ["Prayer", 10], ["Love", 50]
     ], 
     aceBonus: "Off.Support and Def.Support +10%",
     willGain: [2,-1,0,2,2,5],
     pilotSkills: [
-      ["Prohphesy", 1], ["Off.Support", 3], ["SP Regenerate", 1], ["Chain Attack", 4], ["Prevail", 9], ["Def.Support", 3]
+      ["Prophesy", 1], ["Off.Support", 3], ["SP Regenerate", 1], ["Chain Attack", 4], ["Prevail", 9], ["Def.Support", 3]
     ],
     relationships: [
       {

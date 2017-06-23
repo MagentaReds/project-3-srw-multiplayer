@@ -244,7 +244,7 @@ var ptx = {
     wpSpace: 100,
     partSlots: 2,
     fub: "I Weapon Ammo +2",
-    abilities: ["Beam Coat", "HP Recovery (S)"],
+    abilities: ["Beam Coat", "HP Regen (S)"],
     weapons: ["Split Missile", "3-Barrel Beam Cannon", "Howling Launcher E", "Howling Launher B", "Howling Launher X"],
     equipedWeapons: []
   },
@@ -550,7 +550,7 @@ var srg_dgg = {
     wpSpace: 0,
     partSlots: 2,
     fub: "TK Field absorb +300 damage",
-    abilities: ["TK Field", "Change: G-Wing"],
+    abilities: ["TK Field", "Change: G-Hawk"],
     weapons: ["Eye Laser", "Boost Knuckle", "Maxiblaster", "Doom Blade"],
     equipedWeapons: []
   },
@@ -673,7 +673,7 @@ var r_series = {
     wpSpace: 0,
     partSlots: 2,
     fub: "Telekinesis Weapons +200",
-    abilities: ["TK Field", "Chnge: R-1"],
+    abilities: ["TK Field", "Change: R-1"],
     weapons: ["Anti-Air Missile", "Twin G-Cannon"],
     equipedWeapons: []
   },
