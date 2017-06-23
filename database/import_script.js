@@ -9,6 +9,7 @@ var dbMech = require("../models/mech.js");
 var dbWeapon = require("../models/weapon.js");
 
 var pilotFlags = require("../game/statesAndFlags").pilot;
+var weaponFlags = require("../game/statesAndFlags").weapon;
 
 
 function doStuff(command) {
@@ -40,8 +41,164 @@ function importWeapons() {
 
     var manyNewWeapons = [];
 
+    // var upRate = ["VS", "S", "M", "F", "VF", ""];
+    // var upCost = ["VL", "L", "M", "H", "VH", ""];
+    // var prop = ["C", "P", "MAP"];
+    // var type = ["M", "R", "S"];
+    // var cat = [];
+    // for(key in weaponFlags.category) 
+    //     cat.push(weaponFlags.category[key]);
     
+    // //have to do this in parts.
+    // //part one wp space weapons
+    // var workingSet = weapons.wp_space;
+    // for(let i=0; i<workingSet.length; ++i){
+    //   var tempWpn = workingSet[i]; 
+    //   var newWeapon = {
+    //     name: tempWpn.name,
+    //     wpSpace: tempWpn.wpSpace,
+    //     mechCodeName: "wp_space",
+    //     damage: tempWpn.damage,
+    //     range: tempWpn.range,
+    //     hit: tempWpn.hit,
+    //     terrain: tempWpn.terrain,
+    //     ammo: tempWpn.ammo,
+    //     en: tempWpn.en,
+    //     crit: tempWpn.crit,
+    //     skill: tempWpn.skill,
+    //     properties: []
+    //   };
+    //   if(upRate.includes(tempWpn.upgradeRate))
+    //     newWeapon.upgradeRate = tempWpn.upgradeRate;
+    //   else {
+    //     console.log(`Failed at ${tempWpn.name} and ${tempWpn.upgradeRate}`);
+    //     throw new Error();
+    //   }
+    //   if(upCost.includes(tempWpn.upgradeCost))
+    //     newWeapon.upgradeCost = tempWpn.upgradeCost;
+    //   else {
+    //     console.log(`Failed at ${tempWpn.name} and ${tempWpn.upgradeCost}`);
+    //     throw new Error();
+    //   }
+    //   if(cat.includes(tempWpn.category))
+    //     newWeapon.category = tempWpn.category;
+    //   else {
+    //     console.log(`Failed at ${tempWpn.name} and ${tempWpn.category}`);
+    //     throw new Error();
+    //   }
+    //   if(type.includes(tempWpn.type))
+    //     newWeapon.type = tempWpn.type;
+    //   else {
+    //     console.log(`Failed at ${tempWpn.name} and ${tempWpn.type}`);
+    //     throw new Error();
+    //   }
+
+    //   for(let i=0; i<tempWpn.properties.length; ++i){
+    //     if(prop.includes(tempWpn.properties[i]))
+    //       newWeapon.properties.push(tempWpn.properties[i]);
+    //     else {
+    //       console.log(`Failed at ${tempWpn.name} and ${tempWpn.properties[i]}`);
+    //       throw new Error();
+    //     }
+    //   }
+
+    //   manyNewWeapons.push(newWeapon);
+    // }
+
+    //part one redux
+    var workingSet = weapons.wp_space;
+    //console.log("wp_space");
+    addWeaponsHelper(workingSet, "wp_space", false, manyNewWeapons);
+
+    //part two, electic boogaloo
+    for(containerKey in weapons){
+      if(containerKey!=="wp_space") {
+        workingSet = weapons[containerKey];
+        workingSetKeys = Object.keys(workingSet);
+        //console.log(workingSetKeys);
+        for(key in workingSet)
+          addWeaponsHelper(workingSet[key], key, true, manyNewWeapons);
+      }
+    }
+
+    dbWeapon.insertMany(manyNewWeapons, function(err, docs){
+      console.log("Finished inserting weapons");
+      if(err)
+        console.log(err);
+    })
+
+
   });
+}
+
+function addWeaponsHelper(dataSource, key, builtIn, outputArray){
+  var upRate = ["VS", "S", "M", "F", "VF", ""];
+  var upCost = ["VL", "L", "M", "H", "VH", ""];
+  var prop = ["C", "P", "MAP"];
+  var type = ["M", "R", "S"];
+  var cat = [];
+  for(key in weaponFlags.category) 
+      cat.push(weaponFlags.category[key]);
+
+
+  var workingSet = dataSource;
+  for(let i=0; i<workingSet.length; ++i){
+    var tempWpn = workingSet[i]; 
+    var newWeapon = {
+      name: tempWpn.name,
+      wpSpace: tempWpn.wpSpace,
+      mechCodeName: key,
+      damage: tempWpn.damage,
+      range: tempWpn.range,
+      hit: tempWpn.hit,
+      terrain: tempWpn.terrain,
+      ammo: tempWpn.ammo,
+      en: tempWpn.en,
+      crit: tempWpn.crit,
+      skill: tempWpn.skill,
+      properties: [],
+      builtIn: builtIn
+    };
+    if(tempWpn.range.length !==2){
+      console.log(`Failed at ${tempWpn.name} and range ${tempWpn.range}`);
+      throw new Error();
+    }
+    if(upRate.includes(tempWpn.upgradeRate))
+      newWeapon.upgradeRate = tempWpn.upgradeRate;
+    else {
+      console.log(`Failed at ${tempWpn.name} and rate ${tempWpn.upgradeRate}`);
+      throw new Error();
+    }
+    if(upCost.includes(tempWpn.upgradeCost))
+      newWeapon.upgradeCost = tempWpn.upgradeCost;
+    else {
+      console.log(`Failed at ${tempWpn.name} and cost ${tempWpn.upgradeCost}`);
+      throw new Error();
+    }
+    if(cat.includes(tempWpn.category))
+      newWeapon.category = tempWpn.category;
+    else {
+      console.log(`Failed at ${tempWpn.name} and category ${tempWpn.category}`);
+      throw new Error();
+    }
+    if(type.includes(tempWpn.type))
+      newWeapon.type = tempWpn.type;
+    else {
+      console.log(`Failed at ${tempWpn.name} and type ${tempWpn.type}`);
+      throw new Error();
+    }
+
+    for(let i=0; i<tempWpn.properties.length; ++i){
+      if(prop.includes(tempWpn.properties[i]))
+        newWeapon.properties.push(tempWpn.properties[i]);
+      else {
+        console.log(`Failed at ${tempWpn.name} and ${tempWpn.properties[i]}`);
+        throw new Error();
+      }
+    }
+
+    outputArray.push(newWeapon);
+  }
 }
 
 function importPilots() {

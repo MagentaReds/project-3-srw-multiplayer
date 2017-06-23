@@ -36,7 +36,8 @@ db.once("open", function() {
 
     //imported data from file into mongodb.
   var importScript = require("./database/import_script.js");
-  importScript("importPilots");
+  //importScript("importPilots");
+  importScript("importWeapons");
 });
 
 
