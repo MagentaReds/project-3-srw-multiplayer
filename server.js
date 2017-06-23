@@ -33,6 +33,10 @@ db.on("error", function(error) {
 // Once logged in to the db through mongoose, log a success message
 db.once("open", function() {
   console.log("Mongoose connection successful.");
+
+    //imported data from file into mongodb.
+  var importScript = require("./database/import_script.js");
+  importScript("importPilots");
 });
 
 
@@ -42,14 +46,11 @@ var apiRoutes = require("./routes/apiRoutes.js");
 app.use("/", apiRoutes);
 
 
-//Testing stuff
-var testing= require("./database/import_script.js");
-testing();
-
 //game engine teseting
 var clientList = [{name: "bob", units:[]}, {name:"Grant", units:[]}];
-var Game =require("./game/gameEngine.js");
-var game = new Game(clientList);
+// var Game =require("./game/gameEngine.js");
+// var game = new Game(clientList);
+
 
 
 // Listen on port 3000
