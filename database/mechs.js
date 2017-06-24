@@ -14,8 +14,8 @@
     partSlots: ,
     fub: "",
     abilities: [],
-    weapons: [],
-    equipedWeapons: []
+    iWeapons: [],
+    weapons: []
   };
 */
 
@@ -32,10 +32,10 @@ var battleships = {
     wpSpace: 10,
     partSlots: 2,
     abilities: ["EN Regen (L)", "E Field"],
-    weapons: ["AA Autocannon", "Spider Net", "Weaponbreaker", "Chaff Grenade", "Torpedo", "Homing Missile", "Sub Cannon", "Impact Cannon"],
-    equipedWeapons: []
+    iWeapons: ["AA Autocannon", "Spider Net", "Weaponbreaker", "Chaff Grenade", "Torpedo", "Homing Missile", "Sub Cannon", "Impact Cannon"],
+    weapons: []
   },
-  Hagane_1: {
+  Hagane_Shiro: {
     name: "Hagane (Shiro Type)",
     stats: [14000, 200, 60, 1200],
     upgrade: [4,5,10,9],
@@ -47,10 +47,10 @@ var battleships = {
     partSlots: 2,
     fub: "Armor +20%",
     abilities: ["E Field"],
-    weapons: ["AA Autocannon", "Chaff Grenade", "Torpedo", "Homing Missile", "Sub Cannon", "Impact Cannon"],
-    equipedWeapons: []
+    iWeapons: ["AA Autocannon", "Chaff Grenade", "Torpedo", "Homing Missile", "Sub Cannon", "Impact Cannon"],
+    weapons: []
   },
-  Hagane_2: {
+  Hagane: {
     name: "Hagane",
     stats: [15000,220,60,1230],
     upgrade: [4,5,10,9],
@@ -62,8 +62,8 @@ var battleships = {
     partSlots: 2,
     fub: "Armor +20%",
     abilities: ["E Field'"],
-    weapons: ["AA Autocannon", "Chaff Grenade", "Torpedo", "Sub Cannon", "Impact Cannon", "Tronium Cannon"],
-    equipedWeapons: []
+    iWeapons: ["AA Autocannon", "Chaff Grenade", "Torpedo", "Sub Cannon", "Impact Cannon", "Tronium Cannon"],
+    weapons: []
   },
   Kurogane: {
     name: "Kurogane",
@@ -77,8 +77,8 @@ var battleships = {
     partSlots: 2,
     fub: "Armor +20%",
     abilities: ["E Field"],
-    weapons: ["AA Autocannon", "Chaff Grenade", "Torpedo", "Homing Missile", "Sub Cannon", "Impact Cannon", "Titanic Drill"],
-    equipedWeapons: []
+    iWeapons: ["AA Autocannon", "Chaff Grenade", "Torpedo", "Homing Missile", "Sub Cannon", "Impact Cannon", "Titanic Drill"],
+    weapons: []
   },
   Hiyru_Custom: {
     name: "Hiryu Custom",
@@ -92,8 +92,8 @@ var battleships = {
     partSlots: 2,
     fub: "Weapon Accuracy +20%",
     abilities: ["E Field"],
-    weapons: ["AA Autocannon", "Homing Missile", "Long Range Missile", "Dual Beam Cannon", "Gravity Cannon"],
-    equipedWeapons: []
+    iWeapons: ["AA Autocannon", "Homing Missile", "Long Range Missile", "Dual Beam Cannon", "Gravity Cannon"],
+    weapons: []
   }
 }
 
@@ -110,8 +110,8 @@ var ptx = {
     partSlots: 4,
     fub: "All Terrains (except Air) S",
     abilities: [],
-    weapons: ["Split Missile", "Jet Magnum"],
-    equipedWeapons: ["M95 Machine Gun", "Plasma Slicer"]
+    iWeapons: ["Split Missile", "Jet Magnum"],
+    weapons: ["M95 Machine Gun", "Plasma Slicer"]
   },
   Gespenst_Katina: {
     name: "Gespenst MKII-M (Katina)",
@@ -125,8 +125,8 @@ var ptx = {
     partSlots: 4,
     fub: "Armor and HP +15%",
     abilities: [],
-    weapons: ["Split Missile", "Jet Magnum"],
-    equipedWeapons: ["Plasma Slicer", "M13 Shotgun"]
+    iWeapons: ["Split Missile", "Jet Magnum"],
+    weapons: ["Plasma Slicer", "M13 Shotgun"]
   },
   Gespenst_Russel: {
     name: "Gespenst MKII-M (Russel)",
@@ -140,8 +140,8 @@ var ptx = {
     partSlots: 4,
     fub: "Armor +20%",
     abilities: [],
-    weapons: ["Split Missile", "Jet Magnum"],
-    equipedWeapons: ["M95 Machine Gun", "Plasma Slicer"]
+    iWeapons: ["Split Missile", "Jet Magnum"],
+    weapons: ["M95 Machine Gun", "Plasma Slicer"]
   },
   Gespenst_R: {
     name: "Gespenst MkII-R",
@@ -155,8 +155,8 @@ var ptx = {
     partSlots: 4,
     fub: "Mobility +15% and HP +20%",
     abilities: ["Beam Coat"],
-    weapons: ["Split Missile"],
-    equipedWeapons: ["Plasma Cutter", "Chakram Caster", "Slash Ripper", "Double Magna Rifle", "Graviton Cannon"]
+    iWeapons: ["Split Missile"],
+    weapons: ["Plasma Cutter", "Chakram Caster", "Slash Ripper", "Double Magna Rifle", "Graviton Cannon"]
   },
   Gespenst_S: {
     name: "Gespenst MkII-S",
@@ -170,8 +170,8 @@ var ptx = {
     partSlots: 4,
     fub: "HP +20% and EN +15%",
     abilities: ["AB Field"],
-    weapons: ["Split Missile", "Mega Blaster", "Yell! Gespenst Kick!"],
-    equipedWeapons: []
+    iWeapons: ["Split Missile", "Mega Blaster", "Yell! Gespenst Kick!"],
+    weapons: []
   },
   Gespenst: {
     name: "Gespenst",
@@ -185,8 +185,8 @@ var ptx = {
     partSlots: 4,
     fub: "I Weapon Ammo +4",
     abilities: ["Beam Coat"],
-    weapons: ["Split Missile", "Neutron Beam"],
-    equipedWeapons: ["Weapon Breaker", "Plasma Slicer", "Rectangle Launcher", "Remote Slasher", "M90 Assault Machine Gun"]
+    iWeapons: ["Split Missile", "Neutron Beam"],
+    weapons: ["Weapon Breaker", "Plasma Slicer", "Rectangle Launcher", "Remote Slasher", "M90 Assault Machine Gun"]
   },
   Alteisen: {
     name: "Alteisen",
@@ -200,8 +200,8 @@ var ptx = {
     partSlots: 2,
     fub: "All Weapon Terrains S",
     abilities: ["Beam Coat"],
-    weapons: ["Autocannon", "Heat Horn", "Revolver Stake", "Heavy Claymore", '"Trump Card"'],
-    equipedWeapons: []
+    iWeapons: ["Autocannon", "Heat Horn", "Revolver Stake", "Heavy Claymore", '"Trump Card"'],
+    weapons: []
   },
   Alteisen_Riese: {
     name: "Alteisen Riese",
@@ -215,8 +215,8 @@ var ptx = {
     partSlots: 2,
     fub: "All Weapon Terrains S",
     abilities: ["Beam Coat"],
-    weapons: ["5-Barrel Machine Cannon", "Plasma Horn", "Revolving Bunker", "Avalanche Claymore", "Aerial Claymore"],
-    equipedWeapons: []
+    iWeapons: ["5-Barrel Machine Cannon", "Plasma Horn", "Revolving Bunker", "Avalanche Claymore", "Aerial Claymore"],
+    weapons: []
   },
   Weissritter: {
     name: "Wiessritter",
@@ -230,8 +230,8 @@ var ptx = {
     partSlots: 2,
     fub: "I Weapon Ammo +2",
     abilities: ["Beam Coat"],
-    weapons: ["Split Missile", "Beam Cannon", "Oxtongue Rifle E", "Oxtongue Rifile B", "Oxtongue Rifile W"],
-    equipedWeapons: ["Plasma Slicer"]
+    iWeapons: ["Split Missile", "Beam Cannon", "Oxtongue Rifle E", "Oxtongue Rifile B", "Oxtongue Rifile W"],
+    weapons: ["Plasma Slicer"]
   },
   Rein_Weissritter: {
     name: "Rein Weissritter",
@@ -245,8 +245,8 @@ var ptx = {
     partSlots: 2,
     fub: "I Weapon Ammo +2",
     abilities: ["Beam Coat", "HP Regen (S)"],
-    weapons: ["Split Missile", "3-Barrel Beam Cannon", "Howling Launcher E", "Howling Launher B", "Howling Launher X"],
-    equipedWeapons: []
+    iWeapons: ["Split Missile", "3-Barrel Beam Cannon", "Howling Launcher E", "Howling Launher B", "Howling Launher X"],
+    weapons: []
   },
   Schutzwald: {
     name: "Schutzwald",
@@ -260,8 +260,8 @@ var ptx = {
     partSlots: 4,
     fub: "AB Field",
     abilities: [],
-    weapons: ["Gatling Gun", "Autocannon", "Twin Geam Cannon"],
-    equipedWeapons: ["Plasma Sliver", "G-Railgun"]
+    iWeapons: ["Gatling Gun", "Autocannon", "Twin Geam Cannon"],
+    weapons: ["Plasma Sliver", "G-Railgun"]
   },
   R_Blade: {
     name: "R-Blade",
@@ -275,8 +275,8 @@ var ptx = {
     partSlots: 4,
     fub: "W Space +30",
     abilities: [],
-    weapons: ["Gatling Gun", "Blade Tonfa"],
-    equipedWeapons: ["G-Revolver", "G-Railgun"]
+    iWeapons: ["Gatling Gun", "Blade Tonfa"],
+    weapons: ["G-Revolver", "G-Railgun"]
   },
   Wildwurger: {
     name: "Wildwurger",
@@ -290,8 +290,8 @@ var ptx = {
     partSlots: 2,
     fub: "Mobility and Armor +15%",
     abilities: [],
-    weapons: ["3-Barrel Gatling Cannon", "Cold Metal Sword", "Stag Beetle Crusher", "Raptor Wings"],
-    equipedWeapons: ["M90 Assault Machine Gun"]
+    iWeapons: ["3-Barrel Gatling Cannon", "Cold Metal Sword", "Stag Beetle Crusher", "Raptor Wings"],
+    weapons: ["M90 Assault Machine Gun"]
   },
   Wildwurger_L: {
     name: "Wildwurger-L",
@@ -305,8 +305,8 @@ var ptx = {
     partSlots: 3,
     fub: "Mobility and Armor +15%",
     abilities: [],
-    weapons: ["Stun Shock", "3-Barrel Gatling Cannon", "M90 Assault Machine Gun", "Cold Metal Sword", "Stag Beetle Crusher", "Raptor Wings"],
-    equipedWeapons: []
+    iWeapons: ["Stun Shock", "3-Barrel Gatling Cannon", "M90 Assault Machine Gun", "Cold Metal Sword", "Stag Beetle Crusher", "Raptor Wings"],
+    weapons: []
   },
   Wildfalken: {
     name: "Wildfalken",
@@ -320,8 +320,8 @@ var ptx = {
     partSlots: 2,
     fub: "I Weapon Ammo +2",
     abilities: [],
-    weapons: ["Gatling Gun", "Split Missile", "Oxtongue Rifle E", "Oxtongue Rifle B", "Oxtongue Rifle W"],
-    equipedWeapons: ["Roche Saber"]
+    iWeapons: ["Gatling Gun", "Split Missile", "Oxtongue Rifle E", "Oxtongue Rifle B", "Oxtongue Rifle W"],
+    weapons: ["Roche Saber"]
   }
 };
 
@@ -338,8 +338,8 @@ var rtx = {
     partSlots: 3,
     fub: "W Space +50",
     abilities: ["G Wall"],
-    weapons: ["Gatling Gun", "G-Impact Cannon"],
-    equipedWeapons: ["Beam Sword" , "Photon Rifle", "Chakram Caster"]
+    iWeapons: ["Gatling Gun", "G-Impact Cannon"],
+    weapons: ["Beam Sword" , "Photon Rifle", "Chakram Caster"]
   },
   Huckebein_IIM: {
     name: "Huckebein MkII-M",
@@ -353,8 +353,8 @@ var rtx = {
     partSlots: 3,
     fub: "W Space +30",
     abilities: [],
-    weapons: ["Gatling Gun"],
-    equipedWeapons: ["Beam Sword", "Photon Rifle", "Rectangle Launcher"]
+    iWeapons: ["Gatling Gun"],
+    weapons: ["Beam Sword", "Photon Rifle", "Rectangle Launcher"]
   },
   Huckebein: {
     name: "Huckebein",
@@ -368,8 +368,8 @@ var rtx = {
     partSlots: 2,
     fub: "W Space +40 and EN +20%",
     abilities: ["AB Field", "Double Image"],
-    weapons: ["Gatling Gun", "Black Hole Cannon"],
-    equipedWeapons: ["Roche Saber", "Magna Beam Rifile", "Remote Slasher"]
+    iWeapons: ["Gatling Gun", "Black Hole Cannon"],
+    weapons: ["Roche Saber", "Magna Beam Rifile", "Remote Slasher"]
   },
   Huckebein_III_L: {
     name: "Huckebein MIII-L",
@@ -383,8 +383,8 @@ var rtx = {
     partSlots: 2,
     fub: "Armor and EN +10%",
     abilities: ["G Territory", "Double Image"],
-    weapons: ["Gatling Gun", "Multi-Trace Missiles", "Fang Slasher", "Graviton Rifle"],
-    equipedWeapons: ["Roche Saber"]
+    iWeapons: ["Gatling Gun", "Multi-Trace Missiles", "Fang Slasher", "Graviton Rifle"],
+    weapons: ["Roche Saber"]
   },
   Huckebein_III_T: {
     name: "Huckebeing MIII-T",
@@ -398,8 +398,8 @@ var rtx = {
     partSlots: 2,
     fub: "Armor and EN +10%",
     abilities: ["G Territory", "Double Image"],
-    weapons: ["Gatling Gun", "Fang Slasher", "Graviton Rifle"],
-    equipedWeapons: ["Roche Saber", "Remote Slasher", "Boosted Rifle"]
+    iWeapons: ["Gatling Gun", "Fang Slasher", "Graviton Rifle"],
+    weapons: ["Roche Saber", "Remote Slasher", "Boosted Rifle"]
   },
   Huckebein_III_R: {
     name: "Huckebein MIII-R",
@@ -413,8 +413,8 @@ var rtx = {
     partSlots: 2,
     fub: "Armor and EN +10%",
     abilities: ["G Territory", "Double Image"],
-    weapons: ["Gatling Gun", "Multitrace Missile", "Fang Slasher", "Graviton Rifile"],
-    equipedWeapons: ["Photon Rifle, Roche Saber, Remote Slasher, Boosted Rifle"]
+    iWeapons: ["Gatling Gun", "Multitrace Missile", "Fang Slasher", "Graviton Rifile"],
+    weapons: ["Photon Rifle, Roche Saber, Remote Slasher, Boosted Rifle"]
   },
   Huckebein_Gunner_L: {
     name: "Huckebein Gunner-L",
@@ -428,8 +428,8 @@ var rtx = {
     partSlots: 2,
     fub: "Armor and EN +10%",
     abilities: ["G Territory"],
-    weapons: ["Gatling Gun", "Multi-Trace Missile", "Rip Missile", "Graviton Rifle", "Full Impact Cannon"],
-    equipedWeapons: []
+    iWeapons: ["Gatling Gun", "Multi-Trace Missile", "Rip Missile", "Graviton Rifle", "Full Impact Cannon"],
+    weapons: []
   },
   Huckebein_Gunner_R: {
     name: "Huckebein Gunner-R",
@@ -443,8 +443,8 @@ var rtx = {
     partSlots: 2,
     fub: "Armor and EN +10%",
     abilities: ["G Territory"],
-    weapons: ["Gatling Gun", "Multi-Trace Missile", "Rip Missile", "Graviton Rifle", "Full Impact Cannon"],
-    equipedWeapons: []
+    iWeapons: ["Gatling Gun", "Multi-Trace Missile", "Rip Missile", "Graviton Rifle", "Full Impact Cannon"],
+    weapons: []
   },
   Huckebein_Boxer_L: {
     name: "Huckebein Boxer-L",
@@ -458,8 +458,8 @@ var rtx = {
     partSlots: 2,
     fub: "Armor and EN +10%",
     abilities: ["G Territory", "Double Image"],
-    weapons: ["Gatling Gun", "Graviton Cannon", "Fang Slasher", "Geist Knuckle", "G-Sword Diver"],
-    equipedWeapons: []
+    iWeapons: ["Gatling Gun", "Graviton Cannon", "Fang Slasher", "Geist Knuckle", "G-Sword Diver"],
+    weapons: []
   },
   Huckebein_Boxer_R: {
     name: "Huckebein Boxer-R",
@@ -473,8 +473,8 @@ var rtx = {
     partSlots: 2,
     fub: "Armor and EN +10%",
     abilities: ["G Territory", "Double Image"],
-    weapons: ["Gatling Gun", "Graviton Cannon", "Fang Slasher", "Geist Knuckle", "G-Sword Diver"],
-    equipedWeapons: []
+    iWeapons: ["Gatling Gun", "Graviton Cannon", "Fang Slasher", "Geist Knuckle", "G-Sword Diver"],
+    weapons: []
   },
   AM_Gunner: {
     name: "AM Gunner",
@@ -488,8 +488,8 @@ var rtx = {
     partSlots: 3,
     fub: "EN +15%",
     abilities: ["G Territory"],
-    weapons: ["Homing Missile", "Rip Missile", "G-Impact Cannon"],
-    equipedWeapons: []
+    iWeapons: ["Homing Missile", "Rip Missile", "G-Impact Cannon"],
+    weapons: []
   }
 };
 
@@ -506,8 +506,8 @@ var srg_dgg = {
     partSlots: 2,
     fub: "All Weapons +200",
     abilities: ["Change: Wing Gust", "Change: Gust Lander"],
-    weapons: ["Boost Knuckle", "Final Beam", "Calamity Sword", "Darkness Slash"],
-    equipedWeapons: []
+    iWeapons: ["Boost Knuckle", "Final Beam", "Calamity Sword", "Darkness Slash"],
+    weapons: []
   },
   Wing_Gust: {
     name: "Wing Gust",
@@ -521,8 +521,8 @@ var srg_dgg = {
     partSlots: 2,
     fub: "All Weapons +200",
     abilities: ["Change: Grungust", "Change: Gust Lander"],
-    weapons: ["Double Omega Laser", "Spiral Attack", "Missile"],
-    equipedWeapons: []
+    iWeapons: ["Double Omega Laser", "Spiral Attack", "Missile"],
+    weapons: []
   },
   Gust_Lander: {
     name: "Gust Lander",
@@ -536,8 +536,8 @@ var srg_dgg = {
     partSlots: 2,
     fub: "All Weapons +200",
     abilities: ["Change: Grungust", "Change: Wing Gust"],
-    weapons: ["Missile", "Omega Cannon", "Drill Attack"],
-    equipedWeapons: []
+    iWeapons: ["Missile", "Omega Cannon", "Drill Attack"],
+    weapons: []
   },
   Grungust_2: {
     name: "Grungust Type 2",
@@ -551,8 +551,8 @@ var srg_dgg = {
     partSlots: 2,
     fub: "TK Field absorb +300 damage",
     abilities: ["TK Field", "Change: G-Hawk"],
-    weapons: ["Eye Laser", "Boost Knuckle", "Maxiblaster", "Doom Blade"],
-    equipedWeapons: []
+    iWeapons: ["Eye Laser", "Boost Knuckle", "Maxiblaster", "Doom Blade"],
+    weapons: []
   },
   G_Hawk: {
     name: "G-Hawk",
@@ -566,8 +566,8 @@ var srg_dgg = {
     partSlots: 2,
     fub: "TK Field absorb +300 damage",
     abilities: ["TK Field", "Change: Grungust Type 2"],
-    weapons: ["Eye Laser", "Split Missile", "Spiral Attack"],
-    equipedWeapons: []
+    iWeapons: ["Eye Laser", "Split Missile", "Spiral Attack"],
+    weapons: []
   },
   Grungust_3: {
     name: "Grungust Type 3",
@@ -581,8 +581,8 @@ var srg_dgg = {
     partSlots: 2,
     fub: "All Weapons +200",
     abilities: [],
-    weapons: ["Armor Breaker", "Eye Laser", "Drill Boost Knuckle", "Omega Blaster", "Sanshiki Zankantou: Ichimonjigiri"],
-    equipedWeapons: []
+    iWeapons: ["Armor Breaker", "Eye Laser", "Drill Boost Knuckle", "Omega Blaster", "Sanshiki Zankantou: Ichimonjigiri"],
+    weapons: []
   },
   Ryukooh: {
     name: "Ryukooh",
@@ -596,8 +596,8 @@ var srg_dgg = {
     partSlots: 1,
     fub: "EN Regen (S)",
     abilities: ["TK Field", "HP Regen (S)", "Change: Koryuoh"],
-    weapons: ["Bakuraifu", "Magma Burst", "Mountain Pressure", "Dragoon Blade", "Dragon Fang"],
-    equipedWeapons: []
+    iWeapons: ["Bakuraifu", "Magma Burst", "Mountain Pressure", "Dragoon Blade", "Dragon Fang"],
+    weapons: []
   },
   Koryuoh: {
     name: "Koryuoh",
@@ -611,8 +611,8 @@ var srg_dgg = {
     partSlots: 1,
     fub: "EN Regen (S)",
     abilities: ["TK Field", "HP Regen (S)", "Double Image", "Change: Ryukooh"],
-    weapons: ["Tiger Knuckle", "Random Spike", "Sonic Javelin", "Tyrant Breaker"],
-    equipedWeapons: []
+    iWeapons: ["Tiger Knuckle", "Random Spike", "Sonic Javelin", "Tyrant Breaker"],
+    weapons: []
   },
   Dygenguard: {
     name: "Dygenguard",
@@ -626,8 +626,8 @@ var srg_dgg = {
     partSlots: 1,
     fub: "All Melee Weapons +200",
     abilities: [],
-    weapons: ["Colossal Burst", "Colossal Spinner", "Colossal Thunder", "Colossal Storm"],
-    equipedWeapons: []
+    iWeapons: ["Colossal Burst", "Colossal Spinner", "Colossal Thunder", "Colossal Storm"],
+    weapons: []
   },
   Ausenseiter: {
     name: "Ausenseiter",
@@ -641,8 +641,8 @@ var srg_dgg = {
     partSlots: 1,
     fub: "All Ranged Weapons +200",
     abilities: [],
-    weapons: ["Schulterplatte", "Lanzerkanone", "Sturmangriff",  "Lanzerganone W"],
-    equipedWeapons: []
+    iWeapons: ["Schulterplatte", "Lanzerkanone", "Sturmangriff",  "Lanzerganone W"],
+    weapons: []
   }
 };
 
@@ -659,8 +659,8 @@ var r_series = {
     partSlots: 2,
     fub: "Telekenesis Weapons +200",
     abilities: ["TK Field", "Change: R-Wing"],
-    weapons: ["Gatling Gun", "T-Link Knuckle", "T-Link Sword"],
-    equipedWeapons: ["Steel Knife", "G-Revovler", "Boosted Rifle"]
+    iWeapons: ["Gatling Gun", "T-Link Knuckle", "T-Link Sword"],
+    weapons: ["Steel Knife", "G-Revovler", "Boosted Rifle"]
   },
   R_wing: {
     name: "R-Wing",
@@ -674,8 +674,8 @@ var r_series = {
     partSlots: 2,
     fub: "Telekinesis Weapons +200",
     abilities: ["TK Field", "Change: R-1"],
-    weapons: ["Anti-Air Missile", "Twin G-Cannon"],
-    equipedWeapons: []
+    iWeapons: ["Anti-Air Missile", "Twin G-Cannon"],
+    weapons: []
   },
   R_2: {
     name: "R-2 Powered",
@@ -689,8 +689,8 @@ var r_series = {
     partSlots: 2,
     fub: "Ranged Weapons +200",
     abilities: ["AB Field"],
-    weapons: ["Gatling Gun", "Beam Chakram", "Hi-Zol Launcher"],
-    equipedWeapons: ["Beam Sword", "Magna Beam Rifle"]
+    iWeapons: ["Gatling Gun", "Beam Chakram", "Hi-Zol Launcher"],
+    weapons: ["Beam Sword", "Magna Beam Rifle"]
   },
   R_3: {
     name: "R-3 Powered",
@@ -704,8 +704,8 @@ var r_series = {
     partSlots: 3,
     fub: "TK Field absorb +300 damage",
     abilities: ["Tk Field"],
-    weapons: ["Gatling Gun", "TK Missile", "TK Laser Cannon", "Strike Shield"],
-    equipedWeapons: ["Beam Sword"]
+    iWeapons: ["Gatling Gun", "TK Missile", "TK Laser Cannon", "Strike Shield"],
+    weapons: ["Beam Sword"]
   },
   R_Gun: {
     name: "R-Gun Powered",
@@ -719,8 +719,8 @@ var r_series = {
     partSlots: 3,
     fub: "EN +20%",
     abilities: ["TK Field"],
-    weapons: ["Gatling Gun", "TK Boomerang", "Hyper Twin Launchers"],
-    equipedWeapons: ["Double Magna Rifle"]
+    iWeapons: ["Gatling Gun", "TK Boomerang", "Hyper Twin Launchers"],
+    weapons: ["Double Magna Rifle"]
   },
   SRX: {
     name: "SRX",
@@ -734,8 +734,8 @@ var r_series = {
     partSlots: 1,
     fub: "Part Slots +1",
     abilities: ["TK Field"],
-    weapons: ["Finger Launcher", "Blade Kick", "Dominion Ball", "TK Burst Slash"],
-    equipedWeapons: []
+    iWeapons: ["Finger Launcher", "Blade Kick", "Dominion Ball", "TK Burst Slash"],
+    weapons: []
   }
 };
 
@@ -752,8 +752,8 @@ var am = {
     partSlots: 3,
     fub: "WP Space +30 and EN+10%",
     abilities: [],
-    weapons: ["Autocannon", "Sonic Breaker"],
-    equipedWeapons: ["Divine Blade", "Burst Railgun"]
+    iWeapons: ["Autocannon", "Sonic Breaker"],
+    weapons: ["Divine Blade", "Burst Railgun"]
   },
   Calion: {
     name: "Calion",
@@ -767,8 +767,8 @@ var am = {
     partSlots: 3,
     fub: "Mobility +20%",
     abilities: [],
-    weapons: ["Anti-Air Missile", "Sonic Cutter", "G-Drive"],
-    equipedWeapons: []
+    iWeapons: ["Anti-Air Missile", "Sonic Cutter", "G-Drive"],
+    weapons: []
   },
   Astelion: {
     name: "Astelion",
@@ -782,8 +782,8 @@ var am = {
     partSlots: 2,
     fub: "Mobilit +20%",
     abilities: [],
-    weapons: ["Autocannon", "Sonic Breaker",  "RaMVs"],
-    equipedWeapons: ["Assault Blade", "Burst Railgun"]
+    iWeapons: ["Autocannon", "Sonic Breaker",  "RaMVs"],
+    weapons: ["Assault Blade", "Burst Railgun"]
   },
   Fairlion_S: {
     name: "Fairlion-S",
@@ -797,8 +797,8 @@ var am = {
     partSlots: 2,
     fub: "Mobility +20%",
     abilities: ["E Field", "Double Image", "Jammer"],
-    weapons: ["Rolling Cannon", "Vostok Laser", "Sonic Driver"],
-    equipedWeapons: ["Assault Blade"]
+    iWeapons: ["Rolling Cannon", "Vostok Laser", "Sonic Driver"],
+    weapons: ["Assault Blade"]
   },
   Fairlion_G: {
     name: "Fairlion-G",
@@ -812,8 +812,8 @@ var am = {
     partSlots: 2,
     fub: "Mobility +20%",
     abilities: ["E Field", "Double Image", "Jammer"],
-    weapons: ["Rolling Cannon", "Vostok Laser", "Sonic Driver"],
-    equipedWeapons: ["Assault Blade"]
+    iWeapons: ["Rolling Cannon", "Vostok Laser", "Sonic Driver"],
+    weapons: ["Assault Blade"]
   },
   Valsione: {
     name: "Valsione",
@@ -827,8 +827,8 @@ var am = {
     partSlots: 2,
     fub: "Double Image activation +20%",
     abilities: ["Double Image"],
-    weapons: ["Psy-Blaster", "Cross Smasher"],
-    equipedWeapons: ["Divine Blade", "Magna Beam Cannon"]
+    iWeapons: ["Psy-Blaster", "Cross Smasher"],
+    weapons: ["Divine Blade", "Magna Beam Cannon"]
   }
 };
 
@@ -845,8 +845,8 @@ var shadow_mirrors = {
     partSlots: 2,
     fub: "EN Regen (S)",
     abilities: ["Beam Coat", "Double Image"],
-    weapons: ["Shadow Lance", "Mirage Sword", "Illusion Arrow", "Mirage Sign", "Phantom Phoenix"],
-    equipedWeapons: []
+    iWeapons: ["Shadow Lance", "Mirage Sword", "Illusion Arrow", "Mirage Sign", "Phantom Phoenix"],
+    weapons: []
   },
   Angelg_2: {
     name: "Angelg (Upgrade)",
@@ -860,8 +860,8 @@ var shadow_mirrors = {
     partSlots: 2,
     fub: "EN Regen (S)",
     abilities: ["Beam Coat", "Double Image", "+200 Weapon Damage"],
-    weapons: ["Shadow Lance", "Mirage Sword", "Illusion Arrow", "Mirage Sign", "Phantom Phoenix"],
-    equipedWeapons: []
+    iWeapons: ["Shadow Lance", "Mirage Sword", "Illusion Arrow", "Mirage Sign", "Phantom Phoenix"],
+    weapons: []
   },
   Vaisaga: {
     name: "Vaisaga",
@@ -875,8 +875,8 @@ var shadow_mirrors = {
     partSlots: 2,
     fub: "Double Image activation +20%",
     abilities: ["AB Field", "Double Image", "SplWpn Block"],
-    weapons: ["Blazer Blades", "Flowing Claws", "Geo Splitter", "Gust Ripper", "Lite Saber"],
-    equipedWeapons: []
+    iWeapons: ["Blazer Blades", "Flowing Claws", "Geo Splitter", "Gust Ripper", "Lite Saber"],
+    weapons: []
   },
   Randgrith: {
     name: "Randgrith",
@@ -890,8 +890,8 @@ var shadow_mirrors = {
     partSlots: 4,
     fub: "WP Space +30",
     abilities: ["Beam Coat", "Jammer"],
-    weapons: ["Spider Net", "Phalanx Missile", "Matrix Missile", "Linear Bazooka"],
-    equipedWeapons: ["Incision Knife", "M13 Shotgun"]
+    iWeapons: ["Spider Net", "Phalanx Missile", "Matrix Missile", "Linear Bazooka"],
+    weapons: ["Incision Knife", "M13 Shotgun"]
   },
   Rathgrith: {
     name: "Rathgrith",
@@ -905,8 +905,8 @@ var shadow_mirrors = {
     partSlots: 4,
     fub: "WP Space +50",
     abilities: ["Beam Coat", "Jammer"],
-    weapons: ["Phalanx Missile", "Linear Missile Launcher", "Matrix Missile", "F-Solid Bazooka"],
-    equipedWeapons: ["Incision Knife"]
+    iWeapons: ["Phalanx Missile", "Linear Missile Launcher", "Matrix Missile", "F-Solid Bazooka"],
+    weapons: ["Incision Knife"]
   },
   Ashsaber: {
     name: "Ashsaber",
@@ -920,8 +920,8 @@ var shadow_mirrors = {
     partSlots: 3,
     fub: "Ranged Weapons +200",
     abilities: ["Beam Coating", "Jammer"],
-    weapons: ["Burning Dagger", "Halberd Shooter", "Sword Breakers"],
-    equipedWeapons: ["Laser Blade", "Gun Rapier"]
+    iWeapons: ["Burning Dagger", "Halberd Shooter", "Sword Breakers"],
+    weapons: ["Laser Blade", "Gun Rapier"]
   }
 };
 
@@ -938,8 +938,8 @@ var misc = {
     partSlots: 2,
     fub: "Mobility +10% and EN +15%",
     abilities: ["Morale Block", "SP Block", "Change: Cybird"],
-    weapons: ["Caloric Missile", "Cy-Flash", "High Familiar", "Zephyr Sword", "Akashic Buster", "Cosmo Nova"],
-    equipedWeapons: []
+    iWeapons: ["Caloric Missile", "Cy-Flash", "High Familiar", "Zephyr Sword", "Akashic Buster", "Cosmo Nova"],
+    weapons: []
   },
   Cybird: {
     name: "Cybird",
@@ -953,8 +953,8 @@ var misc = {
     partSlots: 2,
     fub: "Mobility +10% and EN +15%",
     abilities: ["Morale Block", "SP Block", "Change: Cybuster"],
-    weapons: ["Cy-Flash", "Caloric Missile", "High Familiar"],
-    equipedWeapons: []
+    iWeapons: ["Cy-Flash", "Caloric Missile", "High Familiar"],
+    weapons: []
   },
   Giganscudo_Duro: {
     name: "Giganscudo Duro",
@@ -968,8 +968,8 @@ var misc = {
     partSlots: 2,
     fub: "Armor +10% and EN +15%",
     abilities: ["G Territory"],
-    weapons: ["Weapon Breaker", "Giga Burst", "Giga Knuckle", "Giga Blaster", "Giga Unghia"],
-    equipedWeapons: []
+    iWeapons: ["Weapon Breaker", "Giga Burst", "Giga Knuckle", "Giga Blaster", "Giga Unghia"],
+    weapons: []
   },
   Lichkeit: {
     name: "Lichkeit",
@@ -983,8 +983,8 @@ var misc = {
     partSlots: 1,
     fub: "Fixed Weapon Ground rating = S",
     abilities: ["Beam Coat", "HP Regen (S)", "EN Regen (S)", "Double Image", "Break Block"],
-    weapons: ["Yomiji", "Mabuitachi", "Raigoue", "Mabuiguri"],
-    equipedWeapons: []
+    iWeapons: ["Yomiji", "Mabuitachi", "Raigoue", "Mabuiguri"],
+    weapons: []
   },
   F_32V: {
     name: "F-32V Schwert X",
@@ -998,8 +998,8 @@ var misc = {
     partSlots: 3,
     fub: "Mobility +15%",
     abilities: [],
-    weapons: ["Gatling Gun", "Anti-Air Missile"],
-    equipedWeapons: []
+    iWeapons: ["Gatling Gun", "Anti-Air Missile"],
+    weapons: []
   },
   Not_Gundam: {
     name: "Totally Not a Gundam",
@@ -1013,8 +1013,8 @@ var misc = {
     partSlots: 4,
     fub: "+10% Armor, EN, Mobility, HP",
     abilities: [],
-    weapons: ["Attack"],
-    equipedWeapons: []
+    iWeapons: ["Attack"],
+    weapons: []
   }
 };
 
