@@ -101,7 +101,7 @@ var statesAndFlags ={
   },
   pilot: {
     skill: {
-      chainAttack: "Chain Atack",
+      chainAttack: "Chain Attack",
       counter: "Counter",
       infight: "In-fight",
       gunfight: "Gunfight",
