@@ -26,9 +26,11 @@ function doStuff(command) {
       importPilots();
       break;
     case "importMechs":
+      console.log("Dropping and reuploading Mechs into mongoDB");
       importMechs();
       break;
     case "importWeapons":
+      console.log("Dropping and reuploading Weapons into mongoDB");
       importWeapons();
       break;
   }
@@ -46,7 +48,6 @@ function importMechs() {
 
       for(containerKey in mechs){
         workingSet = mechs[containerKey];
-        workingSetKeys = Object.keys(workingSet);
         for(key in workingSet)
           addMechsHelper(workingSet[key], key, wpWeapons); 
       }
@@ -56,31 +57,44 @@ function importMechs() {
 }
 
 function addMechsHelper(dataSource, mechCodeName, wpWeapons){
-  dbWeapon.find({mechCodename: mechCodeName}, function(err, docWeapons) {
-    var types = ["Air", "Grd","Wtr","Spc","UndGrd"];
-    var sizes = ["S","M","L","LL"];
-    var abilities = []
-    for(key in mechFlags.abilities) 
-        abilities.push(mechFlags.abilities[key]);
+  dbWeapon.find({mechCodeName: mechCodeName}, function(err, docWeapons) {
+    var tempMech = dataSource;
+    var newMech = {
+      name: tempMech.name,
+      mechCodeName: mechCodeName,
+      stats: tempMech.stats,
+      upgrade: tempMech.upgrade,
+      move: tempMech.move,
+      wpSpace: tempMech.wpSpace,
+      partSlots: tempMech.partSlots,
+      fub: tempMech.fub,
+      abilities: tempMech.abilities,
+      type: tempMech.type.split("/"),
+      weapons: [],
+      iWeapons: [],
+    };
 
-    for(let i=0; i<dataSource.length; ++i){
-      var tempMech = dataSource[i];
-      var newMech = {
-        name: tempMech.name,
-        mechCodeName: mechCodeName,
-        stats: tempMech.stats,
-        upgrade: tempMech.upgrade,
-        move: tempMech.move,
-        wpSpace: tempMech.wpSpace,
-        partSlots: tempMech.partSlots,
-        fub: tempMech.fub,
-        abilities: [],
-        iWeapons: [],
-        weapons: [],
-      };
+    var found=false;
+    for(var i=0; i<tempMech.weapons.length; ++i) {
+      for(var j=0; j<wpWeapons.length; ++j){
+        if(tempMech.weapons[i]===wpWeapons[j].name) {
+          newMech.weapons.push(wpWeapons[j]._id);
+          found=true;
+        }
+      }
+      if(found)
+        found=false;
+      else {
+        console.log(`${mechCodeName} cannot find ${tempMech.weapons[i]}`);
+        throw Error();
+      }
     }
 
-    dbMech.create(tempMech, function(err, docs){
+    for(var i=0; i<docWeapons.length; ++i) {
+      newMech.iWeapons.push(docWeapons[i]._id);
+    }
+
+    dbMech.create(newMech, function(err, docs){
       if(err)
         return console.log(err);
     });
