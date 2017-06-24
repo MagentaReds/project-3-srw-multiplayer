@@ -10,6 +10,7 @@ var dbWeapon = require("../models/weapon.js");
 
 var pilotFlags = require("../game/statesAndFlags").pilot;
 var weaponFlags = require("../game/statesAndFlags").weapon;
+var mechFlags = require("../game/statesAndFlags").mech;
 
 
 function doStuff(command) {
@@ -25,6 +26,7 @@ function doStuff(command) {
       importPilots();
       break;
     case "importMechs":
+      importMechs();
       break;
     case "importWeapons":
       importWeapons();
@@ -32,78 +34,66 @@ function doStuff(command) {
   }
 }
 
-function importWeapons() {
-  dbWeapon.remove({}, function(err) {
+function importMechs() {
+  dbMech.remove({}, function(err) {
     if(err) {
       console.log(err);
       return;
     }
 
+    dbWeapon.find({mechCodeName: "wp_space"}, function(err, wpWeapons) {
+      var workingSet = null;
+
+      for(containerKey in mechs){
+        workingSet = mechs[containerKey];
+        workingSetKeys = Object.keys(workingSet);
+        for(key in workingSet)
+          addMechsHelper(workingSet[key], key, wpWeapons); 
+      }
+
+    });
+  });
+}
+
+function addMechsHelper(dataSource, mechCodeName, wpWeapons){
+  dbWeapon.find({mechCodename: mechCodeName}, function(err, docWeapons) {
+    var types = ["Air", "Grd","Wtr","Spc","UndGrd"];
+    var sizes = ["S","M","L","LL"];
+    var abilities = []
+    for(key in mechFlags.abilities) 
+        abilities.push(mechFlags.abilities[key]);
+
+    for(let i=0; i<dataSource.length; ++i){
+      var tempMech = dataSource[i];
+      var newMech = {
+        name: tempMech.name,
+        mechCodeName: mechCodeName,
+        stats: tempMech.stats,
+        upgrade: tempMech.upgrade,
+        move: tempMech.move,
+        wpSpace: tempMech.wpSpace,
+        partSlots: tempMech.partSlots,
+        fub: tempMech.fub,
+        abilities: [],
+        iWeapons: [],
+        weapons: [],
+      };
+    }
+
+    dbMech.create(tempMech, function(err, docs){
+      if(err)
+        return console.log(err);
+    });
+
+  });
+}
+
+function importWeapons() {
+  dbWeapon.remove({}, function(err) {
+    if(err)
+      return console.log(err);
+
     var manyNewWeapons = [];
-
-    // var upRate = ["VS", "S", "M", "F", "VF", ""];
-    // var upCost = ["VL", "L", "M", "H", "VH", ""];
-    // var prop = ["C", "P", "MAP"];
-    // var type = ["M", "R", "S"];
-    // var cat = [];
-    // for(key in weaponFlags.category) 
-    //     cat.push(weaponFlags.category[key]);
-    
-    // //have to do this in parts.
-    // //part one wp space weapons
-    // var workingSet = weapons.wp_space;
-    // for(let i=0; i<workingSet.length; ++i){
-    //   var tempWpn = workingSet[i]; 
-    //   var newWeapon = {
-    //     name: tempWpn.name,
-    //     wpSpace: tempWpn.wpSpace,
-    //     mechCodeName: "wp_space",
-    //     damage: tempWpn.damage,
-    //     range: tempWpn.range,
-    //     hit: tempWpn.hit,
-    //     terrain: tempWpn.terrain,
-    //     ammo: tempWpn.ammo,
-    //     en: tempWpn.en,
-    //     crit: tempWpn.crit,
-    //     skill: tempWpn.skill,
-    //     properties: []
-    //   };
-    //   if(upRate.includes(tempWpn.upgradeRate))
-    //     newWeapon.upgradeRate = tempWpn.upgradeRate;
-    //   else {
-    //     console.log(`Failed at ${tempWpn.name} and ${tempWpn.upgradeRate}`);
-    //     throw new Error();
-    //   }
-    //   if(upCost.includes(tempWpn.upgradeCost))
-    //     newWeapon.upgradeCost = tempWpn.upgradeCost;
-    //   else {
-    //     console.log(`Failed at ${tempWpn.name} and ${tempWpn.upgradeCost}`);
-    //     throw new Error();
-    //   }
-    //   if(cat.includes(tempWpn.category))
-    //     newWeapon.category = tempWpn.category;
-    //   else {
-    //     console.log(`Failed at ${tempWpn.name} and ${tempWpn.category}`);
-    //     throw new Error();
-    //   }
-    //   if(type.includes(tempWpn.type))
-    //     newWeapon.type = tempWpn.type;
-    //   else {
-    //     console.log(`Failed at ${tempWpn.name} and ${tempWpn.type}`);
-    //     throw new Error();
-    //   }
-
-    //   for(let i=0; i<tempWpn.properties.length; ++i){
-    //     if(prop.includes(tempWpn.properties[i]))
-    //       newWeapon.properties.push(tempWpn.properties[i]);
-    //     else {
-    //       console.log(`Failed at ${tempWpn.name} and ${tempWpn.properties[i]}`);
-    //       throw new Error();
-    //     }
-    //   }
-
-    //   manyNewWeapons.push(newWeapon);
-    // }
 
     //part one redux
     var workingSet = weapons.wp_space;
@@ -126,28 +116,17 @@ function importWeapons() {
       if(err)
         console.log(err);
     })
-
-
   });
 }
 
-function addWeaponsHelper(dataSource, key, builtIn, outputArray){
-  var upRate = ["VS", "S", "M", "F", "VF", ""];
-  var upCost = ["VL", "L", "M", "H", "VH", ""];
-  var prop = ["C", "P", "MAP"];
-  var type = ["M", "R", "S"];
-  var cat = [];
-  for(key in weaponFlags.category) 
-      cat.push(weaponFlags.category[key]);
-
-
+function addWeaponsHelper(dataSource, mechCodeName, builtIn, outputArray){
   var workingSet = dataSource;
   for(let i=0; i<workingSet.length; ++i){
     var tempWpn = workingSet[i]; 
     var newWeapon = {
       name: tempWpn.name,
       wpSpace: tempWpn.wpSpace,
-      mechCodeName: key,
+      mechCodeName: mechCodeName,
       damage: tempWpn.damage,
       range: tempWpn.range,
       hit: tempWpn.hit,
@@ -156,50 +135,18 @@ function addWeaponsHelper(dataSource, key, builtIn, outputArray){
       en: tempWpn.en,
       crit: tempWpn.crit,
       skill: tempWpn.skill,
-      properties: [],
-      builtIn: builtIn
+      properties: tempWpn.properties,
+      builtIn: builtIn,
+      type: tempWpn.type,
+      category: tempWpn.category,
+      upgradeCost: tempWpn.upgradeCost,
+      upgradeRate: tempWpn.upgradeRate
     };
-    if(tempWpn.range.length !==2){
-      console.log(`Failed at ${tempWpn.name} and range ${tempWpn.range}`);
-      throw new Error();
-    }
-    if(upRate.includes(tempWpn.upgradeRate))
-      newWeapon.upgradeRate = tempWpn.upgradeRate;
-    else {
-      console.log(`Failed at ${tempWpn.name} and rate ${tempWpn.upgradeRate}`);
-      throw new Error();
-    }
-    if(upCost.includes(tempWpn.upgradeCost))
-      newWeapon.upgradeCost = tempWpn.upgradeCost;
-    else {
-      console.log(`Failed at ${tempWpn.name} and cost ${tempWpn.upgradeCost}`);
-      throw new Error();
-    }
-    if(cat.includes(tempWpn.category))
-      newWeapon.category = tempWpn.category;
-    else {
-      console.log(`Failed at ${tempWpn.name} and category ${tempWpn.category}`);
-      throw new Error();
-    }
-    if(type.includes(tempWpn.type))
-      newWeapon.type = tempWpn.type;
-    else {
-      console.log(`Failed at ${tempWpn.name} and type ${tempWpn.type}`);
-      throw new Error();
-    }
-
-    for(let i=0; i<tempWpn.properties.length; ++i){
-      if(prop.includes(tempWpn.properties[i]))
-        newWeapon.properties.push(tempWpn.properties[i]);
-      else {
-        console.log(`Failed at ${tempWpn.name} and ${tempWpn.properties[i]}`);
-        throw new Error();
-      }
-    }
 
     outputArray.push(newWeapon);
   }
 }
+
 
 function importPilots() {
   //drop the entire collection first, then reupload from databasefile
@@ -222,127 +169,10 @@ function importPilots() {
         terrain: pilot.terrain,
         aceBonus: pilot.aceBonus,
         willGain: pilot.willGain,
-        spiritCommands: [],
+        spiritCommands: pilot.spiritCommands,
         relationships: pilot.relationships,
-        pilotSkills: []
+        pilotSkills: pilot.pilotSkills
       };
-
-      var spiritValues = [];
-      for(key in pilotFlags.spiritCommand) {
-        spiritValues.push(pilotFlags.spiritCommand[key]);
-      }
-
-      //console.log(spiritValues);
-
-      for(let i=0; i<pilot.spiritCommands.length; ++i) {
-        if(spiritValues.includes(pilot.spiritCommands[i][0]))
-          tempPilot.spiritCommands.push(pilot.spiritCommands[i]);
-        else {
-          console.log(`Failed at pilot ${pilot.name} on spirit ${pilot.spiritCommands[i][0]}`);
-          throw new Error();
-        }
-      }
-
-      for(let i=0; i<pilot.pilotSkills.length; ++i){
-        switch(pilot.pilotSkills[i][0]) {
-          case "Chain Attack":
-            tempPilot.pilotSkills.push([pilotFlags.skill.chainAttack, pilot.pilotSkills[i][1]]);
-            break;
-          case "Counter":
-            tempPilot.pilotSkills.push([pilotFlags.skill.counter, pilot.pilotSkills[i][1]]);
-            break;
-          case "In-fight":
-            tempPilot.pilotSkills.push([pilotFlags.skill.infight, pilot.pilotSkills[i][1]]);
-            break;
-          case "Gunfight":
-            tempPilot.pilotSkills.push([pilotFlags.skill.gunfight, pilot.pilotSkills[i][1]]);
-            break;
-          case "Attacker":
-            tempPilot.pilotSkills.push([pilotFlags.skill.attacker, pilot.pilotSkills[i][1]]);
-            break;
-          case "Revenge":
-            tempPilot.pilotSkills.push([pilotFlags.skill.revenge, pilot.pilotSkills[i][1]]);
-            break;
-          case "Command":
-            tempPilot.pilotSkills.push([pilotFlags.skill.command, pilot.pilotSkills[i][1]]);
-            break;
-          case "Guard":
-            tempPilot.pilotSkills.push([pilotFlags.skill.guard, pilot.pilotSkills[i][1]]);
-            break;
-          case "Predict":
-            tempPilot.pilotSkills.push([pilotFlags.skill.predict, pilot.pilotSkills[i][1]]);
-            break;
-          case "Off.Support":
-            tempPilot.pilotSkills.push([pilotFlags.skill.offSupport, pilot.pilotSkills[i][1]]);
-            break;
-          case "Combo Attack":
-            tempPilot.pilotSkills.push([pilotFlags.skill.combo, pilot.pilotSkills[i][1]]);
-            break;
-          case "Def.Support":
-            tempPilot.pilotSkills.push([pilotFlags.skill.defSupport, pilot.pilotSkills[i][1]]);
-            break;
-          case "SP Up":
-            tempPilot.pilotSkills.push([pilotFlags.skill.spUp, pilot.pilotSkills[i][1]]);
-            break;
-          case "SP Regenerate":
-            tempPilot.pilotSkills.push([pilotFlags.skill.spRegen, pilot.pilotSkills[i][1]]);
-            break;
-          case "Focus":
-            tempPilot.pilotSkills.push([pilotFlags.skill.focus, pilot.pilotSkills[i][1]]);
-            break;
-          case "Resolve":
-            tempPilot.pilotSkills.push([pilotFlags.skill.resolve, pilot.pilotSkills[i][1]]);
-            break;
-          case "Morale":
-            tempPilot.pilotSkills.push([pilotFlags.skill.morale, pilot.pilotSkills[i][1]]);
-            break;
-          case "Will+ (Evade)":
-            tempPilot.pilotSkills.push([pilotFlags.skill.willEvd, pilot.pilotSkills[i][1]]);
-            break;
-          case "Will+ (Hit)":
-            tempPilot.pilotSkills.push([pilotFlags.skill.willHit, pilot.pilotSkills[i][1]]);
-            break;
-          case "Will+ (Damaged)":
-            tempPilot.pilotSkills.push([pilotFlags.skill.willDmg, pilot.pilotSkills[i][1]]);
-            break;
-          case "Prevail":
-            tempPilot.pilotSkills.push([pilotFlags.skill.prevail, pilot.pilotSkills[i][1]]);
-            break;
-          case "Hit & Away":
-            tempPilot.pilotSkills.push([pilotFlags.skill.hitAway, pilot.pilotSkills[i][1]]);
-            break;
-          case "Ammo Save":
-            tempPilot.pilotSkills.push([pilotFlags.skill.ammoSave, pilot.pilotSkills[i][1]]);
-            break;
-          case "EN Save":
-            tempPilot.pilotSkills.push([pilotFlags.skill.enSave, pilot.pilotSkills[i][1]]);
-            break;
-          case "Mechanic":
-            tempPilot.pilotSkills.push([pilotFlags.skill.mechanic, pilot.pilotSkills[i][1]]);
-            break;
-          case "Resupply":
-            tempPilot.pilotSkills.push([pilotFlags.skill.resupply, pilot.pilotSkills[i][1]]);
-            break;
-          case "Genius":
-            tempPilot.pilotSkills.push([pilotFlags.skill.genius, pilot.pilotSkills[i][1]]);
-            break;
-          case "Fortune":
-            tempPilot.pilotSkills.push([pilotFlags.skill.fortune, pilot.pilotSkills[i][1]]);
-            break;
-          case "Lucky":
-            tempPilot.pilotSkills.push([pilotFlags.skill.lucky, pilot.pilotSkills[i][1]]);
-            break;
-          case "Telekinesis":
-            tempPilot.pilotSkills.push([pilotFlags.skill.telekinesis, pilot.pilotSkills[i][1]]);
-            break;
-          case "Prophesy":
-            tempPilot.pilotSkills.push([pilotFlags.skill.prophesy, pilot.pilotSkills[i][1]]);
-            break;
-          default:
-            console.log(`Failed at pilot ${pilot.name}`);
-            throw new Error();
-        }
-      }
 
       manyNewPilots.push(tempPilot);
     });
