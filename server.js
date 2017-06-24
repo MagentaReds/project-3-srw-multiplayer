@@ -2,6 +2,13 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
+var path = require("path");
+var cookierParser = require("cookie-parser");
+var session = require("express-session");
+var dotenv = require("dotenv");
+
+// Load environmental variables from .env file
+dotenv.load();
 
 var Promise = require("bluebird");
 
@@ -16,8 +23,15 @@ var app = express();
 
 // Use morgan and body parser with our app
 app.use(logger("dev"));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-
+app.use(cookierParser);
+app.use(session({
+	// Create unique session identifier
+	secret: 'hushhush',
+	resave: true,
+	saveUnitiailized: true
+}));
 // Make public a static dir
 app.use(express.static("public"));
 
