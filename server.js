@@ -3,7 +3,7 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var path = require("path");
-var cookierParser = require("cookie-parser");
+var cookieParser = require("cookie-parser");
 var session = require("express-session");
 var dotenv = require("dotenv");
 
@@ -25,7 +25,7 @@ var app = express();
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(cookierParser);
+app.use(cookieParser());
 app.use(session({
 	// Create unique session identifier
 	secret: 'hushhush',
@@ -33,32 +33,35 @@ app.use(session({
 	saveUnitiailized: true
 }));
 // Make public a static dir
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
-// Database configuration with mongoose
-mongoose.connect("mongodb://localhost/project3");
-var db = mongoose.connection;
+app.set('view engine', 'jade');
 
-// Show any mongoose errors
-db.on("error", function(error) {
-  console.log("Mongoose Error: ", error);
-});
+// // Database configuration with mongoose
+// mongoose.connect("mongodb://localhost/project3");
+// var db = mongoose.connection;
 
-// Once logged in to the db through mongoose, log a success message
-db.once("open", function() {
-  console.log("Mongoose connection successful.");
-});
+// // Show any mongoose errors
+// db.on("error", function(error) {
+//   console.log("Mongoose Error: ", error);
+// });
+
+// // Once logged in to the db through mongoose, log a success message
+// db.once("open", function() {
+//   console.log("Mongoose connection successful.");
+// });
 
 
 //Routes
 var apiRoutes = require("./routes/apiRoutes.js");
-
+var htmlRoutes = require("./routes/htmlRoutes.js");
 app.use("/", apiRoutes);
+app.use("/", htmlRoutes);
 
 
 //Testing stuff
-var testing= require("./database/import_script.js");
-testing();
+// var testing= require("./database/import_script.js");
+// testing();
 
 
 // Listen on port 3000
