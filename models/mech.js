@@ -29,11 +29,11 @@ var MechSchema = new Schema({
   partSlots: Number,
   fub: String,
   abilities: [String],
-  weapons: [{
+  iWeapons: [{
     type: Schema.Types.ObjectId,
     ref: "Weapon"
   }],
-  equipedWeapons: [String]
+  weapons: [String]
 });
 
 var Mech = mongoose.model("Mech", MechSchema);
