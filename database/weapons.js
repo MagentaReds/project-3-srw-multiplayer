@@ -238,7 +238,7 @@ var wp_space = [
     skill: "",
   },
   {
-    name: "Mega Beam Cannon",
+    name: "Magna Beam Cannon",
     upgradeRate: "M",
     upgradeCost: "M",
     wpSpace: 35,

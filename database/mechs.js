@@ -61,7 +61,7 @@ var battleships = {
     wpSpace: 10,
     partSlots: 2,
     fub: "Armor +20%",
-    abilities: ["E Field'"],
+    abilities: ["E Field"],
     iWeapons: ["AA Autocannon", "Chaff Grenade", "Torpedo", "Sub Cannon", "Impact Cannon", "Tronium Cannon"],
     weapons: []
   },
@@ -70,7 +70,7 @@ var battleships = {
     stats: [16000, 220, 65, 1500],
     upgrade: [4,5,10,9],
     move: 6,
-    type: "Air/Wtr/UndGnd",
+    type: "Air/Wtr/UndGrd",
     terrain: "AAAA",
     size: "LL",
     wpSpace: 10,
@@ -111,7 +111,7 @@ var ptx = {
     fub: "All Terrains (except Air) S",
     abilities: [],
     iWeapons: ["Split Missile", "Jet Magnum"],
-    weapons: ["M95 Machine Gun", "Plasma Slicer"]
+    weapons: ["M95 Machine Gun", "Plasma Sword"]
   },
   Gespenst_Katina: {
     name: "Gespenst MKII-M (Katina)",
@@ -126,7 +126,7 @@ var ptx = {
     fub: "Armor and HP +15%",
     abilities: [],
     iWeapons: ["Split Missile", "Jet Magnum"],
-    weapons: ["Plasma Slicer", "M13 Shotgun"]
+    weapons: ["Plasma Sword", "M13 Shotgun"]
   },
   Gespenst_Russel: {
     name: "Gespenst MKII-M (Russel)",
@@ -141,7 +141,7 @@ var ptx = {
     fub: "Armor +20%",
     abilities: [],
     iWeapons: ["Split Missile", "Jet Magnum"],
-    weapons: ["M95 Machine Gun", "Plasma Slicer"]
+    weapons: ["M95 Machine Gun", "Plasma Sword"]
   },
   Gespenst_R: {
     name: "Gespenst MkII-R",
@@ -156,7 +156,7 @@ var ptx = {
     fub: "Mobility +15% and HP +20%",
     abilities: ["Beam Coat"],
     iWeapons: ["Split Missile"],
-    weapons: ["Plasma Cutter", "Chakram Caster", "Slash Ripper", "Double Magna Rifle", "Graviton Cannon"]
+    weapons: ["Plasma Sword", "Chakram Caster", "Slash Ripper", "Double Magna Rifle", "Graviton Cannon"]
   },
   Gespenst_S: {
     name: "Gespenst MkII-S",
@@ -186,7 +186,7 @@ var ptx = {
     fub: "I Weapon Ammo +4",
     abilities: ["Beam Coat"],
     iWeapons: ["Split Missile", "Neutron Beam"],
-    weapons: ["Weapon Breaker", "Plasma Slicer", "Rectangle Launcher", "Remote Slasher", "M90 Assault Machine Gun"]
+    weapons: ["Weapon Breaker", "Plasma Sword", "Rectangle Launcher", "Remote Slasher", "M90 Assault Machine Gun"]
   },
   Alteisen: {
     name: "Alteisen",
@@ -230,8 +230,8 @@ var ptx = {
     partSlots: 2,
     fub: "I Weapon Ammo +2",
     abilities: ["Beam Coat"],
-    iWeapons: ["Split Missile", "Beam Cannon", "Oxtongue Rifle E", "Oxtongue Rifile B", "Oxtongue Rifile W"],
-    weapons: ["Plasma Slicer"]
+    iWeapons: ["Split Missile", "Beam Cannon", "Oxtongue Rifle E", "Oxtongue Rifle B", "Oxtongue Rifle W"],
+    weapons: ["Plasma Sword"]
   },
   Rein_Weissritter: {
     name: "Rein Weissritter",
@@ -261,7 +261,7 @@ var ptx = {
     fub: "AB Field",
     abilities: [],
     iWeapons: ["Gatling Gun", "Autocannon", "Twin Geam Cannon"],
-    weapons: ["Plasma Sliver", "G-Railgun"]
+    weapons: ["Plasma Sword", "G-Railgun"]
   },
   R_Blade: {
     name: "R-Blade",
@@ -369,7 +369,7 @@ var rtx = {
     fub: "W Space +40 and EN +20%",
     abilities: ["AB Field", "Double Image"],
     iWeapons: ["Gatling Gun", "Black Hole Cannon"],
-    weapons: ["Roche Saber", "Magna Beam Rifile", "Remote Slasher"]
+    weapons: ["Roche Saber", "Magna Beam Rifle", "Remote Slasher"]
   },
   Huckebein_III_L: {
     name: "Huckebein MIII-L",
@@ -413,8 +413,8 @@ var rtx = {
     partSlots: 2,
     fub: "Armor and EN +10%",
     abilities: ["G Territory", "Double Image"],
-    iWeapons: ["Gatling Gun", "Multitrace Missile", "Fang Slasher", "Graviton Rifile"],
-    weapons: ["Photon Rifle, Roche Saber, Remote Slasher, Boosted Rifle"]
+    iWeapons: ["Gatling Gun", "Multitrace Missile", "Fang Slasher", "Graviton Rifle"],
+    weapons: ["Photon Rifle", "Roche Saber", "Remote Slasher", "Boosted Rifle"]
   },
   Huckebein_Gunner_L: {
     name: "Huckebein Gunner-L",
@@ -660,7 +660,7 @@ var r_series = {
     fub: "Telekenesis Weapons +200",
     abilities: ["TK Field", "Change: R-Wing"],
     iWeapons: ["Gatling Gun", "T-Link Knuckle", "T-Link Sword"],
-    weapons: ["Steel Knife", "G-Revovler", "Boosted Rifle"]
+    weapons: ["Steel Knife", "G-Revolver", "Boosted Rifle"]
   },
   R_wing: {
     name: "R-Wing",
@@ -703,7 +703,7 @@ var r_series = {
     wpSpace: 130,
     partSlots: 3,
     fub: "TK Field absorb +300 damage",
-    abilities: ["Tk Field"],
+    abilities: ["TK Field"],
     iWeapons: ["Gatling Gun", "TK Missile", "TK Laser Cannon", "Strike Shield"],
     weapons: ["Beam Sword"]
   },
@@ -859,7 +859,7 @@ var shadow_mirrors = {
     wpSpace: 0,
     partSlots: 2,
     fub: "EN Regen (S)",
-    abilities: ["Beam Coat", "Double Image", "+200 Weapon Damage"],
+    abilities: ["Beam Coat", "Double Image"],
     iWeapons: ["Shadow Lance", "Mirage Sword", "Illusion Arrow", "Mirage Sign", "Phantom Phoenix"],
     weapons: []
   },
@@ -919,7 +919,7 @@ var shadow_mirrors = {
     wpSpace: 150,
     partSlots: 3,
     fub: "Ranged Weapons +200",
-    abilities: ["Beam Coating", "Jammer"],
+    abilities: ["Beam Coat", "Jammer"],
     iWeapons: ["Burning Dagger", "Halberd Shooter", "Sword Breakers"],
     weapons: ["Laser Blade", "Gun Rapier"]
   }
