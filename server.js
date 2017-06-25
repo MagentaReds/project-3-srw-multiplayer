@@ -48,6 +48,11 @@ db.once("open", function() {
   }
 });
 
+//Socket IO
+io.on('connection', function(socket){
+  console.log('a user connected');
+});
+
 
 //Routes
 var apiRoutes = require("./routes/apiRoutes.js");
