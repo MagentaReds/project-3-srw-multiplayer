@@ -1013,8 +1013,8 @@ var misc = {
     partSlots: 4,
     fub: "+10% Armor, EN, Mobility, HP",
     abilities: [],
-    iWeapons: ["Attack"],
-    weapons: []
+    iWeapons: [],
+    weapons: ["Beam Sword", "M95 Machine Gun", "Rectangle Launcher"]
   }
 };
 
