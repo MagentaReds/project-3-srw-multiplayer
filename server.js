@@ -74,8 +74,33 @@ if(process.env.MONGODB_URI) {
 }
 
 //Socket IO
+http.lastPlayderID = 0;
+//http.playersList = [];
+
 io.on('connection', function(socket){
   console.log('a user connected');
+
+  socket.on('newplayer',function(){
+      socket.player = {
+          id: http.lastPlayderID++,
+      };
+      socket.emit("greet", `Hello, User with Id${socket.player.id}`);
+      socket.emit('id', socket.player.id);
+      socket.broadcast.emit('newplayer',socket.player);
+
+      socket.on("sendChat", function(data){
+        console.log("Received chat message, resending to everyone");
+        io.emit("chat", data);
+      });
+
+      socket.on('disconnect',function(){
+          io.emit('remove',socket.player.id);
+      });
+  });
+
+  socket.on('test',function(){
+      console.log('test received');
+  });
 });
 
 
