@@ -49,27 +49,29 @@ passport.deserializeUser(function(user, done) {
 });
 
 
-// Database configuration with mongoose
-mongoose.connect("mongodb://localhost/project3");
-var db = mongoose.connection;
+if(process.env.MONGODB_URI) {
+  // Database configuration with mongoose
+  mongoose.connect("mongodb://localhost/project3");
+  var db = mongoose.connection;
 
-// Show any mongoose errors
-db.on("error", function(error) {
-  console.log("Mongoose Error: ", error);
-});
+  // Show any mongoose errors
+  db.on("error", function(error) {
+    console.log("Mongoose Error: ", error);
+  });
 
-// Once logged in to the db through mongoose, log a success message
-db.once("open", function() {
-  console.log("Mongoose connection successful.");
+  // Once logged in to the db through mongoose, log a success message
+  db.once("open", function() {
+    console.log("Mongoose connection successful.");
 
 
-  if(process.env.POPULATE_MONGODB){
-    //imported data from file into mongodb.
-    console.log("Repopulating MONGODB");
-    var importScript = require("./database/import_script.js");
-    importScript();
-  }
-});
+    if(process.env.POPULATE_MONGODB){
+      //imported data from file into mongodb.
+      console.log("Repopulating MONGODB");
+      var importScript = require("./database/import_script.js");
+      importScript();
+    }
+  });
+}
 
 //Socket IO
 io.on('connection', function(socket){
