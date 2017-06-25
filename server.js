@@ -142,9 +142,10 @@ app.use("/", htmlRoutes);
 
 
 //game engine teseting
-var clientList = [{name: "bob", units:[]}, {name:"Grant", units:[]}];
-// var Game =require("./game/gameEngine.js");
-// var game = new Game(clientList);
+var game;
+require("./config/gameConfig.js")().then(function (g){
+  game=g;
+});
 
 
 
