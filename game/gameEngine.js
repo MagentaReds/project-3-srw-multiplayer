@@ -17,20 +17,37 @@ var Player = require("./player.js")
 
 class Game  {
   constructor(clientList) {
-    this.map = new Map(50,50);
+    this.map = new Map(30,30);
     this.players=new Array(clientList.length);
     for(var i = 0; i<clientList.length; ++i)
-      players[i] = new Player(clientList[i]);
+      this.players[i] = new Player(clientList[i]);
 
     //first player goes first
     this.currentPlayer = 0;
-    this.curentUnit = players[0].units[0];
+    this.currentUnit = 0;
     this.turn =0;
+
+    this.spawnUnits();
+    console.log(`It is Player's ${this.currentPlayer} Unit's ${this.currentUnit} Turn`);
+    console.log(`That means ${this.players[this.currentPlayer].units[this.currentUnit].name}'s turn!`);
   }
-  requestActions(player, x, y) {
+  requestActions(player, r, c) {
     //cases, empty square: skip turn, surrender
     //active unit and is yours: move, attack, spirit commands, status, skip turn.
     //any other unit: status
+  }
+
+  //returns true if action completes, false if action cannot be done
+  doAction(player, action, r, c) {
+
+  }
+
+  //put each player's units on the map
+  //right now hard coded for just 2 playes an one unit each
+  spawnUnits(){
+    this.map.tiles[15][5]=this.players[0].units[0];
+    this.map.tiles[15][25]=this.players[1].units[0];
+    console.log(this.map.getAsciiMap());
   }
   
 

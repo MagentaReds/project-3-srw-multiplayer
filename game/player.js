@@ -8,6 +8,7 @@
 
 class Player {
   constructor(client) {
+    this.id=client.id;
     this.name=client.name;
     this.units=client.units;
   }
@@ -26,3 +27,5 @@ class Player {
   }
  
 }
+
+module.exports = Player;

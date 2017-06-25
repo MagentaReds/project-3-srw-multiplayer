@@ -4,7 +4,17 @@
 
 var statesAndFlags ={
   game : {
-
+    action: {
+      move: "Move",
+      getMove: "Get Move",
+      attack: "Attack",
+      getAttack: "Get Attack",
+      status: "Status",
+      defend: "Defend",
+      evade: "Evade",
+      counter: "Counter",
+      getCounter: "Get Counter"
+    }
   },
   mech:{
     type: {

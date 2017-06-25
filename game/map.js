@@ -95,6 +95,25 @@ class Map {
       this.getPMHelper(r-1,c, m-1, history);
       
   }
+
+  //returns a string of ascii characters representing the map
+  getAsciiMap() {
+    var dot = String.fromCharCode(183);
+    var output=dot.repeat(2)+"01234567890123456789012345678901234567890\n";
+
+    for(let r=0; r<this.rows; ++r){
+      output+=r%10+":"
+      for(let c=0; c<this.cols; ++c){
+        if(this.tiles[r][c])
+          output+=this.tiles[r][c].name.charAt(0);
+        else
+          output+=dot;
+      }
+      output+='\n';
+    }
+
+    return output;
+  }
 }
 
 module.exports = Map;
