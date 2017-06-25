@@ -11,6 +11,8 @@ dotenv.load();
 var PORT = process.env.PORT || 8080;
 
 var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 mongoose.Promise = Promise;
 
@@ -61,6 +63,6 @@ var clientList = [{name: "bob", units:[]}, {name:"Grant", units:[]}];
 
 
 // Listen on port 3000
-app.listen(PORT, function() {
+http.listen(PORT, function() {
   console.log("App running on port: "+PORT);
 });
