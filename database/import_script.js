@@ -13,27 +13,11 @@ var weaponFlags = require("../game/statesAndFlags").weapon;
 var mechFlags = require("../game/statesAndFlags").mech;
 
 
-function doStuff(command) {
-  console.log(`Weapons keys ${Object.keys(weapons)}`);
-  console.log("============================");
-  console.log(`Mechs keys ${Object.keys(mechs)}`);
-  console.log("============================");
-  console.log(`Pilots keys ${Object.keys(pilots)}`);
-
-  switch(command) {
-    case "importPilots":
-      console.log("Dropping and reuploading Pilots into mongoDB");
-      importPilots();
-      break;
-    case "importMechs":
-      console.log("Dropping and reuploading Mechs into mongoDB");
-      importMechs();
-      break;
-    case "importWeapons":
-      console.log("Dropping and reuploading Weapons into mongoDB");
-      importWeapons();
-      break;
-  }
+function populateDatabase() {
+  //starts chain inot promise hell!
+  //this then calls importWeapons
+  ///which then calls importMechs;
+  importPilots();
 }
 
 function importMechs() {
@@ -51,6 +35,7 @@ function importMechs() {
         for(key in workingSet)
           addMechsHelper(workingSet[key], key, wpWeapons); 
       }
+      console.log("Finished inserting Mechs");
 
     });
   });
@@ -126,10 +111,12 @@ function importWeapons() {
     }
 
     dbWeapon.insertMany(manyNewWeapons, function(err, docs){
-      console.log("Finished inserting weapons");
       if(err)
-        console.log(err);
-    })
+        return console.log(err);
+      console.log("Finished inserting weapons");
+      importMechs();
+    });
+
   });
 }
 
@@ -175,8 +162,6 @@ function importPilots() {
 
     pilots.forEach(function(pilot) {
 
-      console.log(pilot.name);
-
       var tempPilot = {
         name:pilot.name, 
         stats: pilot.stats,
@@ -191,14 +176,14 @@ function importPilots() {
       manyNewPilots.push(tempPilot);
     });
 
-    console.log(manyNewPilots.length);
-
     dbPilot.insertMany(manyNewPilots, function(err, docs){
       if(err)
-        console.log(err);
+        return console.log(err);
+      console.log("Finished inserting Pilots");
+      importWeapons();
     });
     
   });
 }
 
-module.exports = doStuff;
+module.exports = populateDatabase;

@@ -5,6 +5,9 @@ var mongoose = require("mongoose");
 
 var Promise = require("bluebird");
 
+var dotenv = require('dotenv');
+dotenv.load();
+
 var PORT = process.env.PORT || 8080;
 
 var app = express();
@@ -34,11 +37,13 @@ db.on("error", function(error) {
 db.once("open", function() {
   console.log("Mongoose connection successful.");
 
+
+  if(process.env.POPULATE_MONGODB){
     //imported data from file into mongodb.
-  var importScript = require("./database/import_script.js");
-  //importScript("importPilots");
-  //importScript("importWeapons");
-  importScript("importMechs");
+    console.log("Repopulating MONGODB");
+    var importScript = require("./database/import_script.js");
+    importScript();
+  }
 });
 
 
