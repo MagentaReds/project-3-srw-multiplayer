@@ -10,6 +10,7 @@ $(document).ready(function(){
   var gameRoom = null;
   var roomSlot = null;
   var id = null;
+  var ready=false;
 
   //client emits
   socket.emit("newPlayer", function(data){
@@ -18,11 +19,22 @@ $(document).ready(function(){
     $("#greeting").text(data.msg);
   });
 
+
   //client listeners
   socket.on("update rooms", function(data){
     console.log("Updating room values and display");
     rooms=data.rooms;
     updateRoomDisplay(rooms);
+  });
+
+  socket.on("game start", function(data){
+    $("#roomMessageDiv").text("Game is starting!");
+    $("#messageDiv").text(data.msg);
+  });
+
+  socket.on("update map", function(data){
+    $("#mapDiv").text(data.map);
+    $("#messageDiv").text(data.msg);
   });
 
   //jquery listeners
@@ -53,6 +65,17 @@ $(document).ready(function(){
       $("#messageDiv").text(data.msg);
     })
   });
+
+  $("#ready").on("click", function(e){
+    console.log("Toggleing Ready");
+    e.preventDefault();
+    var state=$("#ready").attr("data-state");
+
+    socket.emit("ready", function(data){
+      ready=data.ready;
+      $("#messageDiv").text(data.msg);
+    });
+  })
 
 });
 
