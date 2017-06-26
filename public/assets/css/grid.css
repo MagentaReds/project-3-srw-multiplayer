@@ -17,3 +17,8 @@
 	font-size: 4em;
 	text-align: center;
 }
+
+.ui-menu {
+	width: 150px;
+	position: fixed;
+}

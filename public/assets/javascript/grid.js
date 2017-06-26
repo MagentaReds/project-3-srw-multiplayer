@@ -1,5 +1,8 @@
 var grid = [];
 
+$("#menu").hide();
+
+// code that makes 900 grid-tiles with each row and column's data index stored
 for (var r = 0; r < 30; r++) {
 	for (var c = 0; c < 30; c++) {
 		$("#grid").append(`<li class="grid-square" data-r = "${r}" data-c = "${c}"></li>`);
@@ -13,6 +16,20 @@ for (var i = 0; i < 30; i++) {
 var activeUnit = [5,5];
 
 var availableMoveSpaces = [
+						// [4,4],
+						// [4,3],
+						// [4,2],
+						// [4,1],
+						// [3,2],
+						// [3,3],
+						// [3,4],
+						// [2,3],
+						// [2,4],
+						// [1,4],
+						// [4,6],
+						// [4,7],
+						// [4,8],
+						// [4,9],
 						[5,6],
 						[5,7],
 						[5,8],
@@ -49,12 +66,49 @@ function displayActiveUnit(locate) {
 	})();
 	// below code will display tiles where player is able to move unit
 	$(`li[data-r=${locate[0]}][data-c=${locate[1]}]`).on("click", function(){
-		for (var y = 0; y < availableMoveSpaces.length; y++) {
-			(function blink() {
-				$(`li[data-r=${availableMoveSpaces[y][0]}][data-c=${availableMoveSpaces[y][1]}]`).css('background', "#2196f3");//.css('opacity', "0.5").fadeOut(500).fadeIn(500, blink);
-				//availableMoveSpaces[y][0][1]
-		})();
-	}
+		$("#menu").show();
+		var dataR = $(this).attr("data-r");
+		var dataC = $(this).attr("data-c");
+		$(document).on("click", "li", function(event) {
+			// if next clicked tile is outside the one that was previously clicked on
+			if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
+				//$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent");
+				$("#menu").hide();
+			}
+		})
+		$("#move").bind("click", moveUnit);
+			//$(document).on("click", "li", function(event) {
+			function moveUnit (e) {
+
+				for (var y = 0; y < availableMoveSpaces.length; y++) {
+					$(`li[data-r=${availableMoveSpaces[y][0]}][data-c=${availableMoveSpaces[y][1]}]`).bind("click", moveTiles);
+				}
+
+				function moveTiles (e) {
+					console.log("Move Action sent to server");
+					console.log([parseInt($(this).attr("data-r")),parseInt($(this).attr("data-c"))]);
+				}
+
+				(function blink() {
+				for (var y = 0; y < availableMoveSpaces.length; y++) {
+					$(`li[data-r=${availableMoveSpaces[y][0]}][data-c=${availableMoveSpaces[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").fadeOut(500).fadeIn(500, blink);
+				}
+				})();
+				// function bindThis() {
+				// 	if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
+				// 		console.log("hi");
+				// 	}
+				// }
+				// $(document).on("click", "li", function(event) {
+				// 	return;
+				// 	// var moveSpaceCheckArray = [parseInt($(this).attr("data-r")),parseInt($(this).attr("data-c"))];
+				// 	// if (availableMoveSpaces.includes(moveSpaceCheckArray)){
+				// 	// 	console.log("hi");
+				// 	// 	console.log(moveSpaceCheckArray);
+				// 	// }
+				// 	})
+			}
+//})
 	});
 };
 
@@ -67,8 +121,9 @@ $(document).on("click", "li", function(event) {
 	var dataC = $(this).attr("data-c");
 	$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
 	$(document).on("click", "li", function(event) {
+		// if next clicked tile is outside the one that was previously clicked on
 		if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-			$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent");
+			$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
 		}
 	});
 });
