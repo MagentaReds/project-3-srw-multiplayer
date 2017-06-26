@@ -7,7 +7,7 @@ var PilotSchema = new Schema({
   name: String,
   stats: {
     mel: [Number], rng: [Number], hit: [Number],
-    evd: [Number], def: [Number], sp: [Number]
+    evd: [Number], def: [Number], man: [Number], sp: [Number]
   },
   terrain: {
     type: String,
