@@ -116,13 +116,6 @@ app.use("/", apiRoutes);
 app.use("/", htmlRoutes);
 
 
-//game engine teseting
-var game;
-require("./config/gameConfig.js")().then(function (g){
-  game=g;
-});
-
-
 
 // Listen on port 3000, using http instead of app due to socket.io
 http.listen(PORT, function() {
