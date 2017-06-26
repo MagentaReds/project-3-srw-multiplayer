@@ -22,7 +22,7 @@ $(document).ready(function(){
   socket.on("update rooms", function(data){
     console.log("Updating room values and display");
     rooms=data.rooms;
-    updateRoomDisplay(rooms)
+    updateRoomDisplay(rooms);
   });
 
   //jquery listeners
@@ -34,7 +34,7 @@ $(document).ready(function(){
     socket.emit("join room", room, function(data){
       if(data.success) {
         gameRoom=room;
-        roomSlot=data.slot
+        roomSlot=data.slot;
       }
       $("#messageDiv").text(data.msg);
     });
