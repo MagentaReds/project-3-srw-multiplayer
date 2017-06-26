@@ -47,7 +47,8 @@ function configGame(http, io){
         socket.player = {
             id: http.lastPlayerID++,
             room: null,
-            slot: null
+            slot: null,
+            ready: false
         };
         
         //build additional listeners
