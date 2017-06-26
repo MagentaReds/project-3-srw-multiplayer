@@ -49,6 +49,8 @@ class Game  {
   //put each player's units on the map
   //right now hard coded for just 2 playes an one unit each
   spawnUnits(){
+    this.players[0].units[0].setRC(15,5);
+    this.players[1].units[0].setRC(15,25);
     this.map.tiles[15][5]=this.players[0].units[0];
     this.map.tiles[15][25]=this.players[1].units[0];
     console.log(this.map.getAsciiMap());
