@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  var socket = io();
+  var socket = io("/testChat");
   var myId=null;
   socket.emit("newplayer");
 
