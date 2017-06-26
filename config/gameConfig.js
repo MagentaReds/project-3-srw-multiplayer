@@ -25,8 +25,8 @@ module.exports = function() {
   }).then(function(mech){
     clientList[1].units.push(new Unit(pilot2, mech));
     return new Promise(function (resolve, reject) {
-      var game = new Game(clientList);
-      resolve(game);
+      //var game = new Game(clientList);
+      resolve(clientList);
     });
   });
   
