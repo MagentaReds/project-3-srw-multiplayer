@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Test Game Page</title>
+  <script src="./lib/jquery-3.2.1.min.js"></script>
+  <script src="./lib/socket.io.js"></script>
+</head>
+<body>
+  <style>
+    #mapDiv {
+      display: inline-flex;
+      height: 400px;
+      width: 400px;
+
+    }
+
+    #chatDisplay {
+      height: 200px;
+      width: 400px;
+    }
+    #roomDiv {
+      display: flex;
+      flex: 1;
+    }
+    /*.roomCol {
+      display: flex;
+      flex: 1;
+      flex-direction: "row";
+    }*/
+  </style>
+  <div id="greeting"></div>
+  <br/>
+  <div id="messageDiv"></div>
+  <br/>
+  <div id="roomMessageDiv"></div>
+  <br/>
+
+
+  <div id="roomDiv">
+    <div class="roomCol">
+      Room 1 (<span id="room1Count">0</span>/2)
+      <br/>
+      <ul>
+        <li id="room1_slot0"></li>
+        <li id="room1_slot1"></li>
+      </ul>
+      <br/>
+      <button id="joinRoom1" class="joinRoom" data-room="1">Join</button>
+    </div>
+    <div class="roomCol">
+      Room 2 (<span id="room2Count">0</span>/2)
+      <br/>
+      <ul>
+        <li id="room2_slot0"></li>
+        <li id="room2_slot1"></li>
+      </ul>
+      <br/>
+      <button id="joinRoom2" class="joinRoom" data-room="2">Join</button>
+    </div>
+    <div class="roomCol">
+      Room 1 (<span id="room3Count">0</span>/2)
+      <br/>
+      <ul>
+        <li id="room3_slot0"></li>
+        <li id="room3_slot1"></li>
+      </ul>
+      <br/>
+      <button id="joinRoom3" class="joinRoom" data-room="3">Join</button>
+    </div>
+    <div class="roomCol">
+      Room 1 (<span id="room4Count">0</span>/2)
+      <br/>
+      <ul>
+        <li id="room4_slot0"></li>
+        <li id="room4_slot1"></li>
+      </ul>
+      <br/>
+      <button id="joinRoom4" class="joinRoom" data-room="4">Join</button>
+    </div>
+    <button id="leaveRoom">Leave</button>
+  </div>
+
+  <br/>
+  Map:<br/>
+  <div id="mapDiv"></div>
+  <br/>
+  Actions: <br/>
+  <div id="actionDiv">
+    <input id="row" type="number" placeholder="Row"/><input id="col" type="number" placeholder="Col"/><button id="getActions">Get Actions</button>
+    <ul id="actionList"></ul>
+  </div>
+  <br/>
+  Chat:
+  <div id="chatDiv">
+    <div id="chatDisplay"></div>
+    <form id="chatForm">
+      <input id="chatInput" type="text" placeholder="Chat"/><button type="submit" id="chatSubmit">Send</button>
+    </form>
+  </div>
+</body>
+  <script src="./assets/javascript/gameTest.js"></script>
+</html>
