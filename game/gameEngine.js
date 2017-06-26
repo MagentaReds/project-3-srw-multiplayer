@@ -42,6 +42,10 @@ class Game  {
 
   }
 
+  moveAction(player,r,c,toR,toC) {
+    
+  }
+
   //put each player's units on the map
   //right now hard coded for just 2 playes an one unit each
   spawnUnits(){
