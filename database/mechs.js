@@ -219,7 +219,7 @@ var ptx = {
     weapons: []
   },
   Weissritter: {
-    name: "Wiessritter",
+    name: "Weissritter",
     stats: [4100, 120, 115, 900],
     upgrade: [8,8,5,10],
     move: 7,
