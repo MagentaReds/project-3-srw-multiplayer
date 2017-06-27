@@ -16,7 +16,8 @@ var Player = require("./player.js")
 // Design for two players first, then go from there.//
 
 class Game  {
-  constructor(clientList) {
+  constructor(gameInterface, clientList) {
+    this.interface = gameInterface;
     this.map = new Map(30,30);
     this.players=new Array(clientList.length);
     for(var i = 0; i<clientList.length; ++i)
@@ -26,6 +27,7 @@ class Game  {
     this.currentPlayer = 0;
     this.currentUnit = 0;
     this.turn =0;
+    this.turnOver = false;
 
     this.spawnUnits();
     console.log(`It is Player's ${this.currentPlayer} Unit's ${this.currentUnit} Turn`);
@@ -35,6 +37,14 @@ class Game  {
     //cases, empty square: skip turn, surrender
     //active unit and is yours: move, attack, spirit commands, status, skip turn.
     //any other unit: status
+    //will need to refactor this to include a check more unique than just unit name
+    if(!this.turnOver && this.currentPlayer === player && this.map.tiles[r][c]
+      && this.map.tiles[r][c].name === this.players[this.currentPlayer].units[this.currentUnit].name) 
+    {
+      return ["Move", "Attack", "Status", "Skip Turn"];
+    } else {
+      return ["Status", "Skip Turn", "Surrender"];
+    }
   }
 
   //returns true if action completes, false if action cannot be done
@@ -43,7 +53,27 @@ class Game  {
   }
 
   moveAction(player,r,c,toR,toC) {
-    
+    if(!this.turnOver && this.currentPlayer === player 
+      && this.map.tiles[r][c].name === this.players[this.currentPlayer].units[this.currentUnit].name) 
+    {
+      var getPosi = this.map.getPossibleMovement(r,c,this.players[this.currentPlayer].units[this.currentUnit].move);
+      if(getPosi.includes([toR,toC])) {
+        this.map.move(r,c,toR,toC);
+        this.turnOver = true;
+        return true;
+      } else
+        return false;
+    } else {
+      return false;
+    }
+  }
+
+  getWeaponsAction(player, r, c) {
+
+  }
+
+  attackAction(player, r, c, tR, tC) {
+
   }
 
   //put each player's units on the map

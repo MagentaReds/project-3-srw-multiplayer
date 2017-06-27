@@ -75,14 +75,87 @@ $(document).ready(function(){
       ready=data.ready;
       $("#messageDiv").text(data.msg);
     });
-  })
+  });
+
+  $("#getActions").on("click", function(e){
+    console.log("Requesting Actions");
+    e.preventDefault();
+
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+
+    socket.emit("request actions", {player: id, r, c}, function(data){
+      $("#messageDiv").text(data.msg);
+      fillActionList(data.actions, socket);
+    });
+  });
+
+  $(document).on("submit", "form.Move", function(e){
+    e.preventDefault();
+    var me = $(this);
+    var data = {};
+    data.player = id;
+    data.r = parseInt(me.r1);
+    data.c = parseInt(me.c1);
+    data.R = parseInt(me.r2);
+    data.C = parseInt(me.c2);
+    socket.emit("move", data, function(res){
+      if(res.success) {
+        
+      }
+      $("#messageDiv").text(res.msg);
+    });
+  });
+
 
 });
 
+function fillActionList(act, socket) {
+  var ul = $("#actionList");
+  ul.empty();
+  var li,p,but,form,in1,in2,in3,in4;
+  for(var i=0; i<act.length; ++i){
+    li=$("<li>");
+    li.text(act[i]);
+    li.append($("<br/>"));
+    form = $("<form>");
+    form.addClass(act[i]);
+
+    in1 = $("<input>");
+    in1.attr("type", "number");
+    in1.attr("name", "r1");
+    in1.attr("placeholder", "From Row");
+
+    in2 = $("<input>");
+    in2.attr("type", "number");
+    in2.attr("name", "c1");
+    in2.attr("placeholder", "From Col");
+
+    in3 = $("<input>");
+    in3.attr("type", "number");
+    in3.attr("name", "r2");
+    in3.attr("placeholder", "To Row");
+
+    in4 = $("<input>");
+    in4.attr("type", "number");
+    in4.attr("name", "c2");
+    in4.attr("placeholder", "To Col");
+
+    but = $("<button>");
+    but.attr("data-action", act[i]);
+    but.attr("type", "submit");
+    but.text("Send Action");
+
+    form.append(in1, in2, in3, in4, but);
+    li.append(form);
+    ul.append(li);
+  }
+}
+
 function updateRoomDisplay(rooms) {
-  let count=0;
-  for(let i=1; i<rooms.length; ++i){
-    for(let k=0; k<rooms[i].length; ++k) {
+  var count=0;
+  for(var i=1; i<rooms.length; ++i){
+    for(var k=0; k<rooms[i].length; ++k) {
       if(rooms[i][k]) {
         $(`#room${i}_slot${k}`).text(rooms[i][k].id);
         ++count;

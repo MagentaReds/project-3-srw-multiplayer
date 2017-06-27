@@ -29,7 +29,7 @@ function configChatPage(http, io) {
 }
 
 
-function configGame(http, io){
+function configGame(http, io, nsp){
   http.rooms=new Array(5); //one more than needed
   http.rooms[0]=null; //dummy room
   http.rooms[1]=new Array(2);
@@ -39,10 +39,10 @@ function configGame(http, io){
 
   var games=new Array(5);
 
-  io.on('connection', function(socket){
+  nsp.on('connection', function(socket){
     console.log('A user has connected to the game!');
 
-    io.emit("update rooms", {rooms: http.rooms});
+    nsp.emit("update rooms", {rooms: http.rooms});
 
     socket.on('newPlayer',function(cb){
         //build player object stored in socket
@@ -50,7 +50,8 @@ function configGame(http, io){
             id: http.lastPlayerID++,
             room: null,
             slot: null,
-            ready: false
+            ready: false,
+            nsp: null,
         };
         
         //build additional listeners
@@ -62,7 +63,7 @@ function configGame(http, io){
             http.rooms[roomId][joinThisSlot]=socket.player;
             socket.join(`room${roomId}`);
             console.log(`Socket ID ${socket.player.id} joined room ${roomId}`);
-            io.emit("update rooms", {rooms: http.rooms});
+            nsp.emit("update rooms", {rooms: http.rooms});
 
             cb({success: true, slot: joinThisSlot, msg: `Player ID ${socket.player.id} joined room ${roomId}`});
           }
@@ -79,13 +80,13 @@ function configGame(http, io){
             var room = http.rooms[roomNum];
             if(checkAllReady(room)) {
               var firstPlayer = http.rooms[roomNum][0].id; 
-              io.to(`room${roomNum}`).emit("game start", {first: firstPlayer, msg: `ID${firstPlayer} is the first to go!`});
+              nsp.to(`room${roomNum}`).emit("game start", {first: firstPlayer, msg: `ID${firstPlayer} is the first to go!`});
 
               //sending the same unitsand client list to each for testing
               require("./gameConfig.js")().then(function(clientList) {
                 clientList[0].id = room[0].id;
                 clientList[1].id = room[1].id;
-                games[roomNum] = new GameInterface(http, io, io.to(`room${roomNum}`), clientList);
+                games[roomNum] = new GameInterface(http, io, nsp,`room${roomNum}`, clientList);
               });
               
             }
@@ -93,11 +94,23 @@ function configGame(http, io){
           cb({ready: socket.player.ready, msg: `You are ${socket.player.ready ? "ready" : "unread"}.`});
         });
 
+        socket.on("request actions", (data, cb) => {
+          console.log(`actions requested from id${data.player}`);
+          var rNum=socket.player.room;
+          var response = {
+            actions: games[rNum].game.requestActions(data.player, data.r, data.c),
+            msg: `Action List at ${data.r},${data.c} has been sent`
+          };
+
+          cb(response);
+        });
+
         socket.on('disconnect',function(){
           let room=socket.player.room;
           let slot=socket.player.slot;
-          http.rooms[room][slot]=null;
-          io.emit("update rooms", {rooms: http.rooms});
+          if(http.rooms[room])
+            http.rooms[room][slot]=null;
+          nsp.emit("update rooms", {rooms: http.rooms});
         });
 
         socket.on('leave room', function(cb) {
@@ -108,7 +121,7 @@ function configGame(http, io){
             socket.player.slot=null;
             http.rooms[room][slot]=null;
             socket.leave(`room${room}`);
-            io.emit("update rooms", {rooms: http.rooms});
+            nsp.emit("update rooms", {rooms: http.rooms});
             cb({succes:true, msg:`Left room${room}`});
           } else
             cb({succes:false, msg:"You aren't in a room to leave, silly!"});
@@ -141,7 +154,7 @@ function configSocket(http, io){
   //http.playersList = [];
 
   configChatPage(http, io.of("/testChat"));
-  configGame(http, io.of("/game"));
+  configGame(http, io, io.of("/game"));
 
 }
 
