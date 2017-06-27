@@ -17,71 +17,76 @@ $("#cancelMoveLi").toggleClass('blink');
 
 // example location of where an active unit could be
 var activeUnit = [5,5];
-var moving = false;
+
+var availableAttackTiles = [
+	[5,4],
+	[5,6],
+	[4,5],
+	[6,5]
+];
 
 // and their move space spaces which would be sent in from server
 var availableMoveSpaces = [
-						[1,6],
-						[2,6],
-						[2,7],
-						[3,6],
-						[3,7],
-						[3,8],
-						[4,4],
-						[4,3],
-						[4,2],
-						[4,1],
-						[3,2],
-						[3,3],
-						[3,4],
-						[2,3],
-						[2,4],
-						[1,4],
-						[4,6],
-						[4,7],
-						[4,8],
-						[4,9],
-						[5,6],
-						[5,7],
-						[5,8],
-						[5,9],
-						[5,10],
-						[5,4],
-						[5,3],
-						[5,2],
-						[5,1],
-						[5,0],
-						[0,5],
-						[1,5],
-						[2,5],
-						[3,5],
-						[4,5],
-						[6,5],
-						[7,5],
-						[8,5],
-						[9,5],
-						[10,5],
-						[6,1],
-						[6,2],
-						[6,3],
-						[6,4],
-						[6,6],
-						[6,7],
-						[6,8],
-						[6,9],
-						[7,2],
-						[7,3],
-						[7,4],
-						[7,6],
-						[7,7],
-						[7,8],
-						[8,3],
-						[8,4],
-						[8,6],
-						[8,7],
-						[9,4],
-						[9,6]
-
+	[1,6],
+	[2,6],
+	[2,7],
+	[3,6],
+	[3,7],
+	[3,8],
+	[4,4],
+	[4,3],
+	[4,2],
+	[4,1],
+	[3,2],
+	[3,3],
+	[3,4],
+	[2,3],
+	[2,4],
+	[1,4],
+	[4,6],
+	[4,7],
+	[4,8],
+	[4,9],
+	[5,6],
+	[5,7],
+	[5,8],
+	[5,9],
+	[5,10],
+	[5,4],
+	[5,3],
+	[5,2],
+	[5,1],
+	[5,0],
+	[0,5],
+	[1,5],
+	[2,5],
+	[3,5],
+	[4,5],
+	[6,5],
+	[7,5],
+	[8,5],
+	[9,5],
+	[10,5],
+	[6,1],
+	[6,2],
+	[6,3],
+	[6,4],
+	[6,6],
+	[6,7],
+	[6,8],
+	[6,9],
+	[7,2],
+	[7,3],
+	[7,4],
+	[7,6],
+	[7,7],
+	[7,8],
+	[8,3],
+	[8,4],
+	[8,6],
+	[8,7],
+	[9,4],
+	[9,6]
 ];
 
 function displayActiveTile(locate) {
@@ -105,14 +110,15 @@ findActivePlayer();
 function findActivePlayer() {
 	// if statement here that checks socket.io data to see which players turn it is
 	// also for testing purposes, binding menu buttons here as well
-	$("#move").bind("click", moveUnit);
+	$("#move").bind("click", moveOptions);
+	$("#attack").bind("click", attackOptions);
 }
 
 function displayAvailableMoveTiles(locate) {
 	// locates and loops through available tiles that active unit can move to, coloring them blue and toggling the CSS blink class
 	setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
-			$(`li[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").toggleClass('blink').bind("click", moveTiles);
+			$(`li[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").toggleClass('blink').bind("click", moveToTile);
 		}
 	}, 5);
 }
@@ -126,19 +132,19 @@ function hideAvailableMoveTiles(locate) {
 	//}, 5);
 }
 
-function moveTiles() {
+function moveToTile() {
 	// Each available move tile from the above function will bind to this function
 	// clicked tile data will need to be sent to server
-	console.log("Move Action sent to server");
+	console.log("Request Move Action sent to server");
 	console.log([parseInt($(this).attr("data-r")),parseInt($(this).attr("data-c"))]);
 }
 
-function moveUnit (e) {
+function moveOptions (e) {
 	// function that will be bound to JQuery UI's menu button with the "move" label.
-	// use availableMoveSpaces as arugment for displayAvailableMoveTiles function and show cancel button as well as bind it to cancelMove function
+	// use availableMoveSpaces as argument for displayAvailableMoveTiles function and show cancel button as well as bind it to cancelMove function
+	// will need request to server to see what the available move spaces are
 	displayAvailableMoveTiles(availableMoveSpaces);
 	$("#cancel").show().bind("click", cancelMove);
-	moving = true;
 }
 
 function cancelMove (e) {
@@ -146,7 +152,37 @@ function cancelMove (e) {
 	// hide and unbind cancel button so we don't double up on its functionality later on
 	$("#cancel").hide();
 	$("#cancel").unbind("click");
-	moving = false;
+}
+
+function cancelAttack (e) {
+	hideAttackTiles(availableAttackTiles);
+	$("#cancel").hide();
+	$("#cancel").unbind("click");
+}
+
+function displayAttackTiles(locate) {
+	setTimeout(function(){
+		for (var y = 0; y < locate.length; y++) {
+			$(`li[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").toggleClass('blink').bind("click", attackEnemy);
+		}
+	}, 5);
+}
+
+function hideAttackTiles(locate) {
+	for (var y = 0; y < locate.length; y++) {
+		$(`li[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink').unbind("click");
+	}
+}
+
+function attackOptions() {
+	// need request from server to see what options are
+	displayAttackTiles(availableAttackTiles);
+	$("#cancel").show().bind("click", cancelAttack);
+}
+
+function attackEnemy () {
+	console.log("Request Attack Action sent to server");
+	console.log([parseInt($(this).attr("data-r")),parseInt($(this).attr("data-c"))]);
 }
 
 // function that ensures when player clicks on the active unit grid tile, the UI will pop up that shows we can either
@@ -171,12 +207,12 @@ function activeUnitFunctionality(locate) {
 $(document).on("click", "li", function(event) {
 	var dataR = $(this).attr("data-r");
 	var dataC = $(this).attr("data-c");
-	console.log([dataR,dataC]);
+	//console.log([dataR,dataC]);
 	$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
 	$(document).on("click", "li", function(event) {
 		// if next clicked tile is outside the one that was previously clicked on
 		if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-			// test code to fix bug where moving tiles colors dissappear because of background transparent code
+			// test code to fix bug where moving tiles color dissappear because of background transparent code
 			// if (moving){
 			// 	console.log("hi");
 			// 	$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
