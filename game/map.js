@@ -96,6 +96,12 @@ class Map {
       
   }
 
+  //simple movement, will need to update once tiles becomes their own objects rather than just holding a unit reference
+  move(r,c,toR,toC) {
+    this.tiles[toR][toC] = this.tiles[r][c];
+    this.tiles[r][c] = null;
+  }
+
   //returns a string of ascii characters representing the map
   getAsciiMap() {
     var dot = String.fromCharCode(183);
