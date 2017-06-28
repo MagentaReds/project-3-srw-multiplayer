@@ -7,6 +7,7 @@ var dbWeapon = require("../models/weapon.js");
 var dbMech = require("../models/mech.js");
 var dbPilot = require("../models/pilot.js");
 
+//Returns a promise with the built client list, use .then(clientList) to access it.
 module.exports = function() {
   var clientList = [{id: 145, name: "Bob", units:[]}, {id: 213, name:"Johnson", units:[]}];
 
