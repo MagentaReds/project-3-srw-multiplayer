@@ -10,6 +10,7 @@ class Player {
   constructor(client) {
     this.id=client.id;
     this.name=client.name;
+    //will need to make a unit.clone utility to kepe things nice a seperate
     this.units=client.units;
   }
 
