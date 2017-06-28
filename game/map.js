@@ -44,13 +44,13 @@ class Map {
     if(m===0)
       return;
     
-    if(this.isInBounds(r, c+1) && !history.includes([r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
+    if(this.isInBounds(r, c+1) && !this.isInArr(history,[r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
       this.getPTHelper(r, c+1, min, max, oR, oC, m-1, history);
-    if(this.isInBounds(r+1, c) && !history.includes([r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
+    if(this.isInBounds(r+1, c) && !this.isInArr(history,[r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
       this.getPTHelper(r+1, c, min, max, oR, oC, m-1, history);
-    if(this.isInBounds(r, c-1) && !history.includes([r, c-1]) && this.farther(oR,oC,r,c,r,c-1))
+    if(this.isInBounds(r, c-1) && !this.isInArr(history,[r, c-1]) && this.farther(oR,oC,r,c,r,c-1))
       this.getPTHelper(r, c-1, min, max, oR, oC, m-1, history);
-    if(this.isInBounds(r-1, c) && !history.includes([r-1, c]) && this.farther(oR,oC,r,c,r-1,c))
+    if(this.isInBounds(r-1, c) && !this.isInArr(history,[r-1, c]) && this.farther(oR,oC,r,c,r-1,c))
       this.getPTHelper(r-1, c, min, max, oR, oC, m-1, history);
 
   }
@@ -64,16 +64,25 @@ class Map {
     return ((r>=0 && r<this.rows) && (c>=0 && c<this.cols));
   }
 
+  //custom search funciton cause default javascript has no overloading of comparison operators
+  isInArr(arr1, arr2) {
+    var a = JSON.stringify(arr1);
+    var b = JSON.stringify(arr2);
+    return a.indexOf(b) != -1;
+  }
+
   //get's the possible movement squares from the unit at tile r,c
   //probablc solved with rerursion to fill out the availbe map tiles
   //will be ertended later to arrount for diffirult terrain.
   getPossibleMovement(r,c,m) {
+    //console.log(r,c,m);
     var history = [];
-    this.getPMHelper(r,c,m,history);
+    this.getPMHelper(r,c,r,c,m,history);
+    //console.log(history.length);
     return history;
   }
 
-  getPMHelper(r,c,m,history){
+  getPMHelper(r,c,oR,oC,m,history){
     //if we get here, this is a new position, so add it to the history.
     history.push([r,c]);
     //base case, if movement is 0, end recursion
@@ -82,17 +91,17 @@ class Map {
 
     //RECURSE
     //E
-    if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===undefined && !history.includes([r, c+1]))
-      this.getPMHelper(r,c+1, m-1, history);
+    if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===undefined && !this.isInArr(history,[r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
+      this.getPMHelper(r,c+1,oR,oC, m-1, history);
     //S
-    if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===undefined && !history.includes([r+1, c]))
-      this.getPMHelper(r+1,c, m-1, history);
+    if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===undefined && !this.isInArr(history,[r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
+      this.getPMHelper(r+1,c,oR,oC, m-1, history);
     //W
-    if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===undefined && !history.includes([r, c-1]))
-      this.getPMHelper(r,c-1, m-1, history);
+    if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===undefined && !this.isInArr(history,[r, c-1]) && this.farther(oR,oC,r,c,r,c-1))
+      this.getPMHelper(r,c-1,oR,oC, m-1, history);
     //N
-    if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===undefined && !history.includes([r-1, c]))
-      this.getPMHelper(r-1,c, m-1, history);
+    if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===undefined && !this.isInArr(history,[r-1, c])&& this.farther(oR,oC,r,c,r-1,c))
+      this.getPMHelper(r-1,c,oR,oC, m-1, history);
       
   }
 
