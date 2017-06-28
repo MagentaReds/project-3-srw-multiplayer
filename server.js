@@ -74,8 +74,8 @@ if(process.env.MONGODB_URI) {
 }
 
 //Socket IO
-var socketConfig = require("./config/socketConfig.js");
-socketConfig(http, io);
+var GameInterface = require("./game/gameInterface.js");
+var gameInt = new GameInterface(http, io);
 
 
 
