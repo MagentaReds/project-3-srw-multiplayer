@@ -13,7 +13,7 @@ $(document).ready(function(){
   var ready=false;
 
   //client emits
-  socket.emit("newPlayer", function(data){
+  socket.emit("new player", function(data){
     console.log("Registering new player to server");
     id=data.id;
     $("#greeting").text(data.msg);
@@ -71,7 +71,7 @@ $(document).ready(function(){
     e.preventDefault();
     var state=$("#ready").attr("data-state");
 
-    socket.emit("ready", function(data){
+    socket.emit("toggle ready", function(data){
       ready=data.ready;
       $("#messageDiv").text(data.msg);
     });
