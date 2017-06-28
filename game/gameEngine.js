@@ -16,8 +16,7 @@ var Player = require("./player.js")
 // Design for two players first, then go from there.//
 
 class Game  {
-  constructor(gameInterface, clientList) {
-    this.interface = gameInterface;
+  constructor(clientList) {
     this.map = new Map(30,30);
     this.players=new Array(clientList.length);
     for(var i = 0; i<clientList.length; ++i)
@@ -30,16 +29,17 @@ class Game  {
     this.turnOver = false;
 
     this.spawnUnits();
-    console.log(`It is Player's ${this.currentPlayer} Unit's ${this.currentUnit} Turn`);
+    console.log(`It is ${this.players[this.currentPlayer].name} Unit's ${this.currentUnit} Turn`);
     console.log(`That means ${this.players[this.currentPlayer].units[this.currentUnit].name}'s turn!`);
   }
-  requestActions(player, r, c) {
+  requestActions(playerId, r, c) {
     //cases, empty square: skip turn, surrender
     //active unit and is yours: move, attack, spirit commands, status, skip turn.
     //any other unit: status
-    //will need to refactor this to include a check more unique than just unit name
-    if(!this.turnOver && this.currentPlayer === player && this.map.tiles[r][c]
-      && this.map.tiles[r][c].name === this.players[this.currentPlayer].units[this.currentUnit].name) 
+
+    var tmpPlr = this.players[this.currentPlayer]; 
+    if(!this.turnOver && tmpPlr.id === playerId && this.map.tiles[r][c]
+      && this.map.tiles[r][c].id === this.players[this.currentPlayer].units[this.currentUnit].id) 
     {
       return ["Move", "Attack", "Status", "Skip Turn"];
     } else {
