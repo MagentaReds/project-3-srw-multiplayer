@@ -16,7 +16,8 @@ var Player = require("./player.js")
 // Design for two players first, then go from there.//
 
 class Game  {
-  constructor(clientList) {
+  constructor(clientList, inter) {
+    this.inter=inter;
     this.map = new Map(30,30);
     this.players=new Array(clientList.length);
     for(var i = 0; i<clientList.length; ++i)
@@ -47,17 +48,23 @@ class Game  {
     }
   }
 
+  requestMoveTiles(playerId, r, c){
+    var tempPlayer = this.players[this.currentPlayer];
+    var tempUnit = this.players[this.currentPlayer].units[this.currentUnit];
+    return this.map.getPossibleMovement(r, c, tempUnit.move);
+  }
+
   //returns true if action completes, false if action cannot be done
   doAction(player, action, r, c) {
 
   }
 
-  moveAction(player,r,c,toR,toC) {
-    if(!this.turnOver && this.currentPlayer === player 
-      && this.map.tiles[r][c].name === this.players[this.currentPlayer].units[this.currentUnit].name) 
+  doMoveAction(playerId,r,c,toR,toC) {
+    if(!this.turnOver && this.players[this.currentPlayer].id === playerId
+      && this.map.tiles[r][c].id === this.players[this.currentPlayer].units[this.currentUnit].id) 
     {
       var getPosi = this.map.getPossibleMovement(r,c,this.players[this.currentPlayer].units[this.currentUnit].move);
-      if(getPosi.includes([toR,toC])) {
+      if(this.isInArr(getPosi, [toR,toC])) {
         this.map.move(r,c,toR,toC);
         this.turnOver = true;
         return true;
@@ -66,6 +73,13 @@ class Game  {
     } else {
       return false;
     }
+  }
+
+    //custom search funciton cause default javascript has no overloading of comparison operators
+  isInArr(arr1, arr2) {
+    var a = JSON.stringify(arr1);
+    var b = JSON.stringify(arr2);
+    return a.indexOf(b) != -1;
   }
 
   getWeaponsAction(player, r, c) {

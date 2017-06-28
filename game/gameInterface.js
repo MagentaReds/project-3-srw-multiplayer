@@ -21,7 +21,7 @@ class GameRoom {
   }
 
   makeGame(){
-    this.game = new Game(this.clients);
+    this.game = new Game(this.clients, this);
     this.emitMap();
   }
 
@@ -80,6 +80,10 @@ class GameRoom {
 
   emitMap() {
     this.nsp.to(this.name).emit("update map", {map: this.game.map.getAsciiMap(), msg: "Updated map!"});
+  }
+
+  emitMesssage(msg) {
+    this.nsp.to(this.name),emit("game message", {msg});
   }
 }
 
@@ -152,7 +156,8 @@ class GameInterface {
       
       //game listeners
       socket.on("request actions", (data,cb)=>{this.onRequestActions(socket, data, cb)});
-      socket.on("move", (data,cb)=>{});
+      socket.on("get move tiles", (data,cb)=>{this.onGetMoveTiles(socket, data, cb)});
+      socket.on("do move", (data, cb)=>{this.onDoMove(socket, data, cb)});
 
     });
   }
@@ -220,6 +225,34 @@ class GameInterface {
       actions: this.rooms[rNum].game.requestActions(socket.me.id, data.r, data.c),
       msg: `Action List at ${data.r},${data.c} has been sent`
     };
+
+    cb(response);
+  }
+
+  onGetMoveTiles(socket, data, cb){
+    console.log(`actions requested from id${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var response = {
+      success: true,
+      type: "Move",
+      array: this.rooms[rNum].game.requestMoveTiles(socket.me.id, data.r, data.c),
+      msg: `Move array at ${data.r},${data.c} has been sent`
+    };
+
+    cb(response);
+  }
+
+  onDoMove(socket, data, cb) {
+    console.log(`actions requested from id${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var suc = this.rooms[rNum].game.doMoveAction(socket.me.id, data.r, data.c, data.toR, data.toC);
+    var response = {
+      success: suc,
+      msg: `Do move at ${data.r},${data.c} is ${suc}`
+    };
+
+    if(suc)
+      this.rooms[rNum].emitMap();
 
     cb(response);
   }
