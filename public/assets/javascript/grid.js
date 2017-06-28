@@ -1,22 +1,44 @@
 // code that makes 900 grid-tiles with each row and column's data index stored
 for (var r = 0; r < 30; r++) {
 	for (var c = 0; c < 30; c++) {
-		$("#grid").append(`<li class="blink" class="grid-square" data-r = "${r}" data-c = "${c}"></li>`);
+		$("#grid").append(`<li class="blink grid-square" data-r = "${r}" data-c = "${c}"></li>`);
 	}
 }
+
 // hide our JQuery UI
 $("#menu").hide();
 $("#cancel").hide();
 // toggleclass blink for all li, otherwise when we wont to show active unit tile, all tiles will start blinking
-$("li").toggleClass('blink');
+$("li.grid-square").toggleClass('blink');
 // toggles blink for these menu buttons otherwise, they will keep blinking
-$("#moveLi").toggleClass('blink');
-$("#attackLi").toggleClass('blink');
-$("#spiritLi").toggleClass('blink');
-$("#cancelMoveLi").toggleClass('blink');
 
 // example location of where an active unit could be
-var activeUnit = [5,5];
+var activeUnit = [];
+activeUnit = [5,5];
+
+var activePlayer = 3;
+var myId = 3;
+
+var availableWeapons = {
+  weapons: [
+    {
+      id: 1,
+      name: "Attack 1",
+      range: [1,1],
+      dmg: 2000,
+      canUse: true
+    },
+    {
+      id: 4,
+      name: "Attack Fulls",
+      range: [3,7],
+      dmg: 1000,
+      canUse: false
+    }
+  ]
+}
+
+console.log(availableWeapons.weapons[1].id);
 
 var availableAttackTiles = [
 	[5,4],
@@ -89,6 +111,14 @@ var availableMoveSpaces = [
 	[9,6]
 ];
 
+function buildWeaponUi () {
+	for (var x = 0; x < availableWeapons.weapons.length; x++) {
+		$("#weapons").append(`<li[data-id=${availableWeapons.weapons[x].id}]><div>${availableWeapons.weapons[x].name}<div></li>`);
+	}
+}
+
+$(`li[data-r=${5}][data-c=${5}]`).append(`<img src=assets/media/icon1.png height="65px">`);
+
 function displayActiveTile(locate) {
 	// locates active tile where unit will be and colors in tile with green
 	$(`li[data-r=${locate[0]}][data-c=${locate[1]}]`).css('background', "#64dd17").css('opacity', "0.5");
@@ -106,11 +136,14 @@ displayActiveTile(activeUnit);
 blinkActiveTile(activeUnit);
 activeUnitFunctionality(activeUnit);
 findActivePlayer();
+buildWeaponUi();
+console.log($(`li[data-id=${availableWeapons.weapons[0].id}]`).attr("data-id"));
 
 function findActivePlayer() {
-	// if statement here that checks socket.io data to see which players turn it is
+	// if statement here that checks socket.io data to see which player's turn it is
 	// also for testing purposes, binding menu buttons here as well
 	$("#move").bind("click", moveOptions);
+	// for loop to loop through weapons, #attack will not be used anymore
 	$("#attack").bind("click", attackOptions);
 }
 
@@ -189,52 +222,67 @@ function attackEnemy () {
 // move, attack or use spirit command for the active unit
 // function is called when this file is loaded
 function activeUnitFunctionality(locate) {
-	$(`li[data-r=${locate[0]}][data-c=${locate[1]}]`).on("click", function(){
-		$("#menu").show();
-		var dataR = $(this).attr("data-r");
-		var dataC = $(this).attr("data-c");
-		$(document).on("click", "li", function(event) {
-			// if next tile clicked is outside the one that was previously clicked on
-			if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-				$("#menu").hide();
-			}
+	if (activePlayer === 3) {
+		$(`li[data-r=${locate[0]}][data-c=${locate[1]}]`).on("click", function(){
+			$("#menu").show();
+			var dataR = $(this).attr("data-r");
+			var dataC = $(this).attr("data-c");
+			$(document).on("click", "li", function(event) {
+				// if next tile clicked is outside the one that was previously clicked on
+				if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
+					$("#menu").hide();
+				}
+			});
 		});
-	});
+	}
+	else {
+		$(`li[data-r=${locate[0]}][data-c=${locate[1]}]`).on("click", function(){
+			console.log("show status of this unit");
+		})
+	}
 }
 
 // code for checking and displaying which tile was clicked on
 // also the UI for displaying options for clicked grid square should pop up here
-$(document).on("click", "li", function(event) {
+function getActions(r,c) {
+	var actionLocation = [r,c];
+	var response = {};
+	if (activeUnit[0] == r && activeUnit[1] == c) {
+		response.actions = ["Move", "Attack"];
+	}
+	else {
+		response.actions = ["Status"];
+	}
+	console.log(response);
+	return response;
+}
+getActions(5,6);
+
+function fillActions(actions) {
+	var menu = $("#menu");
+	menu.empty();
+	for (var i = 0; i < actions.length; i++) {
+		// will need to append all menu actions
+		menu.append(`<li[data-id=${availableWeapons.weapons[x].id}]><div>${availableWeapons.weapons[x].name}<div></li>`);
+	}
+}
+
+
+$(document).on("click", "li.grid-square", function(event) {
+	// if (activePlayer === myId)
 	var dataR = $(this).attr("data-r");
 	var dataC = $(this).attr("data-c");
 	//console.log([dataR,dataC]);
+	var response = getActions(dataR,dataC);
+
+	//socket.emit("getActions", {r: dataR,c: dataC} function(response){fillActions(response.actions)}
+	// fillActions(response.actions);
+
 	$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
-	$(document).on("click", "li", function(event) {
+	$(document).one("click", "li", function(event) {
 		// if next clicked tile is outside the one that was previously clicked on
 		if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-			// test code to fix bug where moving tiles color dissappear because of background transparent code
-			// if (moving){
-			// 	console.log("hi");
-			// 	$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
-			// 	for (var y = 0; y < availableMoveSpaces.length; y++) {
-			// 		$(`li[data-r=${availableMoveSpaces[y][0]}][data-c=${availableMoveSpaces[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5");
-			// 	}
-			// }
-			//else {
-		// 	if (moving){
-		// 		for (var x = 0; x < availableMoveSpaces.length; x++) {
-		// 			if ((availableMoveSpaces[x][0] === dataR) && (availableMoveSpaces[x][1] === dataC)){
-		// 				console.log("hi");
-		// 				$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "#2196f3").css('opacity', "0.5");
-		// 			}
-		// 		else {
-		// 			$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
-		// 		}
-		// 	}
-		// }
-		// 	else {
 				$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
-			//}
 			// call this function so it's background doesn't become transparent
 			displayActiveTile(activeUnit);
 		}
