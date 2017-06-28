@@ -17,6 +17,12 @@
       font-family: "Lucida Console", Monaco, monospace;
       overflow: scroll;
       line-height: .8em;
+      float: left;
+    }
+    #arrayDiv {
+      height: 400px;
+      width: 400px;
+      overflow: scroll;
     }
     #chatDisplay {
       height: 200px;
@@ -25,6 +31,10 @@
     #roomDiv {
       display: flex;
       flex: 1;
+    }
+    .clearfix {
+      clear:both;
+      overflow:auto;
     }
     /*.roomCol {
       display: flex;
@@ -97,11 +107,22 @@
 
   <br/>
   Map:<br/>
-  <div id="mapDiv"></div>
+  <div>
+    <div id="mapDiv"></div>
+    <div id="arrayDiv">
+      <p id="arrayName">Test</p>
+      <ol id="viewArray">
+        <li>test</li>
+        <li>test</li>
+      </ol>
+    </div>
+  </div>
   <br/>
   Actions: <br/>
-  <div id="actionDiv">
+  <div id="actionDiv" class="clearfix">
     <input id="row" type="number" placeholder="Row"/><input id="col" type="number" placeholder="Col"/><button id="getActions">Get Actions</button>
+    <br/>
+    <input id="row1" type="number" placeholder="Row"/><input id="col2" type="number" placeholder="Col"/>
     <ul id="actionList"></ul>
   </div>
   <br/>

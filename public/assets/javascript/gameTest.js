@@ -90,18 +90,37 @@ $(document).ready(function(){
     });
   });
 
-  $(document).on("submit", "form.Move", function(e){
+  $(document).on("click", "button.get_Move", function(e){
     e.preventDefault();
-    var me = $(this);
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
     var data = {};
     data.player = id;
-    data.r = parseInt(me.r1);
-    data.c = parseInt(me.c1);
-    data.R = parseInt(me.r2);
-    data.C = parseInt(me.c2);
-    socket.emit("move", data, function(res){
+    data.r=r;
+    data.c=c;
+    socket.emit("get move tiles", data, function(res){
       if(res.success) {
-        
+        $("#arrayName").text(res.type);
+        displayArray(res.array);
+      }
+      $("#messageDiv").text(res.msg);
+    });
+  });
+
+  $(document).on("click", "button.Move", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var toR = parseInt($("#row1").val());
+    var toC = parseInt($("#col2").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    data.toR=toR;
+    data.toC=toC;
+    socket.emit("do move", data, function(res){
+      if(res.success) {
       }
       $("#messageDiv").text(res.msg);
     });
@@ -113,43 +132,30 @@ $(document).ready(function(){
 function fillActionList(act, socket) {
   var ul = $("#actionList");
   ul.empty();
-  var li,p,but,form,in1,in2,in3,in4;
+  var li,but,but2
   for(var i=0; i<act.length; ++i){
     li=$("<li>");
     li.text(act[i]);
     li.append($("<br/>"));
-    form = $("<form>");
-    form.addClass(act[i]);
-
-    in1 = $("<input>");
-    in1.attr("type", "number");
-    in1.attr("name", "r1");
-    in1.attr("placeholder", "From Row");
-
-    in2 = $("<input>");
-    in2.attr("type", "number");
-    in2.attr("name", "c1");
-    in2.attr("placeholder", "From Col");
-
-    in3 = $("<input>");
-    in3.attr("type", "number");
-    in3.attr("name", "r2");
-    in3.attr("placeholder", "To Row");
-
-    in4 = $("<input>");
-    in4.attr("type", "number");
-    in4.attr("name", "c2");
-    in4.attr("placeholder", "To Col");
 
     but = $("<button>");
-    but.attr("data-action", act[i]);
-    but.attr("type", "submit");
-    but.text("Send Action");
+    but.addClass(act[i])
+    but.text(act[i]);
 
-    form.append(in1, in2, in3, in4, but);
-    li.append(form);
+    but2 = $("<button>");
+    but2.addClass("get_"+act[i])
+    but2.text("get "+act[i]);
+
+    li.append(but, but2);
     ul.append(li);
   }
+}
+
+function displayArray(array) {
+  var ol = $("#viewArray");
+  ol.empty();
+  for(var i =0; i<array.length; ++i)
+    ol.append($("<li>").text(array[i]));
 }
 
 function updateRoomDisplay(rooms) {
