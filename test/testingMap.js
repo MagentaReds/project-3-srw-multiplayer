@@ -1,7 +1,7 @@
 var Map = require("../game/map.js");
 
-var rows = 10;
-var cols = 10;
+var rows = 30;
+var cols = 30;
 
 var map = new Map(rows,cols);
 
@@ -51,7 +51,7 @@ displayArray(rows,cols,map.getPossibleMovement(5,5,1));
 console.log("===============Get Movement 5,5,1=================");
 displayArray(rows,cols,map.getPossibleMovement(5,5,2));
 console.log("===============Get Movement 5,5,4=================");
-displayArray(rows,cols,map.getPossibleMovement(5,5,4));
+displayArray(rows,cols,map.getPossibleMovement(15,5,6));
 
 
 console.log("ADDING OBSTABLCES");
