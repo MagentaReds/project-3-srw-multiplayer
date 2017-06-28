@@ -1,6 +1,6 @@
 $(document).ready(function(){
- var rooms=new Array(5); //one more than needed
- rooms[0]=null; //dummy room
+ var rooms=new Array(5); 
+ rooms[0]=new Array(2);
  rooms[1]=new Array(2);
  rooms[2]=new Array(2);
  rooms[3]=new Array(2);
@@ -154,10 +154,10 @@ function fillActionList(act, socket) {
 
 function updateRoomDisplay(rooms) {
   var count=0;
-  for(var i=1; i<rooms.length; ++i){
+  for(var i=0; i<rooms.length; ++i){
     for(var k=0; k<rooms[i].length; ++k) {
       if(rooms[i][k]) {
-        $(`#room${i}_slot${k}`).text(rooms[i][k].id);
+        $(`#room${i}_slot${k}`).text(rooms[i][k]);
         ++count;
       } else
         $(`#room${i}_slot${k}`).text('_');
