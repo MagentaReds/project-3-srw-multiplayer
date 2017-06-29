@@ -4,6 +4,18 @@
 
 var statesAndFlags ={
   game : {
+    state: {
+      newRound: "Start of new Round",
+      isMoving: "Unit has started moving",
+      hasMoved: "Unit has moved",
+      isAttacking: "Selecting Weapons/Targets",
+      confirmAttack: "Unit Attack is confirmed",
+      defenderConfirm: "Defender has selected defend action",
+      hasAttacked: "Unit has finished attacking",
+      standby: "Unit has stoodby, Moving on",
+      hasHitandAway: "Unit can move after attcking",
+      turnOver: "Unit's turn has ended"
+    },
     action: {
       move: "Move",
       getMove: "Get Move",
