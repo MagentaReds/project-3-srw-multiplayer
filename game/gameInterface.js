@@ -158,6 +158,8 @@ class GameInterface {
       socket.on("get actions", (data,cb)=>{this.onGetActions(socket, data, cb)});
       socket.on("get move", (data,cb)=>{this.onGetMove(socket, data, cb)});
       socket.on("do move", (data, cb)=>{this.onDoMove(socket, data, cb)});
+      socket.on("get attack", (data,cb)=>{this.onGetAttack(socket, data, cb)});
+      socket.on("do attack", (data, cb)=>{this.onDoAttack(socket, data, cb)});
 
     });
   }
@@ -245,6 +247,22 @@ class GameInterface {
     console.log(`Do Move requested from id${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.doMove(socket.me.id, data.r, data.c, data.toR, data.toC);
+
+    cb(response);
+  }
+
+  onGetAttack(socket, data, cb){
+    console.log(`Get Attack requested from id${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var response = this.rooms[rNum].game.getAttack(socket.me.id, data.r, data.c);
+
+    cb(response);
+  }
+
+  onDoAttack(socket, data, cb) {
+    console.log(`Do Attack requested from id${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var response = this.rooms[rNum].game.doAttack(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
 
     cb(response);
   }

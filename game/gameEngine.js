@@ -255,21 +255,33 @@ class Game  {
     }
   }
 
-  // doMove(playerId,r,c,toR,toC) {
-  //   if(!this.turnOver && this.pRef.id === playerId
-  //     && this.map.tiles[r][c].id === this.uRef.id) 
-  //   {
-  //     var getPosi = this.map.getPossibleMovement(r,c,this.uRef.move);
-  //     if(this.isInArr(getPosi, [toR,toC])) {
-  //       this.map.move(r,c,toR,toC);
-  //       this.turnOver = true;
-  //       return true;
-  //     } else
-  //       return false;
-  //   } else {
-  //     return false;
-  //   }
-  // }
+  getAttack(playerId, r, c) {
+    var sucRes = {success: true, type: "weapons", weapons: this.uRef.weapons, actions:["Cancel"]};
+    var failRes = {success: false, type: "", weapons:[], actions:[]};
+    var failRes2 = {success: false, type: "", weapons:[], actions:["Cancel"]};
+    var selUnit = this.map.tiles[r][c];
+
+    if(this.pRef.id===playerId){
+      if(!selUnit) {
+        return failRes;
+      } else if(selUnit.id !== this.uRef.id){
+        return failRes;
+      } else if(this.inFlags(Flags.newRound)) {
+        return sucRes;
+      } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        return sucRes;
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+        return failRes2;
+      } else {
+        return failRes;
+      }
+    } else if(!selUnit) {
+      return failRes;
+    } else {
+      return failRes;
+    }
+  }
+
 
   moveUnit(r,c,toR,toC) {
     this.map.move(r,c,toR,toC);
