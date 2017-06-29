@@ -12,6 +12,16 @@ class Player {
     this.name=client.name;
     //will need to make a unit.clone utility to kepe things nice a seperate
     this.units=client.units;
+    this.currentUnit = -1;
+  }
+
+  //need to expand to account for when unit is dead, but testing will ignore for now
+  getNextUnit() {
+    this.currentUnit++;
+    if(this.currentUnit>=this.units.length)
+      this.currentUnit=0;
+
+    return this.units[this.currentUnit];
   }
 
   isDefeated(){
