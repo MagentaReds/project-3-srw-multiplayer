@@ -154,19 +154,19 @@ $(document).ready(function(){
     var c = parseInt($("#col").val());
     var toR = parseInt($("#row1").val());
     var toC = parseInt($("#col2").val());
+    var weapon = parseInt($("#weapon").val())
     var data = {};
     data.player = id;
     data.r=r;
     data.c=c;
     data.toR=toR;
     data.toC=toC;
-    data.weapon=0;
+    data.weapon=weapon;
     socket.emit("do attack", data, function(data){
       console.log(data);
       if(data.success) {
       }
       $("#messageDiv").text(data.msg);
-      fillActionList(data.actions);
     });
   });
 
