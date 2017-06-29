@@ -128,6 +128,45 @@ $(document).ready(function(){
     });
   });
 
+  $(document).on("click", "button.get_Attack", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    socket.emit("get attack", data, function(data){
+      console.log(data);
+      if(data.success) {
+        $("#arrayName").text(data.type);
+        displayWeapons(data.weapons);
+      }
+      $("#messageDiv").text(data.msg);
+    });
+  });
+
+  $(document).on("click", "button.Attack", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var toR = parseInt($("#row1").val());
+    var toC = parseInt($("#col2").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    data.toR=toR;
+    data.toC=toC;
+    data.weapon=0;
+    socket.emit("do attack", data, function(data){
+      console.log(data);
+      if(data.success) {
+      }
+      $("#messageDiv").text(data.msg);
+      fillActionList(data.actions);
+    });
+  });
 
 });
 
@@ -158,6 +197,13 @@ function displayArray(array) {
   ol.empty();
   for(var i =0; i<array.length; ++i)
     ol.append($("<li>").text(array[i]));
+}
+
+function displayWeapons(array) {
+  var ol = $("#viewArray");
+  ol.empty();
+  for(var i =0; i<array.length; ++i)
+    ol.append($("<li>").text(`${array[i].name}, ${array[i].range}, ${array[i].damage}`));
 }
 
 function updateRoomDisplay(rooms) {
