@@ -256,9 +256,45 @@ class Game  {
   }
 
   getAttack(playerId, r, c) {
-    var sucRes = {success: true, type: "weapons", weapons: this.uRef.weapons, actions:["Cancel"]};
+    //will need to mod this to only include/flag weapons that can attack/have available targets
+    var sucRes = {success: true, type: "weapons", weapons: this.uRef.weapons, actions:["Targets", "Cancel"]};
     var failRes = {success: false, type: "", weapons:[], actions:[]};
     var failRes2 = {success: false, type: "", weapons:[], actions:["Cancel"]};
+    var selUnit = this.map.tiles[r][c];
+
+    if(this.pRef.id===playerId){
+      if(!selUnit) {
+        return failRes;
+      } else if(selUnit.id !== this.uRef.id){
+        return failRes;
+      } else if(this.inFlags(Flags.newRound)) {
+        return sucRes;
+      } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        return sucRes;
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+        return failRes2;
+      } else {
+        return failRes;
+      }
+    } else if(!selUnit) {
+      return failRes;
+    } else {
+      return failRes;
+    }
+  }
+
+  getTargets(playerId, r, c, weaponId) {
+    var wepRef = this.uRef.weapons[weaponId];
+    var range, targets;
+    if(wepRef) {
+      range = this.map.getPossibleTargets(r,c,wepRef.range[0], wepRef.range[1]);
+      targets = this.map.getTargets(playerId, range);
+    }
+
+    var sucRes = {success: true, range: range, targets: targets, actions:[]};
+    var failRes = {success: false, range: [], targets: [], actions:[]};
+    var failRes2 = {success: false, range: [], targets: [], actions:["Cancel"]};
+
     var selUnit = this.map.tiles[r][c];
 
     if(this.pRef.id===playerId){
@@ -312,10 +348,10 @@ class Game  {
   //put each player's units on the map
   //right now hard coded for just 2 playes an one unit each
   spawnUnits(){
-    this.players[0].units[0].setRC(15,5);
-    this.players[1].units[0].setRC(15,25);
-    this.map.tiles[15][5]=this.players[0].units[0];
-    this.map.tiles[15][25]=this.players[1].units[0];
+    this.players[0].units[0].setRC(15,15);
+    this.players[1].units[0].setRC(15,20);
+    this.map.tiles[15][15]=this.players[0].units[0];
+    this.map.tiles[15][20]=this.players[1].units[0];
     console.log(this.map.getAsciiMap());
   }
   

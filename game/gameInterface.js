@@ -159,6 +159,7 @@ class GameInterface {
       socket.on("get move", (data,cb)=>{this.onGetMove(socket, data, cb)});
       socket.on("do move", (data, cb)=>{this.onDoMove(socket, data, cb)});
       socket.on("get attack", (data,cb)=>{this.onGetAttack(socket, data, cb)});
+      socket.on("get targets", (data,cb)=>{this.onGetTargets(socket, data, cb)});
       socket.on("do attack", (data, cb)=>{this.onDoAttack(socket, data, cb)});
 
     });
@@ -255,6 +256,14 @@ class GameInterface {
     console.log(`Get Attack requested from id${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.getAttack(socket.me.id, data.r, data.c);
+
+    cb(response);
+  }
+
+  onGetTargets(socket, data, cb){
+    console.log(`Get Targets requested from id${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var response = this.rooms[rNum].game.getTargets(socket.me.id, data.r, data.c, data.weapon);
 
     cb(response);
   }
