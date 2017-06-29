@@ -140,11 +140,13 @@ $(document).ready(function(){
       console.log(data);
       if(data.success) {
         $("#arrayName").text(data.type);
+        fillActionList(data.actions);
         displayWeapons(data.weapons);
       }
       $("#messageDiv").text(data.msg);
     });
   });
+
 
   $(document).on("click", "button.Attack", function(e){
     e.preventDefault();
@@ -165,6 +167,27 @@ $(document).ready(function(){
       }
       $("#messageDiv").text(data.msg);
       fillActionList(data.actions);
+    });
+  });
+
+  $(document).on("click", "button.get_Targets", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var weapon = parseInt($("#weapon").val())
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    data.weapon = weapon;
+    socket.emit("get targets", data, function(data){
+      console.log(data);
+      if(data.success) {
+        $("#arrayName").text("Targets/Range");
+        fillActionList(data.actions);
+        displayArray([...data.targets, "I AM A BREAK", ...data.range]);
+      }
+      $("#messageDiv").text(data.msg);
     });
   });
 
