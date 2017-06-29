@@ -33,12 +33,12 @@ module.exports = function(times) {
         var c1 = {};
         c1.id=startVals[0].id+i;
         c1.name=startVals[0].name+i;
-        c1.units=[new Unit(pilot1, mech1)];
+        c1.units=[new Unit(c1.id, pilot1, mech1)];
 
         var c2 = {};
         c2.id=startVals[1].id+i;
         c2.name=startVals[1].name+i;
-        c2.units=[new Unit(pilot2, mech2)];
+        c2.units=[new Unit(c2.id, pilot2, mech2)];
 
         clientList.push(c1);
         clientList.push(c2);
