@@ -84,9 +84,9 @@ $(document).ready(function(){
     var r = parseInt($("#row").val());
     var c = parseInt($("#col").val());
 
-    socket.emit("request actions", {player: id, r, c}, function(data){
+    socket.emit("get actions", {player: id, r, c}, function(data){
       $("#messageDiv").text(data.msg);
-      fillActionList(data.actions, socket);
+      fillActionList(data.actions);
     });
   });
 
@@ -98,12 +98,12 @@ $(document).ready(function(){
     data.player = id;
     data.r=r;
     data.c=c;
-    socket.emit("get move tiles", data, function(res){
-      if(res.success) {
-        $("#arrayName").text(res.type);
-        displayArray(res.array);
+    socket.emit("get move", data, function(data){
+      if(data.success) {
+        $("#arrayName").text(data.type);
+        displayArray(data.array);
       }
-      $("#messageDiv").text(res.msg);
+      $("#messageDiv").text(data.msg);
     });
   });
 
@@ -119,17 +119,19 @@ $(document).ready(function(){
     data.c=c;
     data.toR=toR;
     data.toC=toC;
-    socket.emit("do move", data, function(res){
-      if(res.success) {
+    socket.emit("do move", data, function(data){
+      console.log(data);
+      if(data.success) {
       }
-      $("#messageDiv").text(res.msg);
+      $("#messageDiv").text(data.msg);
+      fillActionList(data.actions);
     });
   });
 
 
 });
 
-function fillActionList(act, socket) {
+function fillActionList(act) {
   var ul = $("#actionList");
   ul.empty();
   var li,but,but2
