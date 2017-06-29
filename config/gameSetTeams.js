@@ -18,13 +18,13 @@ module.exports = function(times) {
   return dbPilot.findOne({name: "Kyosuke Nambu"})
   .then(function(pilot){
     pilot1=pilot;
-     return dbMech.findOne({name: "Alteisen"}).populate("Weapon");
+     return dbMech.findOne({name: "Alteisen"}).populate("weapons iWeapons").exec();
   }).then(function(mech){
     mech1=mech;
     return dbPilot.findOne({name: "Excellen Browning"});
   }).then(function(pilot){
     pilot2=pilot;
-    return dbMech.findOne({name: "Weissritter"}).populate("Weapon")
+    return dbMech.findOne({name: "Weissritter"}).populate("weapons iWeapons").exec();
   }).then(function(mech){
     mech2=mech;
     return new Promise(function (resolve, reject) {
