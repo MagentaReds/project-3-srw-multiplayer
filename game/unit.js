@@ -4,7 +4,7 @@ var dbMech= require("../models/mech.js");
 var dbPilot= require("../models/pilot.js");
 
 class Unit {
-  constructor(pilotDb, mechDb, pilotLevel=50) {
+  constructor(playerId, pilotDb, mechDb, pilotLevel=50) {
     this.name = pilotDb.name;
     this.move = mechDb.move;
     this.pilotLevel=pilotLevel;
@@ -26,6 +26,7 @@ class Unit {
     this.mechAbilities = [...mechDb.abilities];
     this.r=-1;
     this.c=-1;
+    this.owner=playerId;
   }
 
   setRC(r,c) {
