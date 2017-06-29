@@ -111,6 +111,18 @@ class Map {
     this.tiles[r][c] = null;
   }
 
+  //returns an array of valid targets based on the id and passed list of tiles to check
+  getTargets(id, arr) {
+    var res = [];
+    var tempTile=null;
+    for(var i=0; i<arr.length; ++i){
+      tempTile=this.tiles[arr[i][0]][arr[i][1]];
+      if(tempTile && tempTile.owner!==id)
+        res.push(arr[i]);
+    }
+    return res;
+  }
+
   //returns a string of ascii characters representing the map
   getAsciiMap() {
     var dot = String.fromCharCode(183);
