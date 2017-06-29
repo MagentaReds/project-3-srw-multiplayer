@@ -22,7 +22,7 @@ class GameRoom {
 
   makeGame(){
     this.game = new Game(this.clients, this);
-    this.emitMap();
+    //this.emitMap();
   }
 
   join(socket, slot) {
@@ -75,11 +75,11 @@ class GameRoom {
   }
 
   getActions(playerId,r,c) {
-    return this.game.requestActions(playerId, r, c);
+    return this.game.getActions(playerId, r, c);
   }
 
-  emitMap() {
-    this.nsp.to(this.name).emit("update map", {map: this.game.map.getAsciiMap(), msg: "Updated map!"});
+  emitMap(map) {
+    this.nsp.to(this.name).emit("update map", {map: map, msg: "Updated map!"});
   }
 
   emitMesssage(msg) {
@@ -155,8 +155,8 @@ class GameInterface {
       socket.on("toggle ready", (cb)=>{this.onToggleReady(socket, cb)});
       
       //game listeners
-      socket.on("request actions", (data,cb)=>{this.onRequestActions(socket, data, cb)});
-      socket.on("get move tiles", (data,cb)=>{this.onGetMoveTiles(socket, data, cb)});
+      socket.on("get actions", (data,cb)=>{this.onGetActions(socket, data, cb)});
+      socket.on("get move", (data,cb)=>{this.onGetMove(socket, data, cb)});
       socket.on("do move", (data, cb)=>{this.onDoMove(socket, data, cb)});
 
     });
@@ -210,27 +210,26 @@ class GameInterface {
       if(this.rooms[roomNum].checkAllReady()) {
         this.rooms[roomNum].makeGame();
 
-        //need to make this more general, it assumes the first slot is filled
-        var firstPlayer = this.rooms[roomNum].clients[0].name;
+        var firstPlayer = this.rooms[roomNum].game.pRef.name;
         this.nsp.to(socket.me.room).emit("game start", {first: firstPlayer, msg: `ID${firstPlayer} is the first to go!`});
       }
     }
     cb({ready: socket.me.ready, msg: `You are ${socket.me.ready ? "ready" : "unready"}.`});
   }
 
-  onRequestActions(socket, data, cb) {
-    console.log(`actions requested from id${data.player}`);
+  onGetActions(socket, data, cb) {
+    console.log(`Get Actions requested from id${data.player}`);
     var rNum=socket.me.roomNum;
     var response = {
-      actions: this.rooms[rNum].game.requestActions(socket.me.id, data.r, data.c),
+      actions: this.rooms[rNum].game.getActions(socket.me.id, data.r, data.c),
       msg: `Action List at ${data.r},${data.c} has been sent`
     };
 
     cb(response);
   }
 
-  onGetMoveTiles(socket, data, cb){
-    console.log(`actions requested from id${socket.me.id}`);
+  onGetMove(socket, data, cb){
+    console.log(`Get Move requested from id${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = {
       success: true,
@@ -243,25 +242,14 @@ class GameInterface {
   }
 
   onDoMove(socket, data, cb) {
-    console.log(`actions requested from id${socket.me.id}`);
+    console.log(`Do Move requested from id${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var suc = this.rooms[rNum].game.doMoveAction(socket.me.id, data.r, data.c, data.toR, data.toC);
-    var response = {
-      success: suc,
-      msg: `Do move at ${data.r},${data.c} is ${suc}`
-    };
-
-    if(suc)
-      this.rooms[rNum].emitMap();
+    var response = this.rooms[rNum].game.doMove(socket.me.id, data.r, data.c, data.toR, data.toC);
 
     cb(response);
   }
   
   bindSocketListeners1(socket) {
-
-  }
-
-  makeGame() {
 
   }
 
