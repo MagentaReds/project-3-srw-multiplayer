@@ -15,6 +15,19 @@ class Weapon {
     this.skill=db.skill;
     this.terrain=db.terrain;
   }
+
+  canAttack(uRef, hasMoved) {
+    if(uRef.will < this.will)
+      return false;
+    else if(this.maxAmmo>0 && this.curAmmo===0)
+      return false;
+    else if(uRef.en < this.en)
+      return false;
+    else if(hasMoved && !this.props.includes("P") && !uRef.hasAssail())
+      return false;
+    else
+      return true;
+  }
 }
 
 module.exports=Weapon;
