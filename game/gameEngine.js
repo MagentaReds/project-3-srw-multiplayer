@@ -7,6 +7,8 @@ var Player = require("./player.js")
 
 var Flags = require("./statesAndFlags.js").game.state;
 
+var Helpers = require("../config/helpers.js");
+
 // game engine will keep track of everything.
 
 // Client asks for available actions, engine returns answer.
@@ -225,7 +227,7 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
-        if(this.isInArr(posMov, [toR,toC])) {
+        if(Helpers.isInArr(posMov, [toR,toC])) {
           this.moveUnit(r,c,toR,toC);
           this.emptyFlags();
           this.addFlag(Flags.hasMoved);
@@ -237,7 +239,7 @@ class Game  {
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return failRes2;
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
-        if(this.isInArr(posMov, [toR,toC])) {
+        if(Helpers.isInArr(posMov, [toR,toC])) {
           this.moveUnit(r,c,toR,toC);
           this.addFlag(Flags.hasMoved);
           this.emitMap();
@@ -331,6 +333,7 @@ class Game  {
     var failRes2 = {success: false, actions:[]};
 
     var selUnit = this.map.tiles[r][c];
+    var tarUnit = this.map.tiles[toR][toC];
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -338,23 +341,23 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
-        if(this.canAttack(r,c,toR,toC,wepRef,targets)) {
+        if(this.canAttack(r,c,toR,toC,weaponId,targets)) {
           this.emptyFlags();
           this.addFlag(Flags.hasAttacked);
-          if(this.pRef.hasHitAndAway())
+          if(this.uRef.hasHitAndAway())
             this.addFlag(Flags.hasHitAndAway);
           else
             this.addFlag(Flags.turnOver);
-          this.resolveAttack(this.uRef, selUnit, wepRef);
+          this.resolveAttack(selUnit, weaponId, tarUnit);
           return sucRes;
         } else {
           return failRes;
         }
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
-        if(this.canAttack(r,c,toR,toC,wepRef,targets)) {
+        if(this.canAttack(r,c,toR,toC,weaponId,targets)) {
           this.addFlag(Flags.hasAttacked);
           this.addFlag(Flags.turnOver);
-          this.resolveAttack(this.uRef, selUnit, wepRef);
+          this.resolveAttack(selUnit, weaponId, tarUnit);
           return sucRes;
         } else {
           return failRes;
@@ -371,14 +374,43 @@ class Game  {
     }
   }
 
-  canAttack(r,c,toR,toC,wepRef,targets) {
+  //can the unit at r,c attack the unit at toR,toC with weapon wepId
+  canAttack(r,c,toR,toC,wepId,passedTargets) {
+    console.log("Checking to see if can attack");
     var selUnit = this.map.tiles[r][c];
-    if(!selUnit)
+    var tarUnit = this.map.tiles[toR][toC];
+    var targets;
+
+    var wepRef;
+
+    //if unit at r,c or toR,toC don't exist, return false
+    //else set wepRef to selUnit's weapon wepId
+    if(!selUnit || !tarUnit)
       return false;
-    else if(selUnit.id!==this.uRef.id)
-    else if(!isInArr(targets, [toR,toC]))
+    else
+      wepRef=selUnit.weapons[wepId];
+
+    //if Weapon does not exist, return false
+    if(!wepRef)
       return false;
-    else if
+
+    //if no targets are passed in that have been pre built, build our own list
+    if(passedTargets===null || passedTargets===undefined) {
+      let range = this.map.getPossibleTargets(r,c,wepRef.range[0], wepRef.range[1]);
+      targets=this.map.getTargets(playerId, range);
+    } else
+      targets=passedTargets;
+
+    //if tarUnit's pos is not in targets, return false
+    //else (passed all checks so far), return if wepRef has ammo/enough/will en to attack.
+    if(!Helpers.isInArr(targets, [toR,toC]))
+      return false;
+    else
+      return wepRef.canAttack(selUnit, this.inFlags(Flags.hasMoved));
+  }
+
+  resolveAttack(atk, wepId, def) {
+    
   }
 
 
@@ -386,13 +418,6 @@ class Game  {
     this.map.move(r,c,toR,toC);
     this.posR=toR;
     this.posC=toC;
-  }
-
-  //custom search funciton cause default javascript has no overloading of comparison operators
-  isInArr(arr1, arr2) {
-    var a = JSON.stringify(arr1);
-    var b = JSON.stringify(arr2);
-    return a.indexOf(b) != -1;
   }
 
   emitMap() {
