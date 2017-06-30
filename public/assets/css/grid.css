@@ -35,6 +35,10 @@ body {
 	padding: 0px;
 }
 
+#status {
+	top: 37px;
+}
+
 .ui-menu {
 	width: 150px;
 	position: fixed;

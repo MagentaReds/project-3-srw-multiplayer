@@ -10,6 +10,7 @@ for (var r = 0; r < 30; r++) {
 // hide our JQuery UI
 $("#menu").hide();
 $("#cancel").hide();
+$("#status").hide();
 // toggleclass blink for all li.grid-square, otherwise when we wont to show active unit tile, all tiles will start blinking
 //$("li.grid-square").toggleClass('blink');
 $(".grid-style").toggleClass('blink');
@@ -40,7 +41,7 @@ var availableWeapons = {
   ]
 }
 
-console.log(availableWeapons.weapons[1].id);
+// console.log(availableWeapons.weapons[1].id);
 
 var availableAttackTiles = [
 	[5,4],
@@ -113,11 +114,8 @@ var availableMoveSpaces = [
 	[9,6]
 ];
 
-function buildWeaponUi () {
-	for (var x = 0; x < availableWeapons.weapons.length; x++) {
-		$("#weapons").append(`<li[data-id=${availableWeapons.weapons[x].id}]><div>${availableWeapons.weapons[x].name}<div></li>`);
-	}
-}
+activeUnitFunctionality(activeUnit);
+
 
 $(`li[data-r=${5}][data-c=${5}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
 $(`li[data-r=${5}][data-c=${7}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
@@ -137,24 +135,14 @@ function blinkActiveTile(locate) {
 // for the displayActiveUnit function
 displayActiveTile(activeUnit);
 blinkActiveTile(activeUnit);
-activeUnitFunctionality(activeUnit);
-findActivePlayer();
-buildWeaponUi();
-console.log($(`li[data-id=${availableWeapons.weapons[0].id}]`).attr("data-id"));
-
-function findActivePlayer() {
-	// if statement here that checks socket.io data to see which player's turn it is
-	// also for testing purposes, binding menu buttons here as well
-	$("#move").bind("click", moveOptions);
-	// for loop to loop through weapons, #attack will not be used anymore
-	$("#attack").bind("click", attackOptions);
-}
+//console.log($(`li[data-id=${availableWeapons.weapons[0].id}]`).attr("data-id"));
 
 function displayAvailableMoveTiles(locate) {
 	// locates and loops through available tiles that active unit can move to, coloring them blue and toggling the CSS blink class
 	setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
-			$(`div[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").toggleClass('blink').bind("click", moveToTile);
+			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").toggleClass('blink');
+			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", moveToTile);
 		}
 	}, 5);
 }
@@ -163,7 +151,8 @@ function hideAvailableMoveTiles(locate) {
 	// function that is called by the cancel button to hide and unbind click event available move tiles
 	//setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
-			$(`div[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink').unbind("click");
+			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink');
+			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
 		}
 	//}, 5);
 }
@@ -181,6 +170,7 @@ function moveOptions (e) {
 	// will need request to server to see what the available move spaces are
 	displayAvailableMoveTiles(availableMoveSpaces);
 	$("#menu").hide();
+	$("#status").hide();
 	$("#cancel").show().bind("click", cancelMove);
 }
 
@@ -200,20 +190,30 @@ function cancelAttack (e) {
 function displayAttackTiles(locate) {
 	setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
-			$(`div[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").toggleClass('blink').bind("click", attackEnemy);
+			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").toggleClass('blink');
+			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", attackEnemy);
 		}
 	}, 5);
 }
 
 function hideAttackTiles(locate) {
 	for (var y = 0; y < locate.length; y++) {
-		$(`div[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink').unbind("click");
+		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink');
+		$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
 	}
 }
 
-function attackOptions() {
+function attackOptions(event) {
 	// need request from server to see what options are
-	displayAttackTiles(availableAttackTiles);
+	$("#menu").hide();
+	//console.log($(this).attr('id'));
+	console.log(event.data);
+	// if (event.data.id === ) {
+	for (var i = 0; i < event.data.length; i++) {
+		if (event.data.id === i) {
+		displayAttackTiles(availableAttackTiles);
+	}
+	}
 	$("#cancel").show().bind("click", cancelAttack);
 }
 
@@ -226,23 +226,17 @@ function attackEnemy () {
 // move, attack or use spirit command for the active unit
 // function is called when this file is loaded
 function activeUnitFunctionality(locate) {
-	if (activePlayer === 3) {
-		$(`li[data-r=${locate[0]}][data-c=${locate[1]}]`).on("click", function(){
-			$("#menu").show();
-			var dataR = $(this).attr("data-r");
-			var dataC = $(this).attr("data-c");
-			$(document).on("click", "li.grid-square", function(event) {
-				// if next tile clicked is outside the one that was previously clicked on
-				if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-					$("#menu").hide();
+		if (activePlayer === myId) {
+			$("#move").bind("click", moveOptions);
+			function buildWeaponUi () {
+				$("#weapons").empty();
+				// will need to unbind all this when turn is over
+				for (var x = 0; x < availableWeapons.weapons.length; x++) {
+					$("#weapons").append(`<li><div id="weapon_${availableWeapons.weapons[x].id}">${availableWeapons.weapons[x].name}<div></li>`).bind('click', {id: x}, attackOptions);
+					//.bind("click", attackOptions);
 				}
-			});
-		});
-	}
-	else {
-		$(`li[data-r=${locate[0]}][data-c=${locate[1]}]`).on("click", function(){
-			console.log("show status of this unit");
-		})
+			}
+			buildWeaponUi();
 	}
 }
 
@@ -251,8 +245,13 @@ function activeUnitFunctionality(locate) {
 function getActions(r,c) {
 	var actionLocation = [r,c];
 	var response = {};
-	if (activeUnit[0] == r && activeUnit[1] == c) {
-		response.actions = ["Move", "Attack"];
+	if (activePlayer === myId) {
+		if (activeUnit[0] == r && activeUnit[1] == c) {
+			response.actions = ["Move", "Attack"];
+		}
+		else {
+			response.actions = ["Status"];
+		}
 	}
 	else {
 		response.actions = ["Status"];
@@ -262,13 +261,22 @@ function getActions(r,c) {
 }
 getActions(5,6);
 
-function fillActions(actions) {
-	var menu = $("#menu");
-	menu.empty();
-	for (var i = 0; i < actions.length; i++) {
+function enableActions(actions) {
+	// var menu = $("#menu");
+	// menu.show();
+	//for (var i = 0; i < actions.length; i++) {
 		// will need to append all menu actions
-		menu.append(`<li[data-id=${availableWeapons.weapons[x].id}]><div>${availableWeapons.weapons[x].name}<div></li>`);
-	}
+		//console.log(actions[i]);
+		if (actions[0] === "Status") {
+			$("#status").show();
+			$("#menu").hide();
+		}
+		if (actions[0] === "Move") {
+			$("#menu").show();
+			$("#status").hide();
+			console.log("hi");
+		}
+	//}
 }
 
 
@@ -280,7 +288,7 @@ $(document).on("click", "li.grid-square", function(event) {
 	var response = getActions(dataR,dataC);
 
 	//socket.emit("getActions", {r: dataR,c: dataC} function(response){fillActions(response.actions)}
-	// fillActions(response.actions);
+	enableActions(response.actions);
 
 	$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
 	$(document).one("click", "li", function(event) {
