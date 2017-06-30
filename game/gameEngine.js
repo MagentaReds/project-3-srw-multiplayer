@@ -338,12 +338,27 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
-        this.emptyFlags();
-        this.addFlag(Flags.hasAttacked);
-        this.resolveAttack(this.uRef, selUnit, wepRef);
-        return sucRes;
+        if(this.canAttack(r,c,toR,toC,wepRef,targets)) {
+          this.emptyFlags();
+          this.addFlag(Flags.hasAttacked);
+          if(this.pRef.hasHitAndAway())
+            this.addFlag(Flags.hasHitAndAway);
+          else
+            this.addFlag(Flags.turnOver);
+          this.resolveAttack(this.uRef, selUnit, wepRef);
+          return sucRes;
+        } else {
+          return failRes;
+        }
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
-        return sucRes;
+        if(this.canAttack(r,c,toR,toC,wepRef,targets)) {
+          this.addFlag(Flags.hasAttacked);
+          this.addFlag(Flags.turnOver);
+          this.resolveAttack(this.uRef, selUnit, wepRef);
+          return sucRes;
+        } else {
+          return failRes;
+        }
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
         return failRes2;
       } else {
@@ -354,6 +369,16 @@ class Game  {
     } else {
       return failRes;
     }
+  }
+
+  canAttack(r,c,toR,toC,wepRef,targets) {
+    var selUnit = this.map.tiles[r][c];
+    if(!selUnit)
+      return false;
+    else if(selUnit.id!==this.uRef.id)
+    else if(!isInArr(targets, [toR,toC]))
+      return false;
+    else if
   }
 
 
@@ -373,15 +398,6 @@ class Game  {
   emitMap() {
     this.inter.emitMap(this.map.getAsciiMap());
   }
-
-  getWeaponsAction(player, r, c) {
-
-  }
-
-  attackAction(player, r, c, tR, tC) {
-
-  }
-
 
   //put each player's units on the map
   //right now hard coded for just 2 playes an one unit each
