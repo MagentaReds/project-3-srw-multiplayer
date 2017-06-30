@@ -1,16 +1,18 @@
 // code that makes 900 grid-tiles with each row and column's data index stored
 for (var r = 0; r < 30; r++) {
 	for (var c = 0; c < 30; c++) {
-		$("#grid").append(`<li class="blink grid-square" data-r = "${r}" data-c = "${c}"></li>`);
+		$("#grid").append(`<li class="grid-square" data-r = "${r}" data-c = "${c}"><div class="blink grid-style" data-r = "${r}" data-c = "${c}"></div></li>`);
 	}
 }
+// .grid-square will handle click events and icons for units will be appended to here
+// .grid-style will handle all css coloring and blinking aspects of grid
 
 // hide our JQuery UI
 $("#menu").hide();
 $("#cancel").hide();
-// toggleclass blink for all li, otherwise when we wont to show active unit tile, all tiles will start blinking
-$("li.grid-square").toggleClass('blink');
-// toggles blink for these menu buttons otherwise, they will keep blinking
+// toggleclass blink for all li.grid-square, otherwise when we wont to show active unit tile, all tiles will start blinking
+//$("li.grid-square").toggleClass('blink');
+$(".grid-style").toggleClass('blink');
 
 // example location of where an active unit could be
 var activeUnit = [];
@@ -117,16 +119,17 @@ function buildWeaponUi () {
 	}
 }
 
-$(`li[data-r=${5}][data-c=${5}]`).append(`<img src=assets/media/icon1.png height="65px">`);
+$(`li[data-r=${5}][data-c=${5}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
+$(`li[data-r=${5}][data-c=${7}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
 
 function displayActiveTile(locate) {
 	// locates active tile where unit will be and colors in tile with green
-	$(`li[data-r=${locate[0]}][data-c=${locate[1]}]`).css('background', "#64dd17").css('opacity', "0.5");
+	$(`div[data-r=${locate[0]}][data-c=${locate[1]}]`).css('background', "#64dd17").css('opacity', "0.5");
 }
 function blinkActiveTile(locate) {
 	// locates active tile where unit will be and blinks tile
 	// seperate function because we will want to keep coloring in active tile while not toggling the blink
-	$(`li[data-r=${locate[0]}][data-c=${locate[1]}]`).toggleClass('blink');
+	$(`div[data-r=${locate[0]}][data-c=${locate[1]}]`).toggleClass('blink');
 }
 // call these functions on load
 // from server we will get an array where the active unit on current turn is located
@@ -151,7 +154,7 @@ function displayAvailableMoveTiles(locate) {
 	// locates and loops through available tiles that active unit can move to, coloring them blue and toggling the CSS blink class
 	setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
-			$(`li[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").toggleClass('blink').bind("click", moveToTile);
+			$(`div[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").toggleClass('blink').bind("click", moveToTile);
 		}
 	}, 5);
 }
@@ -160,7 +163,7 @@ function hideAvailableMoveTiles(locate) {
 	// function that is called by the cancel button to hide and unbind click event available move tiles
 	//setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
-			$(`li[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink').unbind("click");
+			$(`div[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink').unbind("click");
 		}
 	//}, 5);
 }
@@ -177,6 +180,7 @@ function moveOptions (e) {
 	// use availableMoveSpaces as argument for displayAvailableMoveTiles function and show cancel button as well as bind it to cancelMove function
 	// will need request to server to see what the available move spaces are
 	displayAvailableMoveTiles(availableMoveSpaces);
+	$("#menu").hide();
 	$("#cancel").show().bind("click", cancelMove);
 }
 
@@ -196,14 +200,14 @@ function cancelAttack (e) {
 function displayAttackTiles(locate) {
 	setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
-			$(`li[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").toggleClass('blink').bind("click", attackEnemy);
+			$(`div[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").toggleClass('blink').bind("click", attackEnemy);
 		}
 	}, 5);
 }
 
 function hideAttackTiles(locate) {
 	for (var y = 0; y < locate.length; y++) {
-		$(`li[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink').unbind("click");
+		$(`div[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink').unbind("click");
 	}
 }
 
@@ -227,7 +231,7 @@ function activeUnitFunctionality(locate) {
 			$("#menu").show();
 			var dataR = $(this).attr("data-r");
 			var dataC = $(this).attr("data-c");
-			$(document).on("click", "li", function(event) {
+			$(document).on("click", "li.grid-square", function(event) {
 				// if next tile clicked is outside the one that was previously clicked on
 				if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
 					$("#menu").hide();
@@ -278,11 +282,11 @@ $(document).on("click", "li.grid-square", function(event) {
 	//socket.emit("getActions", {r: dataR,c: dataC} function(response){fillActions(response.actions)}
 	// fillActions(response.actions);
 
-	$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
+	$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
 	$(document).one("click", "li", function(event) {
 		// if next clicked tile is outside the one that was previously clicked on
 		if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-				$(`li[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
+				$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
 			// call this function so it's background doesn't become transparent
 			displayActiveTile(activeUnit);
 		}

@@ -22,6 +22,19 @@ body {
 	text-align: center;
 }
 
+#grid li img {
+	margin-bottom: 10px;
+}
+
+.grid-style {
+	position: absolute;
+	float: left;
+	height: 50px;
+	width: 50px;
+	margin: 0px;
+	padding: 0px;
+}
+
 .ui-menu {
 	width: 150px;
 	position: fixed;
