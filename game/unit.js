@@ -1,9 +1,8 @@
 "use strict";
 
-var dbMech= require("../models/mech.js");
-var dbPilot= require("../models/pilot.js");
-
 var Weapon = require("./weapon.js");
+
+var Flags = require("./statesAndFlags").unit.status;
 
 class Unit {
   constructor(playerId, pilotDb, mechDb, pilotLevel=50) {
@@ -14,7 +13,9 @@ class Unit {
     this.makeWeapons(mechDb);
     this.size = mechDb.size;
     this.hp = mechDb.stats[0];
+    this.hpMax = mechDb.stats[0];
     this.en = mechDb.stats[1],
+    this.enMax = mechDb.stats[1],
     this.mob = mechDb.stats[2];
     this.armor = mechDb.stats[4];
     this.mel = Math.floor(pilotDb.stats.mel[0]*pilotLevel+pilotDb.stats.mel[1]);
@@ -24,12 +25,18 @@ class Unit {
     this.def = Math.floor(pilotDb.stats.def[0]*pilotLevel+pilotDb.stats.def[1]);
     this.man = Math.floor(pilotDb.stats.man[0]*pilotLevel+pilotDb.stats.man[1]);
     this.sp = Math.floor(pilotDb.stats.sp[0]*pilotLevel+pilotDb.stats.sp[1]);
+    this.spMax = Math.floor(pilotDb.stats.sp[0]*pilotLevel+pilotDb.stats.sp[1]);
     this.sc = [...pilotDb.spiritCommands];
     this.pilotSkills = [...pilotDb.pilotSkills];
     this.mechAbilities = [...mechDb.abilities];
     this.r=-1;
     this.c=-1;
     this.owner=playerId;
+    this.willGain=pilotDb.willGain;
+    this.will=100;
+
+    this.flags=[];
+    this.checkSkills();
   }
 
   makeWeapons(db) {
@@ -45,6 +52,33 @@ class Unit {
         return true;
 
     return false;
+  }
+
+  hasFlag(flag) {
+    return this.flags.includes(flag);
+  }
+
+  hasAssail(){
+    return this.flags.includes(Flags.assail);
+  }
+
+  //checks the pilot's skills, and does stuff based off them;
+  checkSkills() {
+
+  }
+
+  //returns maximum movement in squares
+  //assume we are flying/in space for now, will make generic later
+  getMove(air=true) {
+    var result=this.move;
+    if(this.hasFlag(Flags.accel))
+      result+=2;
+    
+    if(air)
+      if(this.en<result)
+        return this.en;
+    
+    return result;
   }
 
   setRC(r,c) {
