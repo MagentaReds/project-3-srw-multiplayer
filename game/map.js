@@ -1,5 +1,6 @@
 "use strirt";
 
+var Helpers = require("../config/helpers.js");
 
 //for simpliric's sake, maps are going to all be in spare, with no enviromental stuff
 //earh "tile" in the map will hold an objert of {placer, unit} or null if there is no unit there.
@@ -44,13 +45,13 @@ class Map {
     if(m===0)
       return;
     
-    if(this.isInBounds(r, c+1) && !this.isInArr(history,[r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
+    if(this.isInBounds(r, c+1) && !Helpers.isInArr(history,[r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
       this.getPTHelper(r, c+1, min, max, oR, oC, m-1, history);
-    if(this.isInBounds(r+1, c) && !this.isInArr(history,[r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
+    if(this.isInBounds(r+1, c) && !Helpers.isInArr(history,[r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
       this.getPTHelper(r+1, c, min, max, oR, oC, m-1, history);
-    if(this.isInBounds(r, c-1) && !this.isInArr(history,[r, c-1]) && this.farther(oR,oC,r,c,r,c-1))
+    if(this.isInBounds(r, c-1) && !Helpers.isInArr(history,[r, c-1]) && this.farther(oR,oC,r,c,r,c-1))
       this.getPTHelper(r, c-1, min, max, oR, oC, m-1, history);
-    if(this.isInBounds(r-1, c) && !this.isInArr(history,[r-1, c]) && this.farther(oR,oC,r,c,r-1,c))
+    if(this.isInBounds(r-1, c) && !Helpers.isInArr(history,[r-1, c]) && this.farther(oR,oC,r,c,r-1,c))
       this.getPTHelper(r-1, c, min, max, oR, oC, m-1, history);
 
   }
@@ -62,13 +63,6 @@ class Map {
 
   isInBounds(r,c) {
     return ((r>=0 && r<this.rows) && (c>=0 && c<this.cols));
-  }
-
-  //custom search funciton cause default javascript has no overloading of comparison operators
-  isInArr(arr1, arr2) {
-    var a = JSON.stringify(arr1);
-    var b = JSON.stringify(arr2);
-    return a.indexOf(b) != -1;
   }
 
   //get's the possible movement squares from the unit at tile r,c
@@ -91,16 +85,16 @@ class Map {
 
     //RECURSE
     //E
-    if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===undefined && !this.isInArr(history,[r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
+    if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===undefined && !Helpers.isInArr(history,[r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
       this.getPMHelper(r,c+1,oR,oC, m-1, history);
     //S
-    if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===undefined && !this.isInArr(history,[r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
+    if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===undefined && !Helpers.isInArr(history,[r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
       this.getPMHelper(r+1,c,oR,oC, m-1, history);
     //W
-    if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===undefined && !this.isInArr(history,[r, c-1]) && this.farther(oR,oC,r,c,r,c-1))
+    if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===undefined && !Helpers.isInArr(history,[r, c-1]) && this.farther(oR,oC,r,c,r,c-1))
       this.getPMHelper(r,c-1,oR,oC, m-1, history);
     //N
-    if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===undefined && !this.isInArr(history,[r-1, c])&& this.farther(oR,oC,r,c,r-1,c))
+    if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===undefined && !Helpers.isInArr(history,[r-1, c])&& this.farther(oR,oC,r,c,r-1,c))
       this.getPMHelper(r-1,c,oR,oC, m-1, history);
       
   }
