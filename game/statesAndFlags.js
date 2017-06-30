@@ -13,7 +13,7 @@ var statesAndFlags ={
       defenderConfirm: "Defender has selected defend action",
       hasAttacked: "Unit has finished attacking",
       standby: "Unit has stoodby, Moving on",
-      hasHitandAway: "Unit can move after attcking",
+      hasHitAndAway: "Unit can move after attcking",
       turnOver: "Unit's turn has ended"
     },
     action: {
