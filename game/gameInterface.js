@@ -85,6 +85,18 @@ class GameRoom {
   emitMesssage(msg) {
     this.nsp.to(this.name),emit("game message", {msg});
   }
+
+  emitCounterActions(playerId, msg) {
+    var socketRef;
+    for(var i=0; i<this.clients.length; ++i)
+      if(this.clients[i].id===playerId)
+        socketRef = this.clients[i];
+
+    socketRef.emit("get counter", (ans)=>{
+      
+    });
+    
+  }
 }
 
 //This class will make and manage all socket.io namespaces/rooms and how they itneract with the Game object
@@ -276,38 +288,6 @@ class GameInterface {
     cb(response);
   }
   
-  bindSocketListeners1(socket) {
-
-  }
-
-  setupListeners() {
-    this.io.to(this.namespace.name).on("request actions", function(data, cb){
-      console.log(`actions requested from id${data.player}`);
-      var response = {
-        actions: this.game.requestActions(data.player, data.r, data.c),
-        msg: `Action List at ${data.r},${data.c} has been sent`
-      };
-
-      cb(response);
-    });
-
-    this.io.on("move", function(data, cb){
-      var response ={};
-
-      var didMove = this.game.moveAction(data.player, data.r, data.c, data.R, data.C);
-      if(didMove) {
-        response.success = true;
-        response.msg = `Moved unit from [${data.r},${data.c}] to [${data.R},${data.C}]`;
-        namespace.emit("update map", {map: this.game.map.getAsciiMap()});
-
-      } else {
-        response.success = false;
-        response.msg = "Failed to move unit";
-      }
-
-      cb(response);
-    });
-  }
 }
 
 module.exports = GameInterface;
