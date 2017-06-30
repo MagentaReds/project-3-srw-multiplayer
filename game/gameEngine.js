@@ -114,7 +114,7 @@ class Game  {
     if(this.pRef.id===playerId){
       if(!selUnit) {
         return ["Status", "Skip Turn", "Surrender"];
-      } else if(selUnit.id !== this.uRef.id){
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return ["Status"];
       } else if(this.inFlags(Flags.newRound)) {
         return ["Move", "Attack", "Status"];
@@ -146,7 +146,7 @@ class Game  {
         return ["Status", "Skip Turn", "Surrender"];
       } 
       //if the the tile contains a unit is not the active unit
-      else if(selUnit.id !== this.uRef.id){
+      else if(selUnit.id !== this.uRef.id  || selUnit.owner !== playerId){
         return ["Status"];
       } 
       //State1:  if it is the start of a new round (the active unit has not commited any actions)
@@ -187,7 +187,7 @@ class Game  {
     if(this.pRef.id===playerId){
       if(!selUnit) {
         return failRes;
-      } else if(selUnit.id !== this.uRef.id){
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
         return sucRes;
@@ -222,7 +222,7 @@ class Game  {
     if(this.pRef.id===playerId){
       if(!selUnit) {
         return failRes;
-      } else if(selUnit.id !== this.uRef.id){
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
         if(this.isInArr(posMov, [toR,toC])) {
@@ -265,7 +265,7 @@ class Game  {
     if(this.pRef.id===playerId){
       if(!selUnit) {
         return failRes;
-      } else if(selUnit.id !== this.uRef.id){
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
         return sucRes;
@@ -300,9 +300,47 @@ class Game  {
     if(this.pRef.id===playerId){
       if(!selUnit) {
         return failRes;
-      } else if(selUnit.id !== this.uRef.id){
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
+        return sucRes;
+      } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        return sucRes;
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+        return failRes2;
+      } else {
+        return failRes;
+      }
+    } else if(!selUnit) {
+      return failRes;
+    } else {
+      return failRes;
+    }
+  }
+
+  doAttack(playerId, r, c, toR, toC, weaponId) {
+    var wepRef = this.uRef.weapons[weaponId];
+    var range, targets;
+    if(wepRef) {
+      range = this.map.getPossibleTargets(r,c,wepRef.range[0], wepRef.range[1]);
+      targets = this.map.getTargets(playerId, range);
+    }
+
+    var sucRes = {success: true, actions:[]};
+    var failRes = {success: false, actions:[]};
+    var failRes2 = {success: false, actions:[]};
+
+    var selUnit = this.map.tiles[r][c];
+
+    if(this.pRef.id===playerId){
+      if(!selUnit) {
+        return failRes;
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
+        return failRes;
+      } else if(this.inFlags(Flags.newRound)) {
+        this.emptyFlags();
+        this.addFlag(Flags.hasAttacked);
+        this.resolveAttack(this.uRef, selUnit, wepRef);
         return sucRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return sucRes;
