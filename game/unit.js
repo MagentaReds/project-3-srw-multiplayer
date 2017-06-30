@@ -3,12 +3,15 @@
 var dbMech= require("../models/mech.js");
 var dbPilot= require("../models/pilot.js");
 
+var Weapon = require("./weapon.js");
+
 class Unit {
   constructor(playerId, pilotDb, mechDb, pilotLevel=50) {
     this.name = pilotDb.name;
     this.move = mechDb.move;
     this.pilotLevel=pilotLevel;
-    this.weapons = [ ...mechDb.weapons,...mechDb.iWeapons];
+    this.weapons = [];
+    this.makeWeapons(mechDb);
     this.size = mechDb.size;
     this.hp = mechDb.stats[0];
     this.en = mechDb.stats[1],
@@ -27,6 +30,21 @@ class Unit {
     this.r=-1;
     this.c=-1;
     this.owner=playerId;
+  }
+
+  makeWeapons(db) {
+    for(var i=0; i<db.weapons.length; i++)
+      this.weapons.push(new Weapon(db.weapons[i]));
+    for(var i=0; i<db.iWeapons.length; i++)
+      this.weapons.push(new Weapon(db.iWeapons[i]));  
+  }
+
+  hasHitAndAway() {
+    for(var i=0; i<this.pilotSkills.length; ++i)
+      if(this.pilotSkills[i][0]==="Hit & Away")
+        return true;
+
+    return false;
   }
 
   setRC(r,c) {
