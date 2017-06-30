@@ -188,6 +188,20 @@ var statesAndFlags ={
       prayer: "Prayer",
       love: "Love"
     }
+  },
+  unit: {
+    status: {
+      accel: "Ac",
+      net: "Net",
+      goAgain: "+1",
+      strike: "St",
+      focus: "Fo",
+      guard: "Gu",
+      guts: "Gt",
+      mercy: "Mc",
+      alert: "Al",
+      assail: "As"
+    }
   }
 };
 
