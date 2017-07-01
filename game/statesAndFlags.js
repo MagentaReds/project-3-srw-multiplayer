@@ -14,7 +14,8 @@ var statesAndFlags ={
       hasAttacked: "Unit has finished attacking",
       standby: "Unit has stoodby, Moving on",
       hasHitAndAway: "Unit can move after attcking",
-      turnOver: "Unit's turn has ended"
+      turnOver: "Unit's turn has ended",
+      waitingForDef: "Game is on hold, waiting for Defender"
     },
     action: {
       move: "Move",
