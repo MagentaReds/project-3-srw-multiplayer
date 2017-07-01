@@ -11,6 +11,7 @@ for (var r = 0; r < 30; r++) {
 $("#menu").hide();
 $("#cancel").hide();
 $("#status").hide();
+$("#endSurrender").hide();
 // toggleclass blink for all li.grid-square, otherwise when we wont to show active unit tile, all tiles will start blinking
 //$("li.grid-square").toggleClass('blink');
 $(".grid-style").toggleClass('blink');
@@ -29,14 +30,45 @@ var availableWeapons = {
       name: "Attack 1",
       range: [1,1],
       dmg: 2000,
-      canUse: true
+      canUse: true,
+			hit: 30,
+			ammo: "20/20"
     },
     {
       id: 4,
       name: "Attack Fulls",
       range: [3,7],
       dmg: 1000,
-      canUse: false
+      canUse: false,
+			hit: 40,
+			ammo: "30/30"
+    },
+		{
+      id: 4,
+      name: "Attack Fulls",
+      range: [3,7],
+      dmg: 1000,
+      canUse: false,
+			hit: 40,
+			ammo: "30/30"
+    },
+		{
+      id: 4,
+      name: "Attack Fulls",
+      range: [3,7],
+      dmg: 1000,
+      canUse: false,
+			hit: 40,
+			ammo: "30/30"
+    },
+		{
+      id: 4,
+      name: "Attack Fulls",
+      range: [3,7],
+      dmg: 1000,
+      canUse: false,
+			hit: 40,
+			ammo: "30/30"
     }
   ]
 }
@@ -218,7 +250,7 @@ function activeUnitFunctionality(locate) {
 			function buildWeaponUi () {
 				$("#weapons").empty();
 				for (var x = 0; x < availableWeapons.weapons.length; x++) {
-					$("#weapons").append(`<li><div class = weapon data="weapon_${availableWeapons.weapons[x].id}">${availableWeapons.weapons[x].name}<div></li>`);
+					$("#weapons").append(`<li><div class = weapon data="weapon_${availableWeapons.weapons[x].id}"><span class="ui-icon ui-icon-notice"></span>${availableWeapons.weapons[x].name}<div></li>`);
 				}
 			}
 			buildWeaponUi();
@@ -237,6 +269,47 @@ $(document).on("click", "div.weapon", function(event){
 	$("#cancel").show().bind("click", cancelAttack);
 });
 
+$(document).on("click", "div#statusDiv", function(event){
+	console.log("GET DATA PACKET FROM BACK END");
+	$("#mechName").empty();
+	$("#mechPic").empty();
+	$("#healthNum").empty();
+	$("#energyNum").empty();
+	$("#pilotPic").empty();
+	$("#pilotName").empty();
+	$("#pilotWill").empty();
+	$("#weaponColumns").empty();
+	$("#weaponData").empty();
+	$("#statusModal").dialog("open");
+	$("#mechName").append("Mech Name");
+	var health = parseInt((1500 / 2500)*100);
+	var energy = parseInt((100 / 216)*100);
+	$("#healthNum").append("HP: 1500 / 2500");
+	$( function() {
+    $( "#healthBar" ).progressbar({
+      value: health
+    });
+  } );
+	$("#energyNum").append("EN: 100 / 216");
+	$( function() {
+    $( "#energyBar" ).progressbar({
+      value: energy
+    });
+  } );
+	$("#pilotName").append("Pilot Name");
+	$("#pilotWill").append("Will 100");
+	$("#weaponColumns").append("Weapon | Ammo | Dmg | Rng | Hit");
+	$("#mechPic").append(`<img src=assets/media/wildwurger-l.png style="margin:-15px 0px 3px -3px; height:115px;">`);
+	$("#pilotPic").append(`<img src=assets/media/alfimi.png style="margin:-50px 0px 0px -50px; height:150px;">`);
+	for (var x = 0; x < availableWeapons.weapons.length; x++) {
+		$("#weaponData").append(`${availableWeapons.weapons[x].name} | ${availableWeapons.weapons[x].ammo} | ${availableWeapons.weapons[x].dmg} | ${availableWeapons.weapons[x].range[0]}~${availableWeapons.weapons[x].range[1]} | +${availableWeapons.weapons[x].hit}<br>`);
+	}
+	// if (availableWeapons.weapons.length > 2) {
+	// 	$("#pilotData").css("height", "185px");
+	// }
+
+})
+
 // code for checking and displaying which tile was clicked on
 // also the UI for displaying options for clicked grid square should pop up here
 function getActions(r,c) {
@@ -246,17 +319,23 @@ function getActions(r,c) {
 		if (activeUnit[0] == r && activeUnit[1] == c) {
 			response.actions = ["Move", "Attack"];
 		}
-		else {
+		else if (/*there is a unit here*/ 5 == r && 7 == c) {
 			response.actions = ["Status"];
 		}
+		else {
+			response.actions = ["End Turn", "Surrender"];
+		}
+	}
+	else if (/*there is a unit here*/ 5 == r && 7 == c) {
+		response.actions = ["Status"];
 	}
 	else {
-		response.actions = ["Status"];
+		response.actions = ["End Turn", "Surrender"];
 	}
 	console.log(response);
 	return response;
 }
-getActions(5,5);
+getActions(5,7);
 
 function enableActions(actions) {
 	// var menu = $("#menu");
@@ -267,11 +346,18 @@ function enableActions(actions) {
 		if (actions[0] === "Status") {
 			$("#status").show();
 			$("#menu").hide();
+			$("#endSurrender").hide();
 		}
 		if (actions[0] === "Move") {
 			$("#menu").show();
+			$("#endSurrender").hide();
 			$("#status").hide();
 			console.log("hi");
+		}
+		if (actions[0] === "End Turn") {
+			$("#endSurrender").show();
+			$("#menu").hide();
+			$("#status").hide();
 		}
 	//}
 }
