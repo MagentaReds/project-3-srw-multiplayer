@@ -39,6 +39,7 @@ class Game  {
     this.target = null;
     this.weapon = null;
     this.defender = null;
+    this.defWep = null;
 
     //things needed to be set to fully resolve an attack
     //target (targets (eventually if/when we get map weapons and chain attacks going))
@@ -46,7 +47,7 @@ class Game  {
     //attacking weapon
     //defending action
     //defending weapon
-    //Supports (off/Def) (eventually)
+    //Supports (Off/Def) (eventually)
 
     this.posR=-1;
     this.posC=-1;
@@ -483,14 +484,25 @@ class Game  {
   //do all the things to resolve the attack (apply damage, remove ammo/en)
   resolveAttack(atk, wepId, def) {
     this.addFlag(Flags.waitingForDef);
+    this.addFlag(Flags.hasAttacked);
     this.defender=def;
+    this.weapon=wepId;
     this.getDefenseAction(def, atk);
   }
 
+  //is called when the defender 
   resolveAttack2(action, wepId) {
     console.log("A Full round is almost all over");
-    this.removeFlag(Flags.waitingForDef);
+    if(action==="Attack")
+      this.defWep=wepId;
     this.computeAttack(wepId, this.defender, data.counterType);
+    this.removeFlag(Flags.waitingForDef);
+  }
+
+  computeAttack() {
+    //if we get here, wepId can target defender, so just do the cacls;
+    this.uRef.attack(this.weapon, this.defender, );
+
   }
 
   //emit defense options to the defender player
@@ -556,6 +568,19 @@ class Game  {
       return 0;
     else
       return Math.floor(finalHit);
+  }
+
+  getDamage(atkRef, defRef, wepId){
+    if(!atkRef || !defRef)
+      return 0;
+
+    var wep = atkRef.weapons[wepId];
+    if(!wep)
+      return 0;
+
+    var distance = (Math.abs(atkRef.r-defRef.r)+Math.abs(atkRef.c-defRef.c));
+    if(distance<wep.range[0] || distance>wep.range[1])
+      return 0;
   }
 
 
