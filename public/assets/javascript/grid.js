@@ -203,20 +203,6 @@ function hideAttackTiles(locate) {
 	}
 }
 
-function attackOptions(event) {
-	// need request from server to see what options are
-	$("#menu").hide();
-	//console.log($(this).attr('id'));
-	console.log(event.data);
-	// if (event.data.id === ) {
-	for (var i = 0; i < event.data.length; i++) {
-		if (event.data.id === i) {
-		displayAttackTiles(availableAttackTiles);
-	}
-	}
-	$("#cancel").show().bind("click", cancelAttack);
-}
-
 function attackEnemy () {
 	console.log("Request Attack Action sent to server");
 	console.log([parseInt($(this).attr("data-r")),parseInt($(this).attr("data-c"))]);
@@ -227,18 +213,29 @@ function attackEnemy () {
 // function is called when this file is loaded
 function activeUnitFunctionality(locate) {
 		if (activePlayer === myId) {
+			// will need to unbind this when turn is over
 			$("#move").bind("click", moveOptions);
 			function buildWeaponUi () {
 				$("#weapons").empty();
-				// will need to unbind all this when turn is over
 				for (var x = 0; x < availableWeapons.weapons.length; x++) {
-					$("#weapons").append(`<li><div id="weapon_${availableWeapons.weapons[x].id}">${availableWeapons.weapons[x].name}<div></li>`).bind('click', {id: x}, attackOptions);
-					//.bind("click", attackOptions);
+					$("#weapons").append(`<li><div class = weapon data="weapon_${availableWeapons.weapons[x].id}">${availableWeapons.weapons[x].name}<div></li>`);
 				}
 			}
 			buildWeaponUi();
 	}
 }
+
+// clicking on weapon
+$(document).on("click", "div.weapon", function(event){
+	var data = $(this).attr("data");
+	console.log(data);
+	$("#menu").hide();
+	// need request from server to see what the availableAttackTiles are;
+	// var availableAttackTiles = [];
+	// availableAttackTiles =[response];
+	displayAttackTiles(availableAttackTiles);
+	$("#cancel").show().bind("click", cancelAttack);
+});
 
 // code for checking and displaying which tile was clicked on
 // also the UI for displaying options for clicked grid square should pop up here
