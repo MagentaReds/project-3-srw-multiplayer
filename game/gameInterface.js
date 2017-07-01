@@ -1,4 +1,6 @@
 
+var Promise = require("bluebird");
+
 var Game = require("./gameEngine.js");
 var Client = require("./client.js");
 
@@ -29,6 +31,7 @@ class GameRoom {
     socket.me.room=this.name;
     socket.me.slot=slot;
     socket.me.roomNum = this.roomNum;
+    socket.me.socketId=socket.id;
     this.clients[slot] = socket.me;
     socket.join(this.name);
     //console.log(this.clients);
@@ -86,16 +89,13 @@ class GameRoom {
     this.nsp.to(this.name),emit("game message", {msg});
   }
 
-  emitCounterActions(playerId, msg) {
+  emitGetCounter(playerId, data) {
     var socketRef;
     for(var i=0; i<this.clients.length; ++i)
       if(this.clients[i].id===playerId)
         socketRef = this.clients[i];
 
-    socketRef.emit("get counter", (ans)=>{
-      
-    });
-    
+    this.nsp.to(socketRef.socketId).emit("get counter", data);   
   }
 }
 
@@ -171,8 +171,10 @@ class GameInterface {
       socket.on("get move", (data,cb)=>{this.onGetMove(socket, data, cb)});
       socket.on("do move", (data, cb)=>{this.onDoMove(socket, data, cb)});
       socket.on("get attack", (data,cb)=>{this.onGetAttack(socket, data, cb)});
-      socket.on("get targets", (data,cb)=>{this.onGetTargets(socket, data, cb)});
+      socket.on("get targets", (data,cb)=>{this.onGetTargets(socket, data, cb)
+      socket.on("get stats", (data, cb)=>{this.onGetStats(socket, data, cb)});});
       socket.on("do attack", (data, cb)=>{this.onDoAttack(socket, data, cb)});
+      socket.on("do counter", (data, cb)=>{this.onDoCounter(socket, data, cb)});
 
     });
   }
@@ -280,10 +282,26 @@ class GameInterface {
     cb(response);
   }
 
+  onGetStats(socket, data, cb){
+    console.log(`Get Stats requested from id${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var response = this.rooms[rNum].game.getStats(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
+
+    cb(response);
+  }
+
   onDoAttack(socket, data, cb) {
     console.log(`Do Attack requested from id${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.doAttack(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
+
+    cb(response);
+  }
+
+  onDoCounter(socket, data, cb) {
+    console.log(`Do Counter requested from id${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var response = this.rooms[rNum].game.doCounter(socket.me.id, data.action, data.weapon);
 
     cb(response);
   }
