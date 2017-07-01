@@ -2,6 +2,8 @@
 
 var mogoose;
 
+var Promise = require("bluebird");
+
 var Map = require("./map.js");
 var Player = require("./player.js")
 
@@ -33,9 +35,18 @@ class Game  {
     this.currentPlayer=-1;
     this.pRef = null;
     this.uRef = null;
-    this.turn =null;
+    this.turn = null;
     this.target = null;
     this.weapon = null;
+    this.defender = null;
+
+    //things needed to be set to fully resolve an attack
+    //target (targets (eventually if/when we get map weapons and chain attacks going))
+    //defender
+    //attacking weapon
+    //defending action
+    //defending weapon
+    //Supports (off/Def) (eventually)
 
     this.posR=-1;
     this.posC=-1;
@@ -293,11 +304,42 @@ class Game  {
       targets = this.map.getTargets(playerId, range);
     }
 
-    var sucRes = {success: true, range: range, targets: targets, actions:[]};
+    var sucRes = {success: true, range: range, targets: targets, actions:["Stats"]};
     var failRes = {success: false, range: [], targets: [], actions:[]};
     var failRes2 = {success: false, range: [], targets: [], actions:["Cancel"]};
 
     var selUnit = this.map.tiles[r][c];
+
+    if(this.pRef.id===playerId){
+      if(!selUnit) {
+        return failRes;
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
+        return failRes;
+      } else if(this.inFlags(Flags.newRound)) {
+        return sucRes;
+      } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        return sucRes;
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+        return failRes2;
+      } else {
+        return failRes;
+      }
+    } else if(!selUnit) {
+      return failRes;
+    } else {
+      return failRes;
+    }
+  }
+
+  getStats(playerId, r, c, toR, toC, weaponId) {
+    var wepRef = this.uRef.weapons[weaponId];
+    var selUnit = this.map.tiles[r][c];
+    var tarUnit = this.map.tiles[toR][toC];
+
+    var sucRes = {success: true, stats: this.getAttackStats(selUnit, tarUnit, null), actions:["Stats"]};
+    var failRes = {success: false, actions:[]};
+    var failRes2 = {success: false, actions:["Cancel"]};
+
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -374,9 +416,32 @@ class Game  {
     }
   }
 
+  doCounter(playerId, action, weaponId) {
+    var wepRef = this.defender.weapons[weaponId];
+
+    var sucRes = {success: true, actions:[]};
+    var failRes = {success: false, actions:[]};
+
+
+    if(this.defender.owner===playerId){
+      if(action==="Attack"){
+        if(this.canAttack(this.defender.r, this.defender.c, this.uRef.r, this.uRef.c, weaponId)) {
+          this.resolveAttack2(action, weaponId);
+          return sucRes;
+        } else
+          return failRes;
+      } else if(action==="Guard" || action==="Evade") {
+        this.resolveAttack2(action, weaponId);
+        return sucRes;
+      } else
+        return failRes;
+    } else
+      return failRes;
+  }
+
   //can the unit at r,c attack the unit at toR,toC with weapon wepId
   canAttack(r,c,toR,toC,wepId,passedTargets) {
-    console.log("Checking to see if can attack");
+    //console.log("Checking to see if can attack");
     var selUnit = this.map.tiles[r][c];
     var tarUnit = this.map.tiles[toR][toC];
     var targets;
@@ -395,22 +460,102 @@ class Game  {
       return false;
 
     //if no targets are passed in that have been pre built, build our own list
-    if(passedTargets===null || passedTargets===undefined) {
-      let range = this.map.getPossibleTargets(r,c,wepRef.range[0], wepRef.range[1]);
-      targets=this.map.getTargets(playerId, range);
-    } else
-      targets=passedTargets;
+    // if(passedTargets===null || passedTargets===undefined) {
+    //   let range = this.map.getPossibleTargets(r,c,wepRef.range[0], wepRef.range[1]);
+    //   targets=this.map.getTargets(playerId, range);
+    // } else
+    //   targets=passedTargets;
+
+    var distance = (Math.abs(r-toR)+Math.abs(c-toC));
+    if(distance<wepRef.range[0] || distance>wepRef.range[1])
+      return false;
+    else 
+      return wepRef.canAttack(selUnit, this.inFlags(Flags.hasMoved));
 
     //if tarUnit's pos is not in targets, return false
     //else (passed all checks so far), return if wepRef has ammo/enough/will en to attack.
-    if(!Helpers.isInArr(targets, [toR,toC]))
-      return false;
-    else
-      return wepRef.canAttack(selUnit, this.inFlags(Flags.hasMoved));
+    // if(!Helpers.isInArr(targets, [toR,toC]))
+    //   return false;
+    // else
+    //   return wepRef.canAttack(selUnit, this.inFlags(Flags.hasMoved));
   }
 
+  //do all the things to resolve the attack (apply damage, remove ammo/en)
   resolveAttack(atk, wepId, def) {
-    
+    this.addFlag(Flags.waitingForDef);
+    this.defender=def;
+    this.getDefenseAction(def, atk);
+  }
+
+  resolveAttack2(action, wepId) {
+    console.log("A Full round is almost all over");
+    this.removeFlag(Flags.waitingForDef);
+    this.computeAttack(wepId, this.defender, data.counterType);
+  }
+
+  //emit defense options to the defender player
+  //actioncs ["Attack", "Evade", "Defend"]
+  //later on will get  also get options if there are Off.Supp and Off.Def Units around, get teir data too
+  //Will also send all availb eweapons that they can Attack with.
+  getDefenseAction(def, atk) {
+    var attackStats = this.getAttackStats(def, atk);
+
+    var data = {actions: ["Attack", "Evade", "Defend"], weapons:def.weapons, stats:attackStats};
+    this.inter.emitGetCounter(def.owner, data);
+  }
+
+  //returns either a tuple, or an array of tuples
+  getAttackStats(atkRef, defRef, weaponId=null) {
+    if(weaponId!==null) {
+      if(!atkRef.weapons[weaponId].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, weaponId, null))
+        return [false, 0];
+      else
+        return [true, this.getHitPercent(atkRef, defRef, weaponId)];
+    }
+    //tuple of [Boolean, hitPercent]
+    var attackStats = new Array(atkRef.weapons.length);
+    for(var i=0; i<attackStats.length; ++i) {
+      if(atkRef.weapons[i].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, i, null))
+        attackStats[i]=[false, 0];
+      else
+        attackStats[i] = [true, this.getHitPercent(atkRef, defRef, i)];
+    }
+    return attackStats;
+  }
+
+  //Assumes that the defender is in range of atk's weapon
+  getHitPercent(atkRef, defRef, wepId) {
+    if(!atkRef || !defRef)
+      return 0;
+
+    var wep = atkRef.weapons[wepId];
+    if(!wep)
+      return 0;
+
+    var distance = (Math.abs(atkRef.r-defRef.r)+Math.abs(atkRef.c-defRef.c));
+    if(distance<wep.range[0] || distance>wep.range[1])
+      return 0;
+
+    if(defRef.hasAlert())
+      return 0;
+    if(atkRef.hasStrike())
+      return 100;
+
+    //Range Adjust = (5 - Range from Attacker to Defender) x 3
+    //1.Base Hit = (Attack Side Pilot Hit/2 + 140) x Attack Side Total Performance Adjustment + Attack Side WP Hit Rate Adjustment + Attack Side Special Skill Adjustment
+    //2.Base Evade = (Defense Side Pilot Evade/2 + Defense Side Unit Mobility ) x Defense Side Final Performance Adjustment + Defense Side Special Skill Adjustment
+    //3.Final Hit = (1+2) x Defense Side Unit Size Adjustment + Range Adjustment + Command Adjustment - Defense Side Performance
+    var rangeAdjust = (5 - distance) * 3;
+    var baseHit = (atkRef.hit/2+140) * (1) + wep.hit + (0);
+    var baseEvd = (defRef.evd/2 + defRef.mob) * (1) + (0);
+    var finalHit = (baseHit-baseEvd) * (1) + rangeAdjust + (0) - (0);
+
+    if(finalHit>100)
+      return 100;
+    else if(finalHit<0)
+      return 0;
+    else
+      return Math.floor(finalHit);
   }
 
 
@@ -427,10 +572,10 @@ class Game  {
   //put each player's units on the map
   //right now hard coded for just 2 playes an one unit each
   spawnUnits(){
-    this.players[0].units[0].setRC(15,15);
-    this.players[1].units[0].setRC(15,20);
-    this.map.tiles[15][15]=this.players[0].units[0];
-    this.map.tiles[15][20]=this.players[1].units[0];
+    this.players[0].units[0].setRC(5,2);
+    this.players[1].units[0].setRC(5,4);
+    this.map.tiles[5][2]=this.players[0].units[0];
+    this.map.tiles[5][4]=this.players[1].units[0];
     console.log(this.map.getAsciiMap());
   }
   
