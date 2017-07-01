@@ -28,6 +28,10 @@ class Weapon {
     else
       return true;
   }
+
+  isMap() {
+    return this.props.includes("MAP");
+  }
 }
 
 module.exports=Weapon;
