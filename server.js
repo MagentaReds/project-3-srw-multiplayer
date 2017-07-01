@@ -8,6 +8,7 @@ var session = require("express-session");
 var dotenv = require("dotenv");
 var passport = require("passport");
 var Auth0Strategy = require("passport-auth0");
+var dbUser = require("./models/user.js");
 
 // Load environmental variables from .env file
 dotenv.load();
@@ -21,33 +22,27 @@ mongoose.Promise = Promise;
 // Initialize Express
 var app = express();
 
+// Use morgan and body parser with our app
+app.use(logger("dev"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(cookieParser());
+app.use(session({
+  // Create unique session identifier
+  secret: 'hushhush',
+  resave: true,
+  saveUnitiailized: true
+}));
+// Make public a static dir
+app.use(express.static(path.join(__dirname, "public/frontend")));
+app.use(passport.initialize());
+app.use(passport.session());
+app.set('views', path.join(__dirname, 'public/frontend'));
+app.set('view engine', 'jade');
+
 //adding app to http, since socket uses http to handle connections
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
-// This will configure Passport to use Auth0
-var strategy = new Auth0Strategy({
-	domain:       process.env.AUTH0_DOMAIN,
-	clientID:     process.env.AUTH0_CLIENT_ID,
-	clientSecret: process.env.AUTH0_CLIENT_SECRET,
-	callbackURL:  'http://localhost:8080/callback'
-}, function(accessToken, refreshToken, extraParams, profile, done) {
-    // profile has all the information from the user
-    return done(null, profile);
-});
-
-// Here we are adding the Auth0 Strategy to our passport framework
-passport.use(strategy);
-
-// The searlize and deserialize user methods will allow us to get the user data once they are logged in.
-passport.serializeUser(function(user, done) {
-	done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-	done(null, user);
-});
-
 
 if(process.env.MONGODB_URI) {
   // Database configuration with mongoose
@@ -73,29 +68,63 @@ if(process.env.MONGODB_URI) {
   });
 }
 
+// This will configure Passport to use Auth0
+var strategy = new Auth0Strategy({
+  domain:       process.env.AUTH0_DOMAIN,
+  clientID:     process.env.AUTH0_CLIENT_ID,
+  clientSecret: process.env.AUTH0_CLIENT_SECRET,
+  callbackURL:  'http://localhost:8080/callback'
+}, function(accessToken, refreshToken, extraParams, profile, done) {
+    // profile has all the information from the user
+    var user = {
+      email: profile.email,
+
+      id: profile.user_id,
+
+      nickname: profile.nickname,
+
+      team: -1
+    };
+    console.log(user);
+    dbUser.findOne({
+      id: profile.user_id
+    }, function(error, data) {
+      console.log("we in here");
+      if (error) {
+        dbUser.create(user).then(function() {
+          return done(null, data);
+        });
+      }
+      if (data == null) {
+        dbUser.create(user).then(function() {
+          return done(null, data);
+        });
+      } else {
+        return done(null, data);
+      }
+
+    });
+
+    // return done(null, profile);
+  });
+
+// Here we are adding the Auth0 Strategy to our passport framework
+passport.use(strategy);
+
+// The searlize and deserialize user methods will allow us to get the user data once they are logged in.
+passport.serializeUser(function(user, done) {
+  console.log(user);
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  console.log(user);
+  done(null, user);
+});
+
 //Socket IO
 var GameInterface = require("./game/gameInterface.js");
 var gameInt = new GameInterface(http, io);
-
-
-
-// Use morgan and body parser with our app
-app.use(logger("dev"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(cookieParser());
-app.use(session({
-	// Create unique session identifier
-	secret: 'hushhush',
-	resave: true,
-	saveUnitiailized: true
-}));
-// Make public a static dir
-app.use(express.static(path.join(__dirname, "public/frontend")));
-app.use(passport.initialize());
-app.use(passport.session());
-app.set('views', path.join(__dirname, 'public/frontend'));
-app.set('view engine', 'jade');
 
 
 app.use(function(err, req, res, next) {
@@ -112,7 +141,7 @@ app.use(function(err, req, res, next) {
 //Routes
 var apiRoutes = require("./routes/apiRoutes.js");
 var htmlRoutes = require("./routes/htmlRoutes.js");
-app.use("/", apiRoutes);
+app.use(apiRoutes);
 app.use("/", htmlRoutes);
 
 

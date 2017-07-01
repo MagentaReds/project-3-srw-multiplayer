@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/MagentaReds/project-3-project-harder#readme",
   "dependencies": {
+    "auth0-lock": "^10.18.0",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "connect-ensure-login": "^0.1.1",

@@ -6,14 +6,14 @@ var Schema = mongoose.Schema;
 // Create the Note schema
 var UserSchema = new Schema({
   // Just a string
-  userName: {
-    type: String
+  email: {
+  	type: String
   },
-
-  // Just a string
-  body: {
-    type: String
-  }
+  id: {
+  	type: String
+  },
+  nickname: String,
+  team: Number
 });
 
 // Remember, Mongoose will automatically save the ObjectIds of the notes
