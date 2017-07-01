@@ -256,7 +256,7 @@ function getActions(r,c) {
 	console.log(response);
 	return response;
 }
-getActions(5,6);
+getActions(5,5);
 
 function enableActions(actions) {
 	// var menu = $("#menu");
@@ -284,7 +284,7 @@ $(document).on("click", "li.grid-square", function(event) {
 	//console.log([dataR,dataC]);
 	var response = getActions(dataR,dataC);
 
-	//socket.emit("getActions", {r: dataR,c: dataC} function(response){fillActions(response.actions)}
+	//socket.emit("getActions", {r: dataR,c: dataC} function(response){enableActions(response.actions)}
 	enableActions(response.actions);
 
 	$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
