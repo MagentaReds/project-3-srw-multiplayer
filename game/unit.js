@@ -62,6 +62,14 @@ class Unit {
     return this.flags.includes(Flags.assail);
   }
 
+  hasAlert(){
+    return this.flags.includes(Flags.alert);
+  }
+
+  hasStrike(){
+    return this.flags.includes(Flags.strike);
+  }
+
   //checks the pilot's skills, and does stuff based off them;
   checkSkills() {
 
