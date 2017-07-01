@@ -37,6 +37,12 @@ $(document).ready(function(){
     $("#messageDiv").text(data.msg);
   });
 
+  socket.on("get counter", function(data) {
+    $("#messageDiv").text("Choose a Counter action!");
+    displayWeapons2(data.weapons, data.stats);
+    fillCounterList(data.actions);
+  });
+
   //jquery listeners
   $(".joinRoom").on("click", function(e){
     console.log("Trying to Join a room");
@@ -191,6 +197,45 @@ $(document).ready(function(){
     });
   });
 
+  $(document).on("click", "button.get_Stats", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var toR = parseInt($("#row1").val());
+    var toC = parseInt($("#col2").val());
+    var weapon = parseInt($("#weapon").val())
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    data.toR=toR;
+    data.toC=toC;
+    data.weapon = weapon;
+    socket.emit("get stats", data, function(data){
+      console.log(data);
+      if(data.success) {
+        $("#arrayName").text("Targets/Range");
+        fillActionList(data.actions);
+        displayArray([...data.targets, "I AM A BREAK", ...data.range]);
+      }
+      $("#messageDiv").text(data.msg);
+    });
+  });
+
+  $(document).on("click", ".counterAction", function(e){
+    e.preventDefault();
+    var action=$(this).attr("data-action");
+    var weapon=parseInt($(".counterWeapon_Attack").val());
+    var data ={action, weapon};
+    socket.emit("do counter", data, function(data){
+      console.log(data);
+      if(data.success) {
+        $(".counterAction").empty();
+      }
+      $("#messageDiv").text(data.msg);
+    });
+  });
+
 });
 
 function fillActionList(act) {
@@ -215,6 +260,30 @@ function fillActionList(act) {
   }
 }
 
+function fillCounterList(act) {
+  var ul = $("#counterList");
+  ul.empty();
+  var li,but,input;
+  for(var i=0; i<act.length; ++i){
+    li=$("<li>");
+    li.text(act[i]);
+    li.append($("<br/>"));
+
+    input=$("<input>");
+    input.addClass("counterWeapon_"+act[i]);
+    input.attr("type", "number");
+
+    but = $("<button>");
+    but.addClass("counterAction");
+    but.text(act[i]);
+    but.attr("data-action", act[i]);
+
+
+    li.append(input, but);
+    ul.append(li);
+  }
+}
+
 function displayArray(array) {
   var ol = $("#viewArray");
   ol.empty();
@@ -227,6 +296,16 @@ function displayWeapons(array) {
   ol.empty();
   for(var i =0; i<array.length; ++i)
     ol.append($("<li>").text(`${array[i].name}, ${array[i].range}, ${array[i].damage}`));
+}
+
+function displayWeapons2(array, stats) {
+  var ol = $("#viewArray");
+  ol.empty();
+  for(var i =0; i<array.length; ++i)
+    if(stats[i][0])
+      ol.append($("<li>").text(`${array[i].name}, ${array[i].range}, ${array[i].damage}, ${stats[i][1]}`));
+    else
+      ol.append($("<del>").append($("<li>").text(`${array[i].name}, ${array[i].range}, ${array[i].damage}, ${stats[i][1]}`)));
 }
 
 function updateRoomDisplay(rooms) {
