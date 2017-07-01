@@ -502,7 +502,8 @@ class Game  {
   computeAttack() {
     //if we get here, wepId can target defender, so just do the cacls;
     this.uRef.attack(this.weapon, this.defender, );
-
+    //move getHitPercent and getDamage to the unit's themsevlevs
+    //let that file grow rather than having this one grow.
   }
 
   //emit defense options to the defender player
@@ -581,6 +582,20 @@ class Game  {
     var distance = (Math.abs(atkRef.r-defRef.r)+Math.abs(atkRef.c-defRef.c));
     if(distance<wep.range[0] || distance>wep.range[1])
       return 0;
+
+    
+    // 1.Base Attack = WP Attack x (Attack Side Pilot Melee/Ranged + Attack Side Pilot Will)/200 x Attack Side WP Performance Adjustment
+    // 2.Base Defense = Defense Side Armor x (Defense Side Pilot Defense + Defense Side Pilot will)/200 x Defense Side Unit Size Adjustment
+    // 3.Damage = (1-2) x (100 * Defense Side Performance Adjustment)/100 x Special Skill Adjustment
+    var pilotStat = atkRef.getAttackStat(wep.type);
+    var baseAtk = wep.damage * (pilotStat + atkRef.will) / 200 * (1);
+    var baseDef = defRef.armor * (defRef.def+defRef.will)/200 * (1);
+    var damage = (baseAtk-baseDef) * (100*(1))/100*(1); 
+
+    if(damage<0)
+      return 0;
+    else
+      return Math.floor(damage);
   }
 
 

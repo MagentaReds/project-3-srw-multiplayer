@@ -46,6 +46,17 @@ class Unit {
       this.weapons.push(new Weapon(db.iWeapons[i]));  
   }
 
+  getAttackStat(type) {
+    switch(type) {
+      case "M":
+        return this.mel;
+      case "R":
+        return this.rng;
+      default:
+        return 0;
+    }
+  }
+
   hasHitAndAway() {
     for(var i=0; i<this.pilotSkills.length; ++i)
       if(this.pilotSkills[i][0]==="Hit & Away")
