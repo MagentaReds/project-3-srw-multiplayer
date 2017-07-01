@@ -91,10 +91,10 @@ app.use(session({
 	saveUnitiailized: true
 }));
 // Make public a static dir
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public/frontend")));
 app.use(passport.initialize());
 app.use(passport.session());
-app.set('views', path.join(__dirname, 'public'));
+app.set('views', path.join(__dirname, 'public/frontend'));
 app.set('view engine', 'jade');
 
 
