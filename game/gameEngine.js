@@ -501,7 +501,7 @@ class Game  {
 
   computeAttack() {
     //if we get here, wepId can target defender, so just do the cacls;
-    this.uRef.attack(this.weapon, this.defender, );
+    this.uRef.attack(this.weapon, this.defender);
 
   }
 
