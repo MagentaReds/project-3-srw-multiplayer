@@ -17,7 +17,7 @@ class Unit {
     this.en = mechDb.stats[1],
     this.enMax = mechDb.stats[1],
     this.mob = mechDb.stats[2];
-    this.armor = mechDb.stats[4];
+    this.armor = mechDb.stats[3];
     this.mel = Math.floor(pilotDb.stats.mel[0]*pilotLevel+pilotDb.stats.mel[1]);
     this.rng = Math.floor(pilotDb.stats.rng[0]*pilotLevel+pilotDb.stats.rng[1]);
     this.hit = Math.floor(pilotDb.stats.hit[0]*pilotLevel+pilotDb.stats.hit[1]);
@@ -29,13 +29,15 @@ class Unit {
     this.sc = [...pilotDb.spiritCommands];
     this.pilotSkills = [...pilotDb.pilotSkills];
     this.mechAbilities = [...mechDb.abilities];
-    this.r=-1;
-    this.c=-1;
     this.owner=playerId;
     this.willGain=pilotDb.willGain;
     this.will=100;
 
+    //member variables related to the current game
     this.isAlive=true;
+    this.r=-1;
+    this.c=-1;
+    this.hasMoved=false;
 
     this.flags=[];
     this.checkSkills();
