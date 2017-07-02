@@ -85,13 +85,13 @@ class GameRoom {
   //Emits a 'get counter' event to the player that is being attacked
   //and sends that player what options they have.
   emitGetCounter(playerId, data) {
-    var socketRef;
+    var socketMeRef;
     for(var i=0; i<this.clients.length; ++i)
       if(this.clients[i].id===playerId)
-        socketRef = this.clients[i];
+        socketMeRef = this.clients[i];
 
-    console.log(`Sending 'get counter' to Player ${socketRef.me.name} in Room ${this.roomNum}`);
-    this.nsp.to(socketRef.socketId).emit("get counter", data);   
+    console.log(`Sending 'get counter' to Player ${socketMeRef.name} in Room ${this.roomNum}`);
+    this.nsp.to(socketMeRef.socketId).emit("get counter", data);   
   }
 }
 
