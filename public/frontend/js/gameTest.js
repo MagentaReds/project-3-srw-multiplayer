@@ -28,16 +28,19 @@ $(document).ready(function(){
   });
 
   socket.on("game start", function(data){
+    console.log("Game is start");
     $("#roomMessageDiv").text("Game is starting!");
     $("#messageDiv").text(data.msg);
   });
 
   socket.on("update map", function(data){
+    console.log("Map has been updated");
     $("#mapDiv").text(data.map);
     $("#messageDiv").text(data.msg);
   });
 
   socket.on("get counter", function(data) {
+    consle.log("You are being attacked! Choose a defense action!");
     $("#messageDiv").text("Choose a Counter action!");
     displayWeapons2(data.weapons, data.stats);
     fillCounterList(data.actions);
@@ -59,7 +62,7 @@ $(document).ready(function(){
         gameRoom=room;
         roomSlot=data.slot;
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -73,18 +76,18 @@ $(document).ready(function(){
         gameRoom=null;
         roomSlot=null;
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     })
   });
 
   $("#ready").on("click", function(e){
-    console.log("Toggleing Ready");
+    console.log("Toggling Ready");
     e.preventDefault();
     var state=$("#ready").attr("data-state");
 
     socket.emit("toggle ready", function(data){
       ready=data.ready;
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -96,7 +99,7 @@ $(document).ready(function(){
     var c = parseInt($("#col").val());
 
     socket.emit("get actions", {player: id, r, c}, function(data){
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
       fillActionList(data.actions);
     });
   });
@@ -114,7 +117,7 @@ $(document).ready(function(){
         $("#arrayName").text(data.type);
         displayArray(data.array);
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -134,7 +137,7 @@ $(document).ready(function(){
       console.log(data);
       if(data.success) {
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
       fillActionList(data.actions);
     });
   });
@@ -154,7 +157,7 @@ $(document).ready(function(){
         fillActionList(data.actions);
         displayWeapons(data.weapons);
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -177,7 +180,7 @@ $(document).ready(function(){
       console.log(data);
       if(data.success) {
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -198,7 +201,7 @@ $(document).ready(function(){
         fillActionList(data.actions);
         displayArray([...data.targets, "I AM A BREAK", ...data.range]);
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -223,7 +226,7 @@ $(document).ready(function(){
         fillActionList(data.actions);
         displayArray([...data.targets, "I AM A BREAK", ...data.range]);
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -237,11 +240,16 @@ $(document).ready(function(){
       if(data.success) {
         $(".counterAction").empty();
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
 });
+
+function writeMessage(data) {
+  console.log(`Server Response: ${data.msg}`);
+  $("#messageDiv").text(data.msg);
+}
 
 function fillActionList(act) {
   var ul = $("#actionList");
