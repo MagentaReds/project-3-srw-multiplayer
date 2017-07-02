@@ -35,6 +35,8 @@ class Unit {
     this.willGain=pilotDb.willGain;
     this.will=100;
 
+    this.isAlive=true;
+
     this.flags=[];
     this.checkSkills();
   }
@@ -104,6 +106,13 @@ class Unit {
     this.r=r;
     this.c=c;
   }
+
+  applyDamage(dmg) {
+    this.hp-=dmg;
+    if(this.hp<0)
+      this.isAlive=false;
+  }
+
 }
 
 module.exports = Unit;
