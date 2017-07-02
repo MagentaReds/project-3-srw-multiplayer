@@ -72,6 +72,7 @@ class Game  {
   //Called to advanced the game one turn, selects a new player and new unit to be the active ones.
   nextTurn() {
      //select first player and unit to go, set flags values as necessry, emit status to clients;
+    this.uRef.hasMoved=false;
     this.pRef = this.getNextPlayer();
     this.uRef = this.pRef.getNextUnit();
     this.turn++;
@@ -260,6 +261,8 @@ class Game  {
           this.moveUnit(r,c,toR,toC);
           this.emptyFlags();
           this.addFlag(Flags.hasMoved);
+          this.uRef.setRC(toR, toC);
+          this.uRef.hasMoved=true;
           this.emitMap();
           return sucRes;
         } else{
@@ -271,6 +274,8 @@ class Game  {
         if(Helpers.isInArr(posMov, [toR,toC])) {
           this.moveUnit(r,c,toR,toC);
           this.addFlag(Flags.hasMoved);
+          this.uRef.setRC(toR, toC);
+          this.uRef.hasMoved=true;
           this.emitMap();
           return sucRes2;
         } else{
@@ -360,6 +365,10 @@ class Game  {
     var selUnit = this.map.tiles[r][c];
     var tarUnit = this.map.tiles[toR][toC];
 
+    if(!selUnit || !tarUnit) {
+      return {success: false, actions:[]};
+    }
+
     var sucRes = {success: true, stats: this.getAttackStats(selUnit, tarUnit, null), actions:["Stats"]};
     var failRes = {success: false, actions:[]};
     var failRes2 = {success: false, actions:["Cancel"]};
@@ -409,7 +418,7 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
-        if(this.canAttack(r,c,toR,toC,weaponId,targets)) {
+        if(this.canAttack(r,c,toR,toC,weaponId)) {
           this.emptyFlags();
           this.addFlag(Flags.hasAttacked);
           if(this.uRef.hasHitAndAway())
@@ -458,7 +467,7 @@ class Game  {
           return sucRes;
         } else
           return failRes;
-      } else if(action==="Guard" || action==="Evade") {
+      } else if(action==="Defend" || action==="Evade") {
         this.resolveAttack2(action, weaponId);
         return sucRes;
       } else
@@ -468,7 +477,7 @@ class Game  {
   }
 
   //can the unit at r,c attack the unit at toR,toC with weapon wepId
-  canAttack(r,c,toR,toC,wepId,passedTargets) {
+  canAttack(r,c,toR,toC,wepId) {
     //console.log("Checking to see if can attack");
     var selUnit = this.map.tiles[r][c];
     var tarUnit = this.map.tiles[toR][toC];
@@ -491,7 +500,7 @@ class Game  {
     if(distance<wepRef.range[0] || distance>wepRef.range[1])
       return false;
     else 
-      return wepRef.canAttack(selUnit, this.inFlags(Flags.hasMoved));
+      return wepRef.canAttack(selUnit, selUnit.hasMoved);
   }
 
   //do all the things to resolve the attack (apply damage, remove ammo/en)
@@ -515,7 +524,7 @@ class Game  {
     //setting defender's counter attack weapon if they are counter attacking;
     if(action==="Attack")
       this.defWep=wepId;
-    this.computeAttack(this.uRef ,wepId, this.defender, this.defWep, action);
+    this.computeAttack(this.uRef ,this.weapon, this.defender, this.defWep, action);
     this.removeFlag(Flags.waitingForDef);
     this.checkFlags();
   }
@@ -580,7 +589,7 @@ class Game  {
   //second in the tuple is the actualy hit percetange of that weapon against the enemy unit
   getAttackStats(atkRef, defRef, weaponId=null) {
     if(weaponId!==null) {
-      if(!atkRef.weapons[weaponId].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, weaponId, null))
+      if(!atkRef.weapons[weaponId].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, weaponId))
         return [false, 0];
       else
         return [true, this.getHitPercent(atkRef, defRef, weaponId)];
@@ -588,7 +597,7 @@ class Game  {
     //tuple of [Boolean, hitPercent]
     var attackStats = new Array(atkRef.weapons.length);
     for(var i=0; i<attackStats.length; ++i) {
-      if(atkRef.weapons[i].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, i, null))
+      if(atkRef.weapons[i].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, i))
         attackStats[i]=[false, 0];
       else
         attackStats[i] = [true, this.getHitPercent(atkRef, defRef, i)];
@@ -650,7 +659,7 @@ class Game  {
     // 3.Damage = (1-2) x (100 * Defense Side Performance Adjustment)/100 x Special Skill Adjustment
     var pilotStat = atkRef.getAttackStat(wep.type);
     var baseAtk = wep.damage * (pilotStat + atkRef.will) / 200 * (1);
-    var baseDef = defRef.armor * (defRef.def+defRef.will)/200 * (1);
+    var baseDef = defRef.armor * (defRef.def + defRef.will) / 200 * (1);
     var damage = (baseAtk-baseDef) * (100*(1))/100*(1); 
 
     if(damage<0)
@@ -694,6 +703,7 @@ class Game  {
     this.map.move(r,c,toR,toC);
     this.posR=toR;
     this.posC=toC;
+
   }
 
   //emits the ascrii map
