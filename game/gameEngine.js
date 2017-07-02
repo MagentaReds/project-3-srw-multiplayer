@@ -75,7 +75,23 @@ class Game  {
     console.log(`It is ${this.pRef.name} Unit's ${this.uRef.name} Turn`);
     console.log(`That means ${this.uRef.name}'s turn!`);
     this.emitMap(); 
-    this.mainLoop();
+  }
+
+  nextTurn() {
+     //select first player and unit to go, set flags values as necessry, emit status to clients;
+    this.pRef = this.getNextPlayer();
+    this.uRef = this.pRef.getNextUnit();
+    this.turn++;
+    this.posR = this.uRef.r;
+    this.posC = this.uRef.c;
+    this.oldR = this.uRef.r;
+    this.oldC = this.uRef.c;
+    this.emptyFlags();
+    this.addFlag(Flags.newRound);
+
+    console.log(`It is ${this.pRef.name} Unit's ${this.uRef.name} Turn`);
+    console.log(`That means ${this.uRef.name}'s turn!`);
+    this.emitMap(); 
   }
 
   //need to expand to account for when unit is dead, but testing will ignore for now
@@ -483,27 +499,66 @@ class Game  {
 
   //do all the things to resolve the attack (apply damage, remove ammo/en)
   resolveAttack(atk, wepId, def) {
+    //This flag is set, use it to halt any other messages from being processed besides do counter from defending unit's player
     this.addFlag(Flags.waitingForDef);
     this.addFlag(Flags.hasAttacked);
+    //set defender unit
     this.defender=def;
+    //set attacking weapon
     this.weapon=wepId;
+    //emit message to defending unit's player about what they want to do.
     this.getDefenseAction(def, atk);
   }
 
-  //is called when the defender 
+  //is called when the defender chooses a defense action
   resolveAttack2(action, wepId) {
     console.log("A Full round is almost all over");
+    //setting defender's counter attack weapon if they are counter attacking;
     if(action==="Attack")
       this.defWep=wepId;
-    this.computeAttack(wepId, this.defender, data.counterType);
+    this.computeAttack(this.uRef ,wepId, this.defender, this.defWep, action);
     this.removeFlag(Flags.waitingForDef);
+    this.checkFlags();
   }
 
-  computeAttack() {
-    //if we get here, wepId can target defender, so just do the cacls;
-    this.uRef.attack(this.weapon, this.defender);
-    //move getHitPercent and getDamage to the unit's themsevlevs
-    //let that file grow rather than having this one grow.
+  computeAttack(atkRef, wepAtk, defRef, wepDef, counterType) {
+    //if we get here, everything should be copacetic, so just do the cacls, no need to check
+
+    this.inter.emitMessage(`${atkRef.name} is attacking ${defRef.name} with ${atkRef.weapons[wepAtk].name}`);
+    this.inter.emitMessage(`${defRef.name} is choosing to ${counterType} on defense!`);
+
+    var hit = this.getHitPercent(this.uRef, this.defender, this.weapon);
+    var damage = this.getDamage(this.uRef, this.defender, this.weapon);
+    var crit = this.getCritPercent(this.uRef, this.defender, this.weapon);
+    
+    if(counterType === "Evade")
+      hit = Math.floor(hit/2);
+    else if(counterType === "Defend")
+      damage = Math.floor(damage/2);
+
+    this.applyAttack(this.uRef, this.defender, this.weapon, hit, damage, crit);
+
+    if(counterType==="Attack" && this.defender.isAlive){
+      hit = this.getHitPercent(this.defender, this.uRef, this.defWep);
+      damage = this.getDamage(this.defender, this.uRef, this.defWep);
+      this.applyAttack(this.defender, this.uRef, this.defWep, hit, damage, crit);
+    }
+      
+  }
+
+  applyAttack(atk, def, atkWep, hit, damage, crit) {
+    atk.weapons[atkWep].removeAmmo(atk);
+    if(Math.floor(Math.random()*100) < hit) {
+      if(Math.floor(Math.random()*100) < crit){
+        this.inter.emitMessage(`${atk.name} hits ${def.name} for ${Math.floor(damage*1.25)} damage`);
+        def.applyDamage(Math.floor(damage*1.25));
+      } else {
+        this.inter.emitMessage(`${atk.name} hits ${def.name} for ${Math.floor(damage)} damage`);
+        def.applyDamage(Math.floor(damage));
+      }
+    } else {
+      this.inter.emitMessage(`${atk.name} misses ${def.name}!`);
+    }
   }
 
   //emit defense options to the defender player
@@ -536,7 +591,6 @@ class Game  {
     return attackStats;
   }
 
-  //Assumes that the defender is in range of atk's weapon
   getHitPercent(atkRef, defRef, wepId) {
     if(!atkRef || !defRef)
       return 0;
@@ -596,6 +650,34 @@ class Game  {
       return 0;
     else
       return Math.floor(damage);
+  }
+
+  getCritPercent(atk, def, atkWep) {
+    if(!atk || !def)
+      return 0;
+
+    var wep = atk.weapons[atkWep];
+    if(!wep)
+      return 0;
+
+    var distance = (Math.abs(atk.r-def.r)+Math.abs(atk.c-def.c));
+    if(distance<wep.range[0] || distance>wep.range[1])
+      return 0;
+
+    var chance  = atk.man - def.man + wep.crit;
+
+    if(chance>100)
+      return 100;
+    else if(chance<0)
+      return 0;
+    else
+      return Math.floor(chance);
+  }
+
+  checkFlags() {
+    if(this.inFlags(Flags.turnOver)){
+      this.nextTurn();
+    }
   }
 
 
