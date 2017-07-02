@@ -85,8 +85,8 @@ class GameRoom {
     this.nsp.to(this.name).emit("update map", {map: map, msg: "Updated map!"});
   }
 
-  emitMesssage(msg) {
-    this.nsp.to(this.name),emit("game message", {msg});
+  emitMessage(msg) {
+    this.nsp.to(this.name).emit("room message", {msg});
   }
 
   emitGetCounter(playerId, data) {
