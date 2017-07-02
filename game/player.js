@@ -24,8 +24,12 @@ class Player {
     return this.units[this.currentUnit];
   }
 
+  //returns true if all units are dead
   isDefeated(){
-
+    for(var i=0; i<this.units.length; ++i)
+      if(this.units[i].isAlive)
+        return false;
+    return true;
   }
   isReady() {
 

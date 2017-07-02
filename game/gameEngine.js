@@ -11,16 +11,7 @@ var Flags = require("./statesAndFlags.js").game.state;
 
 var Helpers = require("../config/helpers.js");
 
-// game engine will keep track of everything.
-
-// Client asks for available actions, engine returns answer.
-
-// Client requests action to take place, 
-// engine either accepts it, runs it, and then returns ok.  
-// Or returns fail (with msg).
-
-// Design for two players first, then go from there.//
-
+//game Game engine class, runs the entire game.
 class Game  {
   constructor(clientList, inter) {
     this.inter=inter;
@@ -59,6 +50,7 @@ class Game  {
     this.gameStart(30,30);
   }
 
+  //Set's up anything else in the game that the constructor doesn't do when first made.
   gameStart(r,c,filePath=null) {
     //select first player and unit to go, set flags values as necessry, emit status to clients;
     this.map = new Map(r,c);
@@ -77,6 +69,7 @@ class Game  {
     this.emitMap(); 
   }
 
+  //Called to advanced the game one turn, selects a new player and new unit to be the active ones.
   nextTurn() {
      //select first player and unit to go, set flags values as necessry, emit status to clients;
     this.pRef = this.getNextPlayer();
@@ -94,6 +87,7 @@ class Game  {
     this.emitMap(); 
   }
 
+  //Returns the player to go next;
   //need to expand to account for when unit is dead, but testing will ignore for now
   getNextPlayer() {
     this.currentPlayer++;
@@ -103,21 +97,25 @@ class Game  {
     return this.players[this.currentPlayer];
   }
 
+  //adds a flag to the flags array
   addFlag(flag) {
     if(!this.flags.includes(flag))
       this.flags.push(flag);
   }
 
+  //removes the flag from the array if it exists in it
   removeFlag(flag) {
     var index = this.flags.indexOf(flag);
     if(index!==-1)
       this.flags.splice(index, 0);
   }
 
+  //removes all flags from the flags array
   emptyFlags() {
     this.flags=[];
   }
 
+  //checks to see if all flags are in the flags array
   inFlags(...flag) {
     for(var i=0; i<flag.length; ++i)
       if(!this.flags.includes(flag[i]))
@@ -125,18 +123,15 @@ class Game  {
     return true;
   }
 
+  //checks to see if at least one flag is in the flags array
   flagsHasOne(...flag){
     for(var i=0; i<flag.length; ++i)
       if(this.flags.includes(flag[i]))
         return true;
   }
 
-  mainLoop(nextState) {
-    if(this.inFlags(Flags.newRound)){
-
-    }
-  }
-
+  //GameInterface to Game method: returns a response based on the games state and which socket called it
+  //returns list of options that a player can do at that map tile
   getActions(playerId, r, c) {
     //need to expand once Spirit commands are introduced
     var selUnit = this.map.tiles[r][c];
@@ -208,6 +203,8 @@ class Game  {
 
   }
 
+  //GameInterface to Game method: returns a response based on the games state and which socket called it
+  //returns a response that contains the list of possible squares a unit may move to
   getMove(playerId, r, c) {
     var sucRes = {success: true, tiles: this.map.getPossibleMovement(r, c, this.uRef.move), actions:["Cancel"]};
     var failRes = {success: false, tiles: [], actions:[]};
@@ -235,10 +232,14 @@ class Game  {
     }
   }
 
+  //GameInterface to Game method: 
+  //returns a list move squares that a unit at r,c can move to, no checking game state
   requestMoveTiles(playerId, r, c){
     return this.map.getPossibleMovement(r, c, this.uRef.move);
   }
 
+  //GameInterface to Game method: returns a response based on the games state and which socket called it
+  //Tries to move the unit, and then returns a success and then list of actions that can be taken aftwards
   doMove(playerId, r, c, toR, toC) {
     var sucRes = {success: true, actions:["Attack", "Standby", "Cancel"]};
     var sucRes2 = {success: true, actions:["Standby", "Cancel"]};
@@ -285,6 +286,8 @@ class Game  {
     }
   }
 
+  //GameInterface to Game method: returns a response based on the games state and which socket called it
+  //returns a list of weapons and actions the unit can do aftwards
   getAttack(playerId, r, c) {
     //will need to mod this to only include/flag weapons that can attack/have available targets
     var sucRes = {success: true, type: "weapons", weapons: this.uRef.weapons, actions:["Targets", "Cancel"]};
@@ -313,6 +316,8 @@ class Game  {
     }
   }
 
+  //GameInterface to Game method: returns a response based on the games state and which socket called it
+  //returns an array of all possible tiles the weapon can target, and all valid tragets within that range
   getTargets(playerId, r, c, weaponId) {
     var wepRef = this.uRef.weapons[weaponId];
     var range, targets;
@@ -348,6 +353,8 @@ class Game  {
     }
   }
 
+  //GameInterface to Game method: returns a response based on the games state and which socket called it
+  //Returns hit statstic about a specific weapon when target a unit at toR, toC
   getStats(playerId, r, c, toR, toC, weaponId) {
     var wepRef = this.uRef.weapons[weaponId];
     var selUnit = this.map.tiles[r][c];
@@ -379,6 +386,8 @@ class Game  {
     }
   }
 
+  //GameInterface to Game method: returns a response based on the games state and which socket called it
+  //tries to actually attack the unit at toR, toC with the weapon, erturns true or false if the attack fails or not
   doAttack(playerId, r, c, toR, toC, weaponId) {
     var wepRef = this.uRef.weapons[weaponId];
     var range, targets;
@@ -433,6 +442,8 @@ class Game  {
     }
   }
 
+  //GameInterface to Game method: returns a response based on the games state and which socket called it
+  //tries to set defense action, returns sucRes if it is accepted, failRes otherwise
   doCounter(playerId, action, weaponId) {
     var wepRef = this.defender.weapons[weaponId];
 
@@ -476,28 +487,15 @@ class Game  {
     if(!wepRef)
       return false;
 
-    //if no targets are passed in that have been pre built, build our own list
-    // if(passedTargets===null || passedTargets===undefined) {
-    //   let range = this.map.getPossibleTargets(r,c,wepRef.range[0], wepRef.range[1]);
-    //   targets=this.map.getTargets(playerId, range);
-    // } else
-    //   targets=passedTargets;
-
     var distance = (Math.abs(r-toR)+Math.abs(c-toC));
     if(distance<wepRef.range[0] || distance>wepRef.range[1])
       return false;
     else 
       return wepRef.canAttack(selUnit, this.inFlags(Flags.hasMoved));
-
-    //if tarUnit's pos is not in targets, return false
-    //else (passed all checks so far), return if wepRef has ammo/enough/will en to attack.
-    // if(!Helpers.isInArr(targets, [toR,toC]))
-    //   return false;
-    // else
-    //   return wepRef.canAttack(selUnit, this.inFlags(Flags.hasMoved));
   }
 
   //do all the things to resolve the attack (apply damage, remove ammo/en)
+  //starts the attack resolution
   resolveAttack(atk, wepId, def) {
     //This flag is set, use it to halt any other messages from being processed besides do counter from defending unit's player
     this.addFlag(Flags.waitingForDef);
@@ -511,6 +509,7 @@ class Game  {
   }
 
   //is called when the defender chooses a defense action
+  //finishes the attack resolution
   resolveAttack2(action, wepId) {
     console.log("A Full round is almost all over");
     //setting defender's counter attack weapon if they are counter attacking;
@@ -521,11 +520,13 @@ class Game  {
     this.checkFlags();
   }
 
+  //Gets hit percentage/damage/crit percent from other methods to send to applyAttack
+  //emits messages about what is happening
   computeAttack(atkRef, wepAtk, defRef, wepDef, counterType) {
     //if we get here, everything should be copacetic, so just do the cacls, no need to check
 
     this.inter.emitMessage(`${atkRef.name} is attacking ${defRef.name} with ${atkRef.weapons[wepAtk].name}`);
-    this.inter.emitMessage(`${defRef.name} is choosing to ${counterType} on defense!`);
+    this.inter.emitMessage(`${defRef.name} is choosing to "${counterType}" on defense!`);
 
     var hit = this.getHitPercent(this.uRef, this.defender, this.weapon);
     var damage = this.getDamage(this.uRef, this.defender, this.weapon);
@@ -546,6 +547,8 @@ class Game  {
       
   }
 
+  //removes ammo/en from unit attacking, and applies damage to defender if it hits
+  //emits messages about what is happening
   applyAttack(atk, def, atkWep, hit, damage, crit) {
     atk.weapons[atkWep].removeAmmo(atk);
     if(Math.floor(Math.random()*100) < hit) {
@@ -572,7 +575,9 @@ class Game  {
     this.inter.emitGetCounter(def.owner, data);
   }
 
-  //returns either a tuple, or an array of tuples
+  //returns either a tuple, or an array of tuples tha
+  //first in the tuple is a Boolean if the weapon can target the def unit
+  //second in the tuple is the actualy hit percetange of that weapon against the enemy unit
   getAttackStats(atkRef, defRef, weaponId=null) {
     if(weaponId!==null) {
       if(!atkRef.weapons[weaponId].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, weaponId, null))
@@ -591,6 +596,7 @@ class Game  {
     return attackStats;
   }
 
+  //caculates the hit percentage based off the attacking and defending units stats and the weapon used
   getHitPercent(atkRef, defRef, wepId) {
     if(!atkRef || !defRef)
       return 0;
@@ -625,6 +631,7 @@ class Game  {
       return Math.floor(finalHit);
   }
 
+  //caculates the damage based off the attacking and defending units stats and the weapon used
   getDamage(atkRef, defRef, wepId){
     if(!atkRef || !defRef)
       return 0;
@@ -652,6 +659,7 @@ class Game  {
       return Math.floor(damage);
   }
 
+  //caculates the crit percentage based off the attacking and defending units stats and the weapon used
   getCritPercent(atk, def, atkWep) {
     if(!atk || !def)
       return 0;
@@ -674,19 +682,21 @@ class Game  {
       return Math.floor(chance);
   }
 
+  //Checks the flags, and advances the game based off them.
   checkFlags() {
     if(this.inFlags(Flags.turnOver)){
       this.nextTurn();
     }
   }
 
-
+  //Moves a unit from r,c, to toR, toC
   moveUnit(r,c,toR,toC) {
     this.map.move(r,c,toR,toC);
     this.posR=toR;
     this.posC=toC;
   }
 
+  //emits the ascrii map
   emitMap() {
     this.inter.emitMap(this.map.getAsciiMap());
   }

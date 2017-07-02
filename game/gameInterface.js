@@ -4,8 +4,8 @@ var Promise = require("bluebird");
 var Game = require("./gameEngine.js");
 var Client = require("./client.js");
 
-//var tempConfig = require("../gameConfig")
 
+//Helper Class to contain information about game Rooms
 class GameRoom {
   constructor(http, io, nsp, num, name) {
     this.name=name;
@@ -17,16 +17,15 @@ class GameRoom {
     this.game=null;
     this.maxPlayers  = 2;
 
-    this.clients = new Array(this.maxPlayers);
-    
-    
+    this.clients = new Array(this.maxPlayers); 
   }
 
+  //Instantiates the gameEngine for this room
   makeGame(){
     this.game = new Game(this.clients, this);
-    //this.emitMap();
   }
 
+  //adds the socket into the clientlist for this room
   join(socket, slot) {
     socket.me.room=this.name;
     socket.me.slot=slot;
@@ -37,6 +36,7 @@ class GameRoom {
     //console.log(this.clients);
   }
 
+  //removes the socket from the slot in this game room
   leave(socket, slot) {
     this.clients[slot]=null;
     socket.me.room=null;
@@ -48,6 +48,7 @@ class GameRoom {
         this.game.reset();
   }
 
+  //checks to see if all people in the room are ready.
   checkAllReady() {
     var arr=this.clients;
     var count=0;
@@ -61,40 +62,35 @@ class GameRoom {
     return count>1;
   }
 
+  //checks to see if there are open slots in the room
   isRoom() {
     for(let i=0; i<this.clients.length; ++i)
     if(!this.clients[i])
       return i;
     return -1;
-
-    // console.log(Object.keys(this.nsp.adapter.rooms[this.name]));
-    // console.log(this.nsp.adapter.rooms["Room Alpha"].sockets);
-
-    // var roomList = this.nsp.adapter.rooms[this.name];
-    // if(!roomList || this.nsp.adapter.rooms[this.name].length < this.maxPlayers)
-    //   return true;
-    // else
-    //   return false;
   }
 
-  getActions(playerId,r,c) {
-    return this.game.getActions(playerId, r, c);
-  }
-
+  //Emits a 'update map' event (the ascii map) to the all sockets/clients in this room
   emitMap(map) {
+    console.log(`Sending Map Update to Room ${this.roomNum}`);
     this.nsp.to(this.name).emit("update map", {map: map, msg: "Updated map!"});
   }
 
+  //Emits a 'room message' event to the all sockets/clients in this room
   emitMessage(msg) {
+    console.log(`Sending Message to Room ${this.roomNum}`);
     this.nsp.to(this.name).emit("room message", {msg});
   }
 
+  //Emits a 'get counter' event to the player that is being attacked
+  //and sends that player what options they have.
   emitGetCounter(playerId, data) {
     var socketRef;
     for(var i=0; i<this.clients.length; ++i)
       if(this.clients[i].id===playerId)
         socketRef = this.clients[i];
 
+    console.log(`Sending 'get counter' to Player ${socketRef.me.name} in Room ${this.roomNum}`);
     this.nsp.to(socketRef.socketId).emit("get counter", data);   
   }
 }
@@ -122,20 +118,11 @@ class GameInterface {
     require("../config/gameSetTeams.js")(10).then((clientList)=>{
       this.tempClientList = clientList;
     });
-    //nsp.emit("update map", {map: this.game.map.getAsciiMap(), msg: "Updated map!"});
-    //io.sockets.in(this.room).emit("update map", {map: this.game.map.getAsciiMap(), msg: "Updated map!"});
-    //nsp.to(this.room).emit("update map", {map: this.game.map.getAsciiMap(), msg: "Updated map!"});
-
-    //this.setupListeners();
-
-    //Attach this to methods. or not, react has messed me up
-    //this.setNspListeners=this.setNspListeners.bind(this);
-
 
     this.setNspListeners();
-
   }
 
+  //Sets most of the event handlers for socket.io
   setNspListeners() {
     //console.log("Setting Listeners");
     this.nsp.on("connection", (socket)=>{
@@ -145,9 +132,7 @@ class GameInterface {
 
       //adding new data to the socket itself
       socket.me = new Client(socket, this.tempClientList[this.uniqueIdCounter]);
-
       this.uniqueIdCounter++,
-
 
       //joining/leaving the fun!
       socket.on("new player", (cb)=>{
@@ -179,6 +164,7 @@ class GameInterface {
     });
   }
 
+  //Emit room details/updates to all connected sockets in the namespace.
   emitRooms() {
     var data = {rooms:new Array(5)};
     for(var i =0; i<this.rooms.length; ++i) {
@@ -189,8 +175,13 @@ class GameInterface {
           data.rooms[i][k]=this.rooms[i].clients[k].name;
       }
     }
+    console.log(`Sending Updated details about All Rooms to namespace`);
     this.nsp.emit("update rooms", data);
   }
+
+  //Rest of methods are handlers for each socket.io event type we are listening for.
+  
+  //These first few handlers deal with room administration.
 
   onJoinRoom(socket, roomNum, cb) {
     var room = this.rooms[roomNum];
@@ -234,8 +225,11 @@ class GameInterface {
     cb({ready: socket.me.ready, msg: `You are ${socket.me.ready ? "ready" : "unready"}.`});
   }
 
+  //The rest of these handlers talk to the room's gameEngine and call the related method.
+  //Then based send's the gameEngine's response back to the socket.
+
   onGetActions(socket, data, cb) {
-    console.log(`Get Actions requested from id${data.player}`);
+    console.log(`Get Actions requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = {
       actions: this.rooms[rNum].game.getActions(socket.me.id, data.r, data.c),
@@ -246,7 +240,7 @@ class GameInterface {
   }
 
   onGetMove(socket, data, cb){
-    console.log(`Get Move requested from id${socket.me.id}`);
+    console.log(`Get Move requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = {
       success: true,
@@ -259,7 +253,7 @@ class GameInterface {
   }
 
   onDoMove(socket, data, cb) {
-    console.log(`Do Move requested from id${socket.me.id}`);
+    console.log(`Do Move requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.doMove(socket.me.id, data.r, data.c, data.toR, data.toC);
 
@@ -267,7 +261,7 @@ class GameInterface {
   }
 
   onGetAttack(socket, data, cb){
-    console.log(`Get Attack requested from id${socket.me.id}`);
+    console.log(`Get Attack requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.getAttack(socket.me.id, data.r, data.c);
 
@@ -275,7 +269,7 @@ class GameInterface {
   }
 
   onGetTargets(socket, data, cb){
-    console.log(`Get Targets requested from id${socket.me.id}`);
+    console.log(`Get Targets requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.getTargets(socket.me.id, data.r, data.c, data.weapon);
 
@@ -283,7 +277,7 @@ class GameInterface {
   }
 
   onGetStats(socket, data, cb){
-    console.log(`Get Stats requested from id${socket.me.id}`);
+    console.log(`Get Stats requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.getStats(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
 
@@ -291,7 +285,7 @@ class GameInterface {
   }
 
   onDoAttack(socket, data, cb) {
-    console.log(`Do Attack requested from id${socket.me.id}`);
+    console.log(`Do Attack requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.doAttack(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
 
@@ -299,7 +293,7 @@ class GameInterface {
   }
 
   onDoCounter(socket, data, cb) {
-    console.log(`Do Counter requested from id${socket.me.id}`);
+    console.log(`Do Counter requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.doCounter(socket.me.id, data.action, data.weapon);
 
