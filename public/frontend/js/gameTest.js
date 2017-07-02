@@ -40,7 +40,7 @@ $(document).ready(function(){
   });
 
   socket.on("get counter", function(data) {
-    consle.log("You are being attacked! Choose a defense action!");
+    console.log("You are being attacked! Choose a defense action!");
     $("#messageDiv").text("Choose a Counter action!");
     displayWeapons2(data.weapons, data.stats);
     fillCounterList(data.actions);
