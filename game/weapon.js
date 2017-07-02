@@ -29,6 +29,13 @@ class Weapon {
       return true;
   }
 
+  removeAmmo(uRef) {
+    if(this.maxAmmo>0)
+      this.curAmmo--;
+    if(this.en>0)
+      uRef.en-=this.en;
+  }
+
   isMap() {
     return this.props.includes("MAP");
   }
