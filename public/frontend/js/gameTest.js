@@ -43,6 +43,11 @@ $(document).ready(function(){
     fillCounterList(data.actions);
   });
 
+  socket.on("room message", function(data){
+    console.log(data.msg);
+    $("#roomMessageDiv").text(data.msg);
+  })
+
   //jquery listeners
   $(".joinRoom").on("click", function(e){
     console.log("Trying to Join a room");
