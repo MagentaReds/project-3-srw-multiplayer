@@ -71,31 +71,54 @@ class Map {
   getPossibleMovement(r,c,m) {
     //console.log(r,c,m);
     var history = [];
-    this.getPMHelper(r,c,r,c,m,history);
-    //console.log(history.length);
+    var history2=[];
+    var counter=[0];
+    this.getPMHelper(r,c,m,r,c,m,history,history2,-1,counter);
+    //console.log(history.length, counter[0]);
     return history;
   }
 
-  getPMHelper(r,c,oR,oC,m,history){
-    //if we get here, this is a new position, so add it to the history.
-    history.push([r,c]);
+  getPMHelper(r,c,m,oR,oC,oM,history,his2,index,counter){
+    //counter to keep track how many times this function has been called
+    counter[0]++;
+
+    //if we get here, this is a new position, so add it to the history
+    //  and also add the number of steps remaining to his2
+    //or if index!=-1, then we have been here, but now we can get here in fewer steps
+    //  so we update the m value in his2
+    if(index===-1) {
+      history.push([r,c]);
+      his2.push(m);
+    } else {
+      //console.log(`${r},${c} from ${his2[index]} to ${m}`);
+      his2[index]=m;
+    }
+
     //base case, if movement is 0, end recursion
     if(m===0)
       return;
 
-    //RECURSE
-    //E
-    if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===undefined && !Helpers.isInArr(history,[r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
-      this.getPMHelper(r,c+1,oR,oC, m-1, history);
-    //S
-    if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===undefined && !Helpers.isInArr(history,[r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
-      this.getPMHelper(r+1,c,oR,oC, m-1, history);
-    //W
-    if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===undefined && !Helpers.isInArr(history,[r, c-1]) && this.farther(oR,oC,r,c,r,c-1))
-      this.getPMHelper(r,c-1,oR,oC, m-1, history);
-    //N
-    if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===undefined && !Helpers.isInArr(history,[r-1, c])&& this.farther(oR,oC,r,c,r-1,c))
-      this.getPMHelper(r-1,c,oR,oC, m-1, history);
+    var temp;
+    if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===undefined) {
+      temp=Helpers.getIndexArr(history,[r, c+1]);
+      if(temp===-1 || his2[temp]<(m-1))
+        this.getPMHelper(r,c+1,m-1,oR,oC,oM,history,his2,temp,counter);
+    }
+    if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===undefined) {
+      temp=Helpers.getIndexArr(history,[r, c-1]);
+      if(temp===-1 || his2[temp]<(m-1))
+        this.getPMHelper(r,c-1,m-1,oR,oC,oM,history,his2,temp,counter);
+    }
+    if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===undefined) {
+      temp=Helpers.getIndexArr(history,[r+1, c]);
+      if(temp===-1 || his2[temp]<(m-1))
+        this.getPMHelper(r+1,c,m-1,oR,oC,oM,history,his2,temp,counter);
+    }
+    if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===undefined) {
+      temp=Helpers.getIndexArr(history,[r-1, c]);
+      if(temp===-1 || his2[temp]<(m-1))
+        this.getPMHelper(r-1,c,m-1,oR,oC,oM,history,his2,temp,counter);
+    }
       
   }
 
