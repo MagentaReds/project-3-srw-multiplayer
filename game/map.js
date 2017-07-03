@@ -14,9 +14,13 @@ class Map {
   constructor(rows, cols, fileNamme="") {
     this.rows = rows;
     this.cols = cols;
-    this.tiles=new Array(cols);
-    for(let i=0; i<cols; ++i)
-      this.tiles[i] = new Array(rows);
+    this.tiles=new Array(rows);
+    for(let i=0; i<rows; ++i) {
+      this.tiles[i] = new Array(cols);
+      for(let k=0; k<cols; ++k){
+        this.tiles[i][k] = null;
+      }
+    }
 
     this.getRadius = this.getRadius.bind(this);
     this.isInBounds = this.isInBounds.bind(this);
@@ -99,22 +103,27 @@ class Map {
       return;
 
     var temp;
-    if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===undefined) {
+    //if adjacent square is in bounds and is empty, then...
+    if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===null) {
+      //grab index of adjacent square from history array
       temp=Helpers.getIndexArr(history,[r, c+1]);
+      //then if adjacent square is not in the history 
+      //  OR it is in the history but it took more steps than current (has less movement remaining) to get to
+      //then step into and recurse
       if(temp===-1 || his2[temp]<(m-1))
         this.getPMHelper(r,c+1,m-1,oR,oC,oM,history,his2,temp,counter);
     }
-    if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===undefined) {
+    if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===null) {
       temp=Helpers.getIndexArr(history,[r, c-1]);
       if(temp===-1 || his2[temp]<(m-1))
         this.getPMHelper(r,c-1,m-1,oR,oC,oM,history,his2,temp,counter);
     }
-    if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===undefined) {
+    if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===null) {
       temp=Helpers.getIndexArr(history,[r+1, c]);
       if(temp===-1 || his2[temp]<(m-1))
         this.getPMHelper(r+1,c,m-1,oR,oC,oM,history,his2,temp,counter);
     }
-    if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===undefined) {
+    if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===null) {
       temp=Helpers.getIndexArr(history,[r-1, c]);
       if(temp===-1 || his2[temp]<(m-1))
         this.getPMHelper(r-1,c,m-1,oR,oC,oM,history,his2,temp,counter);

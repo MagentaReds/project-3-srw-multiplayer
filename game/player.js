@@ -13,6 +13,9 @@ class Player {
     //will need to make a unit.clone utility to kepe things nice a seperate
     this.units=client.units;
     this.currentUnit = -1;
+
+    this.defeated=false;
+    this.hasSurrendered =false;
   }
 
   //need to expand to account for when unit is dead, but testing will ignore for now
@@ -29,6 +32,8 @@ class Player {
     for(var i=0; i<this.units.length; ++i)
       if(this.units[i].isAlive)
         return false;
+
+    this.defeated=true;
     return true;
   }
   isReady() {

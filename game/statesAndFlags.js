@@ -4,7 +4,7 @@
 
 var statesAndFlags ={
   game : {
-    state: {
+    flags: {
       newRound: "Start of new Round",
       isMoving: "Unit has started moving",
       hasMoved: "Unit has moved",
@@ -15,7 +15,8 @@ var statesAndFlags ={
       standby: "Unit has stoodby, Moving on",
       hasHitAndAway: "Unit can move after attcking",
       turnOver: "Unit's turn has ended",
-      waitingForDef: "Game is on hold, waiting for Defender"
+      waitingForDef: "Game is on hold, waiting for Defender",
+      gameOver: "The game is over"
     },
     action: {
       move: "Move",

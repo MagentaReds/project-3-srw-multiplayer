@@ -1,3 +1,4 @@
+"use strict";
 
 var Promise = require("bluebird");
 
@@ -7,12 +8,13 @@ var Client = require("./client.js");
 
 //Helper Class to contain information about game Rooms
 class GameRoom {
-  constructor(http, io, nsp, num, name) {
+  constructor(http, io, nsp, num, name, gameInter) {
     this.name=name;
     this.roomNum=num;
     this.http=http;
     this.io=io;
     this.nsp=nsp;
+    this.gameInter=gameInter;
     
     this.game=null;
     this.maxPlayers  = 2;
@@ -31,7 +33,7 @@ class GameRoom {
     socket.me.slot=slot;
     socket.me.roomNum = this.roomNum;
     socket.me.socketId=socket.id;
-    this.clients[slot] = socket.me;
+    this.clients[slot] = socket;
     socket.join(this.name);
     //console.log(this.clients);
   }
@@ -55,7 +57,7 @@ class GameRoom {
     for(let i=0; i<arr.length; ++i)
       if(arr[i]){
         ++count;
-        if(!arr[i].ready)
+        if(!arr[i].me.ready)
           return false;
       }
     
@@ -87,11 +89,35 @@ class GameRoom {
   emitGetCounter(playerId, data) {
     var socketMeRef;
     for(var i=0; i<this.clients.length; ++i)
-      if(this.clients[i].id===playerId)
-        socketMeRef = this.clients[i];
+      if(this.clients[i].me.id===playerId)
+        socketMeRef = this.clients[i].me;
 
     console.log(`Sending 'get counter' to Player ${socketMeRef.name} in Room ${this.roomNum}`);
     this.nsp.to(socketMeRef.socketId).emit("get counter", data);   
+  }
+
+  gameOver(playerRef) {
+    console.log(`The game in Room ${this.roomNum} is over, shutting down room`);
+    if(playerRef) {
+      this.emitMessage(`The Winner is ${playerRef.name}!`);
+    }
+    this.emitMessage("The Game is over, shutting down room");
+
+    this.cleanUpRoom();
+  }
+
+  cleanUpRoom() {
+    this.game=null;
+    for(let i=0; i<this.clients.length; ++i){
+      if(this.clients[i]) {
+        this.clients[i].me.room=null;
+        this.clients[i].me.slot=null;
+        this.clients[i].me.roomNum=null;
+        this.clients[i].leave(this.name);
+        this.clients[i]=null;
+      }
+    }
+    this.gameInter.emitRooms();
   }
 }
 
@@ -104,11 +130,11 @@ class GameInterface {
     this.nsp=io.of("/game");
     this.mapRooms = this.nsp.adapter.rooms;
     this.rooms= new Array(5);
-    this.rooms[0]=new GameRoom(http, io, this.nsp, 0, "Room Alpha");
-    this.rooms[1]=new GameRoom(http, io, this.nsp, 1, "Room Beta");
-    this.rooms[2]=new GameRoom(http, io, this.nsp, 2, "Room Gamma");
-    this.rooms[3]=new GameRoom(http, io, this.nsp, 3, "Room Delta");
-    this.rooms[4]=new GameRoom(http, io, this.nsp, 4, "Room Epsilon");
+    this.rooms[0]=new GameRoom(http, io, this.nsp, 0, "Room Alpha", this);
+    this.rooms[1]=new GameRoom(http, io, this.nsp, 1, "Room Beta", this);
+    this.rooms[2]=new GameRoom(http, io, this.nsp, 2, "Room Gamma", this);
+    this.rooms[3]=new GameRoom(http, io, this.nsp, 3, "Room Delta", this);
+    this.rooms[4]=new GameRoom(http, io, this.nsp, 4, "Room Epsilon", this);
 
     //for temp names for clients
     this.uniqueIdCounter = 0;
@@ -160,6 +186,8 @@ class GameInterface {
       socket.on("get stats", (data, cb)=>{this.onGetStats(socket, data, cb)});});
       socket.on("do attack", (data, cb)=>{this.onDoAttack(socket, data, cb)});
       socket.on("do counter", (data, cb)=>{this.onDoCounter(socket, data, cb)});
+      socket.on("do cancel", (data, cb)=>{this.onDoCancel(socket, data, cb)});
+      socket.on("do standby", (data, cb)=>{this.onDoStandby(socket, data, cb)});
 
     });
   }
@@ -172,7 +200,7 @@ class GameInterface {
       data.rooms[i]=new Array(this.rooms[i].clients.length);
       for(var k =0; k<this.rooms[i].clients.length; ++k){
         if(this.rooms[i].clients[k])
-          data.rooms[i][k]=this.rooms[i].clients[k].name;
+          data.rooms[i][k]=this.rooms[i].clients[k].me.name;
       }
     }
     console.log(`Sending Updated details about All Rooms to namespace`);
@@ -296,6 +324,22 @@ class GameInterface {
     console.log(`Do Counter requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
     var response = this.rooms[rNum].game.doCounter(socket.me.id, data.action, data.weapon);
+
+    cb(response);
+  }
+
+  onDoCancel(socket, data, cb) {
+    console.log(`Do Cancel requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var response = this.rooms[rNum].game.doCancel(socket.me.id, data.r, data.c);
+
+    cb(response);
+  }
+
+  onDoStandby(socket, data, cb) {
+    console.log(`Do Cancel requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var response = this.rooms[rNum].game.doStandby(socket.me.id, data.r, data.c);
 
     cb(response);
   }

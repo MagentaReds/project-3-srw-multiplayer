@@ -7,7 +7,7 @@ var Promise = require("bluebird");
 var Map = require("./map.js");
 var Player = require("./player.js")
 
-var Flags = require("./statesAndFlags.js").game.state;
+var Flags = require("./statesAndFlags.js").game.flags;
 
 var Helpers = require("../config/helpers.js");
 
@@ -19,9 +19,10 @@ class Game  {
     this.players=[];
     for(var i = 0; i<clientList.length; ++i)
       if(clientList[i])
-        this.players.push(new Player(clientList[i]));
+        this.players.push(new Player(clientList[i].me));
 
     this.numPlayers=this.players.length;
+    this.winner=null;
     //first player goes first
     this.currentPlayer=-1;
     this.pRef = null;
@@ -54,25 +55,16 @@ class Game  {
   gameStart(r,c,filePath=null) {
     //select first player and unit to go, set flags values as necessry, emit status to clients;
     this.map = new Map(r,c);
-    this.pRef = this.getNextPlayer();
-    this.uRef = this.pRef.getNextUnit();
-    this.turn = 0;
-    this.posR = this.uRef.r;
-    this.posC = this.uRef.c;
-    this.oldR = this.uRef.r;
-    this.oldC = this.uRef.c;
-    this.addFlag(Flags.newRound);
-
     this.spawnUnits();
-    console.log(`It is ${this.pRef.name} Unit's ${this.uRef.name} Turn`);
-    console.log(`That means ${this.uRef.name}'s turn!`);
-    this.emitMap(); 
+    this.turn = 0;
+    this.nextTurn(false);
   }
 
   //Called to advanced the game one turn, selects a new player and new unit to be the active ones.
-  nextTurn() {
+  nextTurn(setOldMove=true) {
      //select first player and unit to go, set flags values as necessry, emit status to clients;
-    this.uRef.hasMoved=false;
+    if(setOldMove)
+      this.uRef.hasMoved=false;
     this.pRef = this.getNextPlayer();
     this.uRef = this.pRef.getNextUnit();
     this.turn++;
@@ -242,10 +234,10 @@ class Game  {
   //GameInterface to Game method: returns a response based on the games state and which socket called it
   //Tries to move the unit, and then returns a success and then list of actions that can be taken aftwards
   doMove(playerId, r, c, toR, toC) {
-    var sucRes = {success: true, actions:["Attack", "Standby", "Cancel"]};
-    var sucRes2 = {success: true, actions:["Standby", "Cancel"]};
-    var failRes = {success: false, actions:[]};
-    var failRes2 = {success: false, actions:["Attack", "Standby","Cancel"]};
+    var sucRes = {success: true, actions:["Attack", "Standby", "Cancel"], msg: `${this.uRef.name} has from ${r},${c} to ${toR},${toC}`};
+    var sucRes2 = {success: true, actions:["Standby", "Cancel"], msg: `${this.uRef.name} has from ${r},${c} to ${toR},${toC}`};
+    var failRes = {success: false, actions:[], msg: `Cannot move this square`};
+    var failRes2 = {success: false, actions:["Attack", "Standby","Cancel"], msg: `${this.uRef.name} has already moved this turn`};
 
     var posMov = this.map.getPossibleMovement(r, c, this.uRef.move);
 
@@ -277,12 +269,100 @@ class Game  {
           this.uRef.setRC(toR, toC);
           this.uRef.hasMoved=true;
           this.emitMap();
+          this.addFlag(Flags.turnOver);
+          this.nextTurn();
           return sucRes2;
         } else{
           return failRes;
         }
       } else {
         return failRes;
+      }
+    } else if(!selUnit) {
+      return failRes;
+    } else {
+      return failRes;
+    }
+  }
+
+  doCancel(playerId, r, c) {
+    var sucRes = {success: true, actions:[], msg:"You have cancel!"};
+    var sucRes2 = {success: true, actions:[], msg:"Nothing to cancel"};
+    var failRes = {success: false, actions:[], msg:"Cannot cancel this square"};
+    var failRes2 = {success: false, actions:[], msg:"Nothing to cancel"};
+
+    if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
+      return failRes2;
+    }
+
+    var selUnit = this.map.tiles[r][c];
+
+    if(this.pRef.id===playerId){
+      if(!selUnit) {
+        return failRes;
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
+        return failRes;
+      } else if(this.inFlags(Flags.newRound)) {
+        return sucRes2;
+      } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        console.log(this.posR, this.posC, this.oldR, this.oldC)
+        this.map.move(this.posR, this.posC, this.oldR, this.oldC);
+        selUnit.setRC(this.oldR, this.oldC);
+        selUnit.hasMoved=false;
+        this.posR=this.oldR;
+        this.posC=this.oldC;
+        this.inter.emitMap(this.map.getAsciiMap());
+        this.emptyFlags();
+        this.addFlag(Flags.newRound);
+        return sucRes;
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+        return sucRes2
+      } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+        this.map.move(this.posR, this.posC, this.oldR, this.oldC);
+        selUnit.setRC(this.oldR, this.oldC);
+        selUnit.hasMoved=false;
+        this.posR=this.oldR;
+        this.posC=this.oldC;
+        this.inter.emitMap(this.map.getAsciiMap());
+        this.removeFlag(Flags.hasMoved);
+        return sucRes;
+      }
+    } else if(!selUnit) {
+      return failRes;
+    } else {
+      return failRes;
+    }
+  }
+
+
+  doStandby(playerId, r, c) {
+    var sucRes = {success: true, actions:[], msg:"Unit has stoodby, turn over!"};
+    var failRes = {success: false, actions:[], msg:"Cannot standby this square"};
+    var failRes2 = {success: false, actions:[], msg:"Cannot Sstandby at this time"};
+
+    if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
+      return failRes2;
+    }
+
+    var selUnit = this.map.tiles[r][c];
+
+    if(this.pRef.id===playerId){
+      if(!selUnit) {
+        return failRes;
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
+        return failRes;
+      } else if(this.inFlags(Flags.newRound)) {
+        return failRes2;
+      } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        this.addFlag(Flags.turnOver);
+        this.nextTurn();
+        return sucRes;
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+        return failRes2;
+      } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+        this.addFlag(Flags.turnOver);
+        this.nextTurn();
+        return sucRes;
       }
     } else if(!selUnit) {
       return failRes;
@@ -547,11 +627,15 @@ class Game  {
       damage = Math.floor(damage/2);
 
     this.applyAttack(this.uRef, this.defender, this.weapon, hit, damage, crit);
+    this.checkAliveness(this.defender, false);
+    this.checkPlayer(this.defender.owner);
 
     if(counterType==="Attack" && this.defender.isAlive){
       hit = this.getHitPercent(this.defender, this.uRef, this.defWep);
       damage = this.getDamage(this.defender, this.uRef, this.defWep);
       this.applyAttack(this.defender, this.uRef, this.defWep, hit, damage, crit);
+      this.checkAliveness(this.uRef, true);
+      this.checkPlayer(this.uRef.owner);
     }
       
   }
@@ -691,10 +775,58 @@ class Game  {
       return Math.floor(chance);
   }
 
+  checkAliveness(unit, isCurrentUnit) {
+    if(!unit.isAlive) {
+      this.inter.emitMessage(`${unit.name} has been shot down!`);
+      this.map.tiles[unit.r][unit.c] = null;
+      this.inter.emitMap(this.map.getAsciiMap());
+    }
+
+    if(isCurrentUnit) {
+      this.addFlag(Flags.turnOver);
+    }
+  }
+
   //Checks the flags, and advances the game based off them.
   checkFlags() {
     if(this.inFlags(Flags.turnOver)){
-      this.nextTurn();
+      //this.checkPlayers();
+      this.checkGameOver();
+      if(this.inFlags(Flags.gameOver)) {
+        this.inter.gameOver(this.winner);
+      } else{
+        this.nextTurn();
+      }
+    }
+  }
+
+  checkPlayer(playerId) {
+    var temp = null;
+    for(let i=0; i<this.players.length; ++i)
+      if(this.players[i].id===playerId) {
+        temp=this.players[i];
+        //console.log("Found player", temp.name, temp.id);
+      }
+        
+
+    if(temp && temp.isDefeated()) {
+      this.inter.emitMessage(`${temp.name} has been defeated!`);
+    }
+  }
+
+  checkGameOver() {
+    var playersOk  = [];
+    for(let i=0; i<this.players.length; ++i){
+      if(!this.players[i].isDefeated() && !this.players[i].hasSurrendered)
+        playersOk.push(i);
+    }
+
+    if(playersOk.length===1) {
+      this.winner=this.players[playersOk[0]];
+      this.addFlag(Flags.gameOver);
+    } else if(playersOk.length===0) {
+      this.winnner=null;
+      this.addFlag(Flags.gameOver);
     }
   }
 

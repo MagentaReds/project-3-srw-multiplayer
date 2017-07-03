@@ -161,6 +161,40 @@ $(document).ready(function(){
     });
   });
 
+  $(document).on("click", "button.Cancel", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    socket.emit("do cancel", data, function(data){
+      console.log(data);
+      if(data.success) {
+        
+      }
+      writeMessage(data);
+    });
+  });
+
+  $(document).on("click", "button.Standby", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    socket.emit("do standby", data, function(data){
+      console.log(data);
+      if(data.success) {
+        
+      }
+      writeMessage(data);
+    });
+  });
+
 
   $(document).on("click", "button.Attack", function(e){
     e.preventDefault();
