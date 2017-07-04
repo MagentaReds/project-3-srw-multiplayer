@@ -1,10 +1,13 @@
 "use strict";
 
+var Helpers = require("../config/helpers.js");
+
 var Weapon = require("./weapon.js");
 
-var Status = require("./statesAndFlags").unit.status;
-var Skill = require("./statesAndFlags").pilot.skill;
-var Ability = require("./statesAndFlags").mech.abilities;
+var Status = require("./statesAndFlags.js").unit.status;
+var Skill = require("./statesAndFlags.js").pilot.skill;
+var Ability = require("./statesAndFlags.js").mech.abilities;
+var WepCategory = require("./statesAndFlags.js").weapon.category;
 
 class Unit {
   constructor(playerId, pilotDb, mechDb, pilotLevel=50) {
@@ -14,6 +17,7 @@ class Unit {
     this.weapons = [];
     this.makeWeapons(mechDb);
     this.size = mechDb.size;
+    this.terrain = this.combineTerrain(pilotDb.terrain, mechDb.terrain);
     this.hp = mechDb.stats[0];
     this.hpMax = mechDb.stats[0];
     this.en = mechDb.stats[1],
@@ -30,7 +34,7 @@ class Unit {
     this.spMax = Math.floor(pilotDb.stats.sp[0]*pilotLevel+pilotDb.stats.sp[1]);
     this.sc = [...pilotDb.spiritCommands];
     this.pilotSkills = [...pilotDb.pilotSkills];
-    this.mechAbilities = [...mechDb.abilities];
+    this.abilities = [...mechDb.abilities];
     this.owner=playerId;
     this.willGain=pilotDb.willGain;
     this.will=100;
@@ -68,6 +72,53 @@ class Unit {
     for(var i=0; i<db.iWeapons.length; i++)
       this.weapons.push(new Weapon(db.iWeapons[i]));  
   }
+
+  combineTerrain(ter1, ter2) {
+    var res="";
+    var temp=0;
+    for(let i=0; i<4; ++i) {
+      switch(ter1.charAt(i)) {
+        case 'S':
+          temp+=4;
+          break;
+        case 'A':
+          temp+=3
+          break;
+        case 'B':
+          temp+=2
+          break;
+        case 'C':
+          temp+=1
+          break;
+      }
+      switch(ter2.charAt(i)) {
+        case 'S':
+          temp+=4;
+          break;
+        case 'A':
+          temp+=3
+          break;
+        case 'B':
+          temp+=2
+          break;
+        case 'C':
+          temp+=1
+          break;
+      }
+      if(temp===8 || temp===7)
+        res+='S';
+      else if(temp===6)
+        res+='A';
+      else if(temp===5 || temp===4)
+        res+='B';
+      else if(temp===3 || temp===2)
+        res+='C';
+      else
+        res+='D';
+    }
+
+    return res;
+  }
   
   skillLevel(skill) {
     for(let i=0; i<this.pilotSkills.length; ++i)
@@ -100,9 +151,152 @@ class Unit {
   hasHitAndAway() {
     return this.skills.has(Skill.hitAway);
   }
+  hasAssail() {
+    return this.status.includes(Status.assail);
+  }
 
   hasFlag(flag) {
     return this.flags.includes(flag);
+  }
+
+  terPer(terrain) {
+    var index=-1;
+    switch(terrain) {
+      case "Air":
+        index=0;
+        break;
+      case "Grd":
+        index=1;
+        break;
+      case "Wtr":
+        index=2;
+        break;
+      case "Spc":
+        index=3;
+        break;
+    }
+    switch(this.terrain.charAt(index)) {
+      case 'S':
+        return 1.1;
+      case 'A':
+        return 1.0;
+      case 'B':
+        return .9;
+      case 'C':
+        return .8;
+      case 'D':
+        return .4;
+    }
+  }
+
+  sizeAdjust() {
+    switch(this.size) {
+      case 'LL':
+        return 1.4;
+      case 'L':
+        return 1.2;
+      case 'M':
+        return 1.0;
+      case 'S':
+        return 0.8;
+    }
+  }
+
+  modHit() {
+    var res=0;
+    var temp;
+    if(this.status.includes(Status.focus))
+      res+=30;
+    if(this.skills.has(Skill.prevail));
+      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+    if(this.skills.has(Skill.telekinesis))
+      res+=Helpers.getTKHitEvd(this.skills.get(Skill.telekinesis));
+    if(this.skills.has(Skill.genius))
+      res+=20;
+    if(this.skills.has(Skill.predict) && this.will>110)
+      res+=10;
+
+    return res;
+  }
+
+  modEvd(defending=false) {
+    var res=0;
+    if(this.status.includes(Status.focus))
+      res+=30;
+    if(this.skills.has(Skill.prevail));
+      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+    if(this.skills.has(Skill.telekinesis))
+      res+=Helpers.getTKHitEvd(this.skills.get(Skill.telekinesis));
+    if(this.skills.has(Skill.genius))
+      res+=20;
+    if(this.skills.has(Skill.predict) && this.will>=110)
+      res+=10;
+    if(this.skills.has(Skill.prophesy) && this.will>=130 && defending)
+      res+=30;
+
+    return res;
+  }
+
+  modCrit() {
+    var res=0;
+    if(this.skills.has(Skill.genius))
+      res+=20;
+    if(this.skills.has(Skill.prevail));
+      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+  }
+
+  modDmgFlat(wepCat) {
+    var res=0;
+    if(this.skills.has(Skill.gunfight) && wepCat==='R')
+      res+=Helpers.getFightDmg(this.skills.get(Skill.gunfight));
+    if(this.skills.has(Skill.infight) && wepCat==='M')
+      res+=Helpers.getFightDmg(this.skills.get(Skill.infight));
+
+    return res;
+  }
+
+  modDmgScale(counter=false) {
+    var res=1.0;
+    if(this.skills.has(Skill.attacker) && this.will>=130)
+      res+=.2;
+    if(this.skills.has(Skill.revenge) && counter)
+      res+=.2;
+    
+    return res;
+  }
+
+  modDefFlat(wepCat) {
+    var res=0;
+    if(this.abilities.includes(Ability.beamCoat) && wepCat===WepCategory.energyBeam && this.en>=5)
+      res+=900;
+    if(this.abilities.includes(Ability.abField) && wepCat===WepCategory.energyBeam && this.en>=10)
+      res+=1200;
+    if(this.abilities.includes(Ability.eField) && this.will>=120 && this.en>=15)
+      res+=1500;
+    if(this.abilities.includes(Ability.gWall) && this.will>=120 && this.en>=5)
+      res+=800;
+    if(this.abilities.includes(Ability.gTerritory) && this.will>=120 && this.en>=15)
+      res+=1800;
+    if(this.abilities.includes(Ability.tkField) && this.will>=110 && this.en>=5)
+      res+=Helpers.getTKField(this.skills.has(Skill.telekinesis));
+    
+    return res;
+  }
+
+  modDefScale(wepCat) {
+    var res=1.0;
+    if(this.skills.has(Skill.guard) && this.will>=130)
+      res+=.2;
+    
+    return res;
+  }
+
+  modArmScale() {
+    var res=1.0;
+    if(this.skills.has(Skill.prevail))
+      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+
+    return res;
   }
 
 
