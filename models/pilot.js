@@ -33,7 +33,15 @@ var PilotSchema = new Schema({
     }
   },
   aceBonus: String,
-  willGain: [Number],
+  willGain: {
+    type:[Number],
+    validate: {
+      validator: function(v){
+        return v.length===6;
+      },
+      message: "{Value} is not a valid will gain list"
+    }
+  },
   pilotSkills: {
     type: [Schema.Types.Mixed],
     validate: {
