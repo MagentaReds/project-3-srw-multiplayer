@@ -49,7 +49,19 @@ $(document).ready(function(){
   socket.on("room message", function(data){
     console.log(data.msg);
     $("#roomMessageDiv").text(data.msg);
-  })
+    var p = $("<p>");
+    var strong =$("<strong>");
+    strong.text(data.msg);
+    $("#chatDisplay").append(p.append(strong));
+  });
+
+  socket.on("chat message", function(data){
+    console.log(data.msg);
+    var p = $("<p>");
+    p.text(data.msg);
+    $("#chatDisplay").append(p);
+    $("#chatDisplay").scrollTop($("#chatDisplay")[0].scrollHeight);
+  });
 
   //jquery listeners
   $(".joinRoom").on("click", function(e){
@@ -276,6 +288,13 @@ $(document).ready(function(){
       }
       writeMessage(data);
     });
+  });
+
+  $(document).on("submit", "#chatForm", function(e){
+    e.preventDefault();
+    var msg = $("#chatInput").val().trim();
+    socket.emit("send chat", msg);
+    $("#chatInput").val("");
   });
 
 });
