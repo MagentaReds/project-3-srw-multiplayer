@@ -16,6 +16,10 @@ class Weapon {
     this.terrain=db.terrain;
   }
 
+  refill() {
+    this.ammo=this.maxAmmo;
+  }
+
   canAttack(uRef, hasMoved) {
     if(uRef.will < this.will)
       return false;
