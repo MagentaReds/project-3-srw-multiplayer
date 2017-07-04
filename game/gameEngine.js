@@ -8,6 +8,9 @@ var Map = require("./map.js");
 var Player = require("./player.js")
 
 var Flags = require("./statesAndFlags.js").game.flags;
+var Status = require("./statesAndFlags").unit.status;
+var Skill = require("./statesAndFlags").pilot.skill;
+var Ability = require("./statesAndFlags").mech.abilities;
 
 var Helpers = require("../config/helpers.js");
 
@@ -93,8 +96,8 @@ class Game  {
     return this.players[this.currentPlayer];
   }
 
-  checkUnitAbiliteis() {
-    
+  checkUnitAbilities() {
+
   }
 
   //adds a flag to the flags array
@@ -145,7 +148,7 @@ class Game  {
         return ["Move", "Attack", "Status"];
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return ["Attack", "Standby", "Cancel"];
-      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return ["Move", "Standby"];
       } else {
         return [];
@@ -183,7 +186,7 @@ class Game  {
         return ["Attack", "Standby", "Cancel"];
       } 
       //state3: If the unit has attacked but not moved and has attack and away
-      else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return ["Move", "Standby"];
       } 
       //State4: current Unit is done for the round (or should be if they here to this else)
@@ -220,7 +223,7 @@ class Game  {
         return sucRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return failRes2;
-      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return sucRes;
       } else {
         return failRes;
@@ -269,7 +272,7 @@ class Game  {
         }
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return failRes2;
-      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         if(Helpers.isInArr(posMov, [toR,toC])) {
           this.moveUnit(r,c,toR,toC);
           this.addFlag(Flags.hasMoved);
@@ -322,9 +325,9 @@ class Game  {
         this.emptyFlags();
         this.addFlag(Flags.newRound);
         return sucRes;
-      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return sucRes2
-      } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         this.map.move(this.posR, this.posC, this.oldR, this.oldC);
         selUnit.setRC(this.oldR, this.oldC);
         selUnit.hasMoved=false;
@@ -364,9 +367,9 @@ class Game  {
         this.addFlag(Flags.turnOver);
         this.nextTurn();
         return sucRes;
-      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return failRes2;
-      } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         this.addFlag(Flags.turnOver);
         this.nextTurn();
         return sucRes;
@@ -396,7 +399,7 @@ class Game  {
         return sucRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return sucRes;
-      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return failRes2;
       } else {
         return failRes;
@@ -433,7 +436,7 @@ class Game  {
         return sucRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return sucRes;
-      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return failRes2;
       } else {
         return failRes;
@@ -470,7 +473,7 @@ class Game  {
         return sucRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return sucRes;
-      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return failRes2;
       } else {
         return failRes;
@@ -526,7 +529,7 @@ class Game  {
         } else {
           return failRes;
         }
-      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && this.inFlags(Flags.hasHitAndAway)) {
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return failRes2;
       } else {
         return failRes;
@@ -697,7 +700,7 @@ class Game  {
   }
 
   //caculates the hit percentage based off the attacking and defending units stats and the weapon used
-  getHitPercent(atkRef, defRef, wepId) {
+  getHitPercent(atkRef, defRef, wepId, ter="Spc", counter=false) {
     if(!atkRef || !defRef)
       return 0;
 
@@ -709,9 +712,9 @@ class Game  {
     if(distance<wep.range[0] || distance>wep.range[1])
       return 0;
 
-    if(defRef.hasAlert())
+    if(defRef.status.includes(Status.alert))
       return 0;
-    if(atkRef.hasStrike())
+    if(atkRef.status.includes(Status.strike))
       return 100;
 
     //Range Adjust = (5 - Range from Attacker to Defender) x 3
@@ -719,9 +722,10 @@ class Game  {
     //2.Base Evade = (Defense Side Pilot Evade/2 + Defense Side Unit Mobility ) x Defense Side Final Performance Adjustment + Defense Side Special Skill Adjustment
     //3.Final Hit = (1+2) x Defense Side Unit Size Adjustment + Range Adjustment + Command Adjustment - Defense Side Performance
     var rangeAdjust = (5 - distance) * 3;
-    var baseHit = (atkRef.hit/2+140) * (1) + wep.hit + (0);
-    var baseEvd = (defRef.evd/2 + defRef.mob) * (1) + (0);
-    var finalHit = (baseHit-baseEvd) * (1) + rangeAdjust + (0) - (0);
+    var baseHit = (atkRef.hit/2+140) * (atkRef.terPer(ter)) + wep.hit + (atkRef.modHit());
+    var baseEvd = (defRef.evd/2 + defRef.mob) * (defRef.terPer(ter)) + (defRef.modEvd(!counter));
+    var finalHit = (baseHit-baseEvd) * (defRef.sizeAdjust()) + rangeAdjust + (0) - (0);
+    console.log(baseHit, baseEvd, finalHit);
 
     if(finalHit>100)
       return 100;
@@ -732,7 +736,7 @@ class Game  {
   }
 
   //caculates the damage based off the attacking and defending units stats and the weapon used
-  getDamage(atkRef, defRef, wepId){
+  getDamage(atkRef, defRef, wepId, ter="Spc", counter=false){
     if(!atkRef || !defRef)
       return 0;
 
@@ -749,9 +753,10 @@ class Game  {
     // 2.Base Defense = Defense Side Armor x (Defense Side Pilot Defense + Defense Side Pilot will)/200 x Defense Side Unit Size Adjustment
     // 3.Damage = (1-2) x (100 * Defense Side Performance Adjustment)/100 x Special Skill Adjustment
     var pilotStat = atkRef.getAttackStat(wep.type);
-    var baseAtk = wep.damage * (pilotStat + atkRef.will) / 200 * (1);
-    var baseDef = defRef.armor * (defRef.def + defRef.will) / 200 * (1);
-    var damage = (baseAtk-baseDef) * (100*(1))/100*(1); 
+    var baseAtk = (wep.damage + atkRef.modDmgFlat(wep.cat) ) * (pilotStat + atkRef.will) / 200 * (wep.terPer(ter));
+    var baseDef = (defRef.armor * defRef.modArmScale()) * (defRef.def + defRef.will) / 200 * (defRef.sizeAdjust());
+    var damage = (baseAtk - baseDef) * (100 * (defRef.terPer(ter))) / 100 * (atkRef.modDmgScale() * defRef.modDefScale()); 
+    var damage = damage - defRef.modDefFlat(wep.cat);
 
     if(damage<0)
       return 0;
