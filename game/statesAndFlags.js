@@ -193,16 +193,28 @@ var statesAndFlags ={
   },
   unit: {
     status: {
-      accel: "Ac",
-      net: "Net",
-      goAgain: "+1",
+      valor: "Va",
+      gain: "Ga",
       strike: "St",
-      focus: "Fo",
+      zeal: "Ze",
+      cheer: "Ga",
+      attune: "St",
+      mercy: "Me",
+      luck: "Lu",
+      assail: "As",
+      snipe: "Sn",
+      bless: "Lu",
       guard: "Gu",
-      guts: "Gt",
-      mercy: "Mc",
+      fury: "Fu",
       alert: "Al",
-      assail: "As"
+      focus: "Fo",
+      accel: "Ac",
+      resolve: "Re",
+      enable: "En",
+      net: "NT",
+      wepBreak: "WB",
+      armBreak: "AB",
+      spBlock: "SB"
     }
   }
 };
