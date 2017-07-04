@@ -84,6 +84,11 @@ class GameRoom {
     this.nsp.to(this.name).emit("room message", {msg});
   }
 
+  receiveChat(socketMe, msg) {
+    console.log(`Received chat mesage from ${socketMe.name} resending to Room ${this.roomNum}`);
+    this.nsp.to(this.name).emit("chat message", {msg: `${socketMe.name}: ${msg.substr(0, 100)}`})
+  }
+
   //Emits a 'get counter' event to the player that is being attacked
   //and sends that player what options they have.
   emitGetCounter(playerId, data) {
@@ -188,6 +193,7 @@ class GameInterface {
       socket.on("do counter", (data, cb)=>{this.onDoCounter(socket, data, cb)});
       socket.on("do cancel", (data, cb)=>{this.onDoCancel(socket, data, cb)});
       socket.on("do standby", (data, cb)=>{this.onDoStandby(socket, data, cb)});
+      socket.on("send chat", (data, cb)=>{this.onSendChat(socket, data)});
 
     });
   }
@@ -259,89 +265,127 @@ class GameInterface {
   onGetActions(socket, data, cb) {
     console.log(`Get Actions requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = {
-      actions: this.rooms[rNum].game.getActions(socket.me.id, data.r, data.c),
-      msg: `Action List at ${data.r},${data.c} has been sent`
-    };
+    var room=this.rooms[rNum];
+    if(room)  {
+      var response = {
+        actions: this.rooms[rNum].game.getActions(socket.me.id, data.r, data.c),
+        msg: `Action List at ${data.r},${data.c} has been sent`
+      };
 
-    cb(response);
+      cb(response);
+    }
   }
 
   onGetMove(socket, data, cb){
     console.log(`Get Move requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = {
-      success: true,
-      type: "Move",
-      array: this.rooms[rNum].game.requestMoveTiles(socket.me.id, data.r, data.c),
-      msg: `Move array at ${data.r},${data.c} has been sent`
-    };
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = {
+        success: true,
+        type: "Move",
+        array: this.rooms[rNum].game.requestMoveTiles(socket.me.id, data.r, data.c),
+        msg: `Move array at ${data.r},${data.c} has been sent`
+      };
 
-    cb(response);
+      cb(response);
+    }
   }
 
   onDoMove(socket, data, cb) {
     console.log(`Do Move requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = this.rooms[rNum].game.doMove(socket.me.id, data.r, data.c, data.toR, data.toC);
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.doMove(socket.me.id, data.r, data.c, data.toR, data.toC);
 
-    cb(response);
+      cb(response);
+    }
   }
 
   onGetAttack(socket, data, cb){
     console.log(`Get Attack requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = this.rooms[rNum].game.getAttack(socket.me.id, data.r, data.c);
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.getAttack(socket.me.id, data.r, data.c);
 
-    cb(response);
+      cb(response);
+    }
   }
 
   onGetTargets(socket, data, cb){
     console.log(`Get Targets requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = this.rooms[rNum].game.getTargets(socket.me.id, data.r, data.c, data.weapon);
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.getTargets(socket.me.id, data.r, data.c, data.weapon);
 
-    cb(response);
+      cb(response);
+    }
   }
 
   onGetStats(socket, data, cb){
     console.log(`Get Stats requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = this.rooms[rNum].game.getStats(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.getStats(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
 
-    cb(response);
+      cb(response);
+    }
   }
 
   onDoAttack(socket, data, cb) {
     console.log(`Do Attack requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = this.rooms[rNum].game.doAttack(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.doAttack(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
 
-    cb(response);
+      cb(response);
+    }
   }
 
   onDoCounter(socket, data, cb) {
     console.log(`Do Counter requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = this.rooms[rNum].game.doCounter(socket.me.id, data.action, data.weapon);
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.doCounter(socket.me.id, data.action, data.weapon);
 
-    cb(response);
+      cb(response);
+    }
   }
 
   onDoCancel(socket, data, cb) {
     console.log(`Do Cancel requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = this.rooms[rNum].game.doCancel(socket.me.id, data.r, data.c);
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.doCancel(socket.me.id, data.r, data.c);
 
-    cb(response);
+      cb(response);
+    }
   }
 
   onDoStandby(socket, data, cb) {
     console.log(`Do Cancel requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
-    var response = this.rooms[rNum].game.doStandby(socket.me.id, data.r, data.c);
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.doStandby(socket.me.id, data.r, data.c);
 
-    cb(response);
+      cb(response);
+    }
+  }
+
+  onSendChat(socket, msg) {
+    console.log(`Send chat event from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room)
+      room.receiveChat(socket.me, msg);
   }
   
 }
