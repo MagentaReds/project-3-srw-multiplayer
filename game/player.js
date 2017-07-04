@@ -12,10 +12,18 @@ class Player {
     this.name=client.name;
     //will need to make a unit.clone utility to kepe things nice a seperate
     this.units=client.units;
+    this.resetUnits();
     this.currentUnit = -1;
 
     this.defeated=false;
     this.hasSurrendered =false;
+  }
+
+  //resetting units due not deep copy
+  resetUnits() {
+    for(let i=0; i<this.units.length; ++i) {
+      this.units[i].reset();
+    }
   }
 
   //need to expand to account for when unit is dead, but testing will ignore for now
