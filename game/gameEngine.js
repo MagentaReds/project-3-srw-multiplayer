@@ -18,8 +18,9 @@ class Game  {
     this.map = null;
     this.players=[];
     for(var i = 0; i<clientList.length; ++i)
-      if(clientList[i])
+      if(clientList[i]) {
         this.players.push(new Player(clientList[i].me));
+      }
 
     this.numPlayers=this.players.length;
     this.winner=null;
@@ -47,6 +48,7 @@ class Game  {
     this.oldC=-1;
 
     this.flags=[];
+    this.unitFlags=[];
 
     this.gameStart(30,30);
   }
@@ -74,6 +76,7 @@ class Game  {
     this.oldC = this.uRef.c;
     this.emptyFlags();
     this.addFlag(Flags.newRound);
+    this.checkUnitAbilities();
 
     console.log(`It is ${this.pRef.name} Unit's ${this.uRef.name} Turn`);
     console.log(`That means ${this.uRef.name}'s turn!`);
@@ -88,6 +91,10 @@ class Game  {
       this.currentPlayer=0;
 
     return this.players[this.currentPlayer];
+  }
+
+  checkUnitAbiliteis() {
+    
   }
 
   //adds a flag to the flags array
