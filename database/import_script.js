@@ -53,6 +53,8 @@ function addMechsHelper(dataSource, mechCodeName, wpWeapons){
       wpSpace: tempMech.wpSpace,
       partSlots: tempMech.partSlots,
       fub: tempMech.fub,
+      size: tempMech.size,
+      terrain: tempMech.terrain,
       abilities: tempMech.abilities,
       type: tempMech.type.split("/"),
       weapons: [],
