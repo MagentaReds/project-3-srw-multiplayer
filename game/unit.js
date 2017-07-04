@@ -2,7 +2,9 @@
 
 var Weapon = require("./weapon.js");
 
-var Flags = require("./statesAndFlags").unit.status;
+var Status = require("./statesAndFlags").unit.status;
+var Skill = require("./statesAndFlags").pilot.skill;
+var Ability = require("./statesAndFlags").mech.abilities;
 
 class Unit {
   constructor(playerId, pilotDb, mechDb, pilotLevel=50) {
@@ -39,8 +41,25 @@ class Unit {
     this.c=-1;
     this.hasMoved=false;
 
+    this.status=[];
     this.flags=[];
-    this.checkSkills();
+    this.skills = new Map();
+    this.spirits = new Map();
+    this.fillSkillsAndSpirits();
+  }
+
+  reset() {
+    this.hp=this.hpMax;
+    this.en=this.enMax;
+    this.sp=this.spMax;
+    this.will=100;
+    this.isAlive=true;
+    this.hasMoved=false;
+    this.flags=[];
+    for(let i=0; i<this.weapons.length; ++i){
+      this.weapons[i].refill();
+    }
+
   }
 
   makeWeapons(db) {
@@ -48,6 +67,23 @@ class Unit {
       this.weapons.push(new Weapon(db.weapons[i]));
     for(var i=0; i<db.iWeapons.length; i++)
       this.weapons.push(new Weapon(db.iWeapons[i]));  
+  }
+  
+  skillLevel(skill) {
+    for(let i=0; i<this.pilotSkills.length; ++i)
+      if(this.pilotSkills[i][0]===skill)
+        return this.pilotSkills[i][1];
+
+    return 0;
+  }
+
+  fillSkillsAndSpirits() {
+    for(var i=0; i<this.pilotSkills.length; ++i){
+      this.skills.set(this.pilotSkills[i][0], this.pilotSkills[i][1]);
+    }
+    for(let i=0; i<this.sc.length; ++i){
+      this.spirits.set(this.sc[i][0], this.sc[i][1]);
+    }
   }
 
   getAttackStat(type) {
@@ -62,33 +98,13 @@ class Unit {
   }
 
   hasHitAndAway() {
-    for(var i=0; i<this.pilotSkills.length; ++i)
-      if(this.pilotSkills[i][0]==="Hit & Away")
-        return true;
-
-    return false;
+    return this.skills.has(Skill.hitAway);
   }
 
   hasFlag(flag) {
     return this.flags.includes(flag);
   }
 
-  hasAssail(){
-    return this.flags.includes(Flags.assail);
-  }
-
-  hasAlert(){
-    return this.flags.includes(Flags.alert);
-  }
-
-  hasStrike(){
-    return this.flags.includes(Flags.strike);
-  }
-
-  //checks the pilot's skills, and does stuff based off them;
-  checkSkills() {
-
-  }
 
   //returns maximum movement in squares
   //assume we are flying/in space for now, will make generic later
