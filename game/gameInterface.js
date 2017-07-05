@@ -186,9 +186,12 @@ class GameInterface {
       socket.on("get actions", (data,cb)=>{this.onGetActions(socket, data, cb)});
       socket.on("get move", (data,cb)=>{this.onGetMove(socket, data, cb)});
       socket.on("do move", (data, cb)=>{this.onDoMove(socket, data, cb)});
+      socket.on("get spirit", (data,cb)=>{this.onGetSpirit(socket, data, cb)});
+      socket.on("do spirit", (data, cb)=>{this.onDoSpirit(socket, data, cb)});
       socket.on("get attack", (data,cb)=>{this.onGetAttack(socket, data, cb)});
-      socket.on("get targets", (data,cb)=>{this.onGetTargets(socket, data, cb)
-      socket.on("get stats", (data, cb)=>{this.onGetStats(socket, data, cb)});});
+      socket.on("get targets", (data,cb)=>{this.onGetTargets(socket, data, cb)});
+      socket.on("get stats", (data, cb)=>{this.onGetStats(socket, data, cb)});
+      socket.on("get status", (data, cb)=>{this.onGetStatus(socket, data, cb)});
       socket.on("do attack", (data, cb)=>{this.onDoAttack(socket, data, cb)});
       socket.on("do counter", (data, cb)=>{this.onDoCounter(socket, data, cb)});
       socket.on("do cancel", (data, cb)=>{this.onDoCancel(socket, data, cb)});
@@ -303,6 +306,28 @@ class GameInterface {
     }
   }
 
+  onGetSpirit(socket, data, cb) {
+    console.log(`Get Spirit requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.getSpirit(socket.me.id, data.r, data.c);
+
+      cb(response);
+    }
+  }
+
+  onDoSpirit(socket, data, cb) {
+    console.log(`Do Spirit requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.doSpirit(socket.me.id, data.r, data.c, data.toR, data.toC, data.spirit);
+
+      cb(response);
+    }
+  }
+
   onGetAttack(socket, data, cb){
     console.log(`Get Attack requested from ${socket.me.name} id: ${socket.me.id}`);
     var rNum=socket.me.roomNum;
@@ -331,6 +356,17 @@ class GameInterface {
     var room=this.rooms[rNum];
     if(room) {
       var response = this.rooms[rNum].game.getStats(socket.me.id, data.r, data.c, data.toR, data.toC, data.weapon);
+
+      cb(response);
+    }
+  }
+
+  onGetStatus(socket, data, cb){
+    console.log(`Get Status requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.getStatus(socket.me.id, data.r, data.c);
 
       cb(response);
     }
