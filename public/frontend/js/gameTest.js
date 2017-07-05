@@ -154,6 +154,64 @@ $(document).ready(function(){
     });
   });
 
+  $(document).on("click", "button.get_Status", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    socket.emit("get status", data, function(data){
+      console.log(data);
+      if(data.success) {
+        $("#arrayName").text(data.type);
+        displayArray(data.status);
+      }
+      writeMessage(data);
+    });
+  });
+
+  $(document).on("click", "button.get_Spirit", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    socket.emit("get spirit", data, function(data){
+      if(data.success) {
+        $("#arrayName").text(data.type);
+        displayArray(data.spirits);
+      }
+      writeMessage(data);
+    });
+  });
+
+  $(document).on("click", "button.Spirit", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var toR = parseInt($("#row1").val());
+    var toC = parseInt($("#col2").val());
+    var spirit = parseInt($("#weapon").val())
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    data.toR=toR;
+    data.toC=toC;
+    data.spirit=spirit;
+    socket.emit("do spirit", data, function(data){
+      console.log(data);
+      if(data.success) {
+      }
+      writeMessage(data);
+      fillActionList(data.actions);
+    });
+  });
+
   $(document).on("click", "button.get_Attack", function(e){
     e.preventDefault();
     var r = parseInt($("#row").val());
