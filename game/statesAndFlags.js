@@ -198,7 +198,7 @@ var statesAndFlags ={
       strike: "St",
       zeal: "Ze",
       cheer: "Ga",
-      attune: "St",
+      attune: "At",
       mercy: "Me",
       luck: "Lu",
       assail: "As",
