@@ -145,7 +145,7 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return ["Status"];
       } else if(this.inFlags(Flags.newRound)) {
-        return ["Move", "Attack", "Status"];
+        return ["Move", "Attack", "Spirit", "Status"];
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return ["Attack", "Standby", "Cancel"];
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
@@ -287,6 +287,58 @@ class Game  {
         }
       } else {
         return failRes;
+      }
+    } else if(!selUnit) {
+      return failRes;
+    } else {
+      return failRes;
+    }
+  }
+
+  getSpirit(playerId, r, c) {
+    var selUnit = this.map.tiles[r][c];
+
+    if(!selUnit) {
+      return {success:false, spirits:[], msg: "Target square is empty"};
+    } else {
+      var sucRes = {success:true, spirits:selUnit.getSpiritList(), msg: `${selUnit.name}'s spirit command list`};
+      return sucRes;
+    }
+
+  }
+
+  doSpirit(playerId, r, c, toR, toC, spiritId) {
+    var sucRes = {success: true, actions:[], msg:"Successfully cast spirit command"};
+    var failRes = {success: false, actions:[], msg:"Cannot alter this square"};
+    var failRes2 = {success: false, actions:[], msg:"Failed to cast spirit command"};
+
+    if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
+      return failRes2;
+    }
+
+    var selUnit = this.map.tiles[r][c];
+    var tarUnit = null;
+    console.log(toR, toC);
+    if((toR!==null && toR!==undefined && toR!=='') && (toC!==null && toC!==undefined && toC!=='') )
+      tarUnit=this.map.tiles[toR][toC];
+
+    if(this.pRef.id===playerId){
+      if(!selUnit) {
+        return failRes;
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
+        return failRes;
+      } else if(this.inFlags(Flags.newRound)) {
+        var didCast = selUnit.castSC(spiritId, tarUnit);
+        if(didCast)
+          return sucRes;
+        else
+          return failRes2;
+      } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        return failRes2;
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
+        return failRes2;
+      } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
+        return failRes2;
       }
     } else if(!selUnit) {
       return failRes;
@@ -450,7 +502,7 @@ class Game  {
 
   //GameInterface to Game method: returns a response based on the games state and which socket called it
   //Returns hit statstic about a specific weapon when target a unit at toR, toC
-  getStats(playerId, r, c, toR, toC, weaponId) {
+  getStats(playerId, r, c, toR=0, toC=0, weaponId) {
     var wepRef = this.uRef.weapons[weaponId];
     var selUnit = this.map.tiles[r][c];
     var tarUnit = this.map.tiles[toR][toC];
@@ -483,6 +535,18 @@ class Game  {
     } else {
       return failRes;
     }
+  }
+
+  getStatus(playerId, r, c) {
+    var selUnit = this.map.tiles[r][c];
+
+    if(!selUnit) {
+      return {success: false, msg:"Target square is empty"};
+    }
+
+    var sucRes = {success: true, status: selUnit.getStatus(), msg:`${selUnit.name}'s stats have been sent!`};
+    return sucRes;
+
   }
 
   //GameInterface to Game method: returns a response based on the games state and which socket called it
