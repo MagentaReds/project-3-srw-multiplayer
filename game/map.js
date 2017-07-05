@@ -1,5 +1,7 @@
 "use strirt";
 
+var Tile = require("./tile.js");
+
 var Helpers = require("../config/helpers.js");
 
 //for simpliric's sake, maps are going to all be in spare, with no enviromental stuff
@@ -18,7 +20,7 @@ class Map {
     for(let i=0; i<rows; ++i) {
       this.tiles[i] = new Array(cols);
       for(let k=0; k<cols; ++k){
-        this.tiles[i][k] = null;
+        this.tiles[i][k] = new Tile(i,k);
       }
     }
 
@@ -32,6 +34,31 @@ class Map {
     var history = [];
     this.getPTHelper(r,c,0,ra,r,c,ra,history);
     return history;
+  }
+
+  getTile(r,c) {
+    if(r<0 || r>=this.rows)
+      return null;
+    if(c<0 || c>=this.cols)
+      return null;
+    return this.tiles[r][c];
+  }
+
+  getUnit(r,c) {
+    if(r<0 || r>=this.rows)
+      return null;
+    if(c<0 || c>=this.cols)
+      return null;
+    return this.tiles[r][c].unit;
+  }
+
+  setUnit(r,c, unit) {
+    if(r<0 || r>=this.rows)
+      return false;
+    if(c<0 || c>=this.cols)
+      return false;
+    this.tiles[r][c].unit=unit;
+    return true;
   }
 
   //returns an aray of possible target tiles, with a min and maximum range
@@ -104,7 +131,7 @@ class Map {
 
     var temp;
     //if adjacent square is in bounds and is empty, then...
-    if(this.isInBounds(r,c+1) && this.tiles[r][c+1]===null) {
+    if(this.isInBounds(r,c+1) && this.tiles[r][c+1].unit===null) {
       //grab index of adjacent square from history array
       temp=Helpers.getIndexArr(history,[r, c+1]);
       //then if adjacent square is not in the history 
@@ -113,17 +140,17 @@ class Map {
       if(temp===-1 || his2[temp]<(m-1))
         this.getPMHelper(r,c+1,m-1,oR,oC,oM,history,his2,temp,counter);
     }
-    if(this.isInBounds(r,c-1) && this.tiles[r][c-1]===null) {
+    if(this.isInBounds(r,c-1) && this.tiles[r][c-1].unit===null) {
       temp=Helpers.getIndexArr(history,[r, c-1]);
       if(temp===-1 || his2[temp]<(m-1))
         this.getPMHelper(r,c-1,m-1,oR,oC,oM,history,his2,temp,counter);
     }
-    if(this.isInBounds(r+1,c) && this.tiles[r+1][c]===null) {
+    if(this.isInBounds(r+1,c) && this.tiles[r+1][c].unit===null) {
       temp=Helpers.getIndexArr(history,[r+1, c]);
       if(temp===-1 || his2[temp]<(m-1))
         this.getPMHelper(r+1,c,m-1,oR,oC,oM,history,his2,temp,counter);
     }
-    if(this.isInBounds(r-1,c) && this.tiles[r-1][c]===null) {
+    if(this.isInBounds(r-1,c) && this.tiles[r-1][c].unit===null) {
       temp=Helpers.getIndexArr(history,[r-1, c]);
       if(temp===-1 || his2[temp]<(m-1))
         this.getPMHelper(r-1,c,m-1,oR,oC,oM,history,his2,temp,counter);
@@ -133,17 +160,17 @@ class Map {
 
   //simple movement, will need to update once tiles becomes their own objects rather than just holding a unit reference
   move(r,c,toR,toC) {
-    this.tiles[toR][toC] = this.tiles[r][c];
-    this.tiles[r][c] = null;
+    this.tiles[toR][toC].unit = this.tiles[r][c].unit;
+    this.tiles[r][c].unit = null;
   }
 
   //returns an array of valid targets based on the id and passed list of tiles to check
   getTargets(id, arr) {
     var res = [];
-    var tempTile=null;
+    var tempUnit=null;
     for(var i=0; i<arr.length; ++i){
-      tempTile=this.tiles[arr[i][0]][arr[i][1]];
-      if(tempTile && tempTile.owner!==id)
+      tempUnit=this.getUnit(arr[i][0], arr[i][1]);
+      if(tempUnit && tempUnit.unit.owner!==id)
         res.push(arr[i]);
     }
     return res;
@@ -157,8 +184,8 @@ class Map {
     for(let r=0; r<this.rows; ++r){
       output+=r%10+":"
       for(let c=0; c<this.cols; ++c){
-        if(this.tiles[r][c])
-          output+=this.tiles[r][c].name.charAt(0);
+        if(this.tiles[r][c].unit)
+          output+=this.tiles[r][c].unit.name.charAt(0);
         else
           output+=dot;
       }
