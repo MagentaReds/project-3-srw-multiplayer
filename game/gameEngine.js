@@ -8,9 +8,11 @@ var Map = require("./map.js");
 var Player = require("./player.js")
 
 var Flags = require("./statesAndFlags.js").game.flags;
-var Status = require("./statesAndFlags").unit.status;
-var Skill = require("./statesAndFlags").pilot.skill;
-var Ability = require("./statesAndFlags").mech.abilities;
+var Status = require("./statesAndFlags.js").unit.status;
+var Skill = require("./statesAndFlags.js").pilot.skill;
+var Ability = require("./statesAndFlags.js").mech.abilities;
+var WepCategory = require("./statesAndFlags.js").weapon.category;
+var Spirit = require("./statesAndFlags.js").pilot.spiritCommand;
 
 var Helpers = require("../config/helpers.js");
 
@@ -79,10 +81,9 @@ class Game  {
     this.oldC = this.uRef.c;
     this.emptyFlags();
     this.addFlag(Flags.newRound);
-    this.checkUnitAbilities();
+    this.uRef.startTurn();
 
     console.log(`It is ${this.pRef.name} Unit's ${this.uRef.name} Turn`);
-    console.log(`That means ${this.uRef.name}'s turn!`);
     this.emitMap(); 
   }
 
@@ -94,10 +95,6 @@ class Game  {
       this.currentPlayer=0;
 
     return this.players[this.currentPlayer];
-  }
-
-  checkUnitAbilities() {
-
   }
 
   //adds a flag to the flags array
@@ -280,7 +277,7 @@ class Game  {
           this.uRef.hasMoved=true;
           this.emitMap();
           this.addFlag(Flags.turnOver);
-          this.nextTurn();
+          this.checkFlags();
           return sucRes2;
         } else{
           return failRes;
@@ -417,13 +414,13 @@ class Game  {
         return failRes2;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         this.addFlag(Flags.turnOver);
-        this.nextTurn();
+        this.checkFlags();
         return sucRes;
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return failRes2;
       } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         this.addFlag(Flags.turnOver);
-        this.nextTurn();
+        this.checkFlags();
         return sucRes;
       }
     } else if(!selUnit) {
@@ -690,45 +687,71 @@ class Game  {
 
     this.inter.emitMessage(`${atkRef.name} is attacking ${defRef.name} with ${atkRef.weapons[wepAtk].name}`);
     this.inter.emitMessage(`${defRef.name} is choosing to "${counterType}" on defense!`);
+    
+    if(counterType==="Attack" && defRef.doesCounterAttack(atkRef)) {
+      this.inter.emitMessage(`${defRef.name} Counters and attacks first!`);
+      this.computeAttackHelper2(counterType);
+      this.computeAttackHelper1(counterType);
+    } else if(counterType==="Attack") {
+      this.computeAttackHelper1(counterType);
+      this.computeAttackHelper2(counterType);
+    } else
+      this.computeAttackHelper1(counterType);
+  }
 
+  computeAttackHelper1(counterType) {
     var hit = this.getHitPercent(this.uRef, this.defender, this.weapon);
     var damage = this.getDamage(this.uRef, this.defender, this.weapon);
     var crit = this.getCritPercent(this.uRef, this.defender, this.weapon);
     
-    if(counterType === "Evade")
+    if(counterType === "Evade" && !atkRef.hasStrike())
       hit = Math.floor(hit/2);
     else if(counterType === "Defend")
       damage = Math.floor(damage/2);
 
     this.applyAttack(this.uRef, this.defender, this.weapon, hit, damage, crit);
-    this.checkAliveness(this.defender, false);
+    this.checkAliveness(this.defender, false, this.uRef);
     this.checkPlayer(this.defender.owner);
+  }
 
+  computeAttackHelper2(counterType) {
     if(counterType==="Attack" && this.defender.isAlive){
-      hit = this.getHitPercent(this.defender, this.uRef, this.defWep);
-      damage = this.getDamage(this.defender, this.uRef, this.defWep);
+      var hit = this.getHitPercent(this.defender, this.uRef, this.defWep, undefined, true);
+      var damage = this.getDamage(this.defender, this.uRef, this.defWep, undefined, true);
+      var crit = this.getCritPercent(this.defender, this.uRef, this.defWep);
       this.applyAttack(this.defender, this.uRef, this.defWep, hit, damage, crit);
-      this.checkAliveness(this.uRef, true);
+      this.checkAliveness(this.uRef, true, this.defender);
       this.checkPlayer(this.uRef.owner);
-    }
-      
+    }     
   }
 
   //removes ammo/en from unit attacking, and applies damage to defender if it hits
   //emits messages about what is happening
   applyAttack(atk, def, atkWep, hit, damage, crit) {
+    var didHit=false;
     atk.weapons[atkWep].removeAmmo(atk);
     if(Math.floor(Math.random()*100) < hit) {
-      if(Math.floor(Math.random()*100) < crit){
+      if(!atk.hasFury() && !atk.hasStrike() && def.activatesDoubleImage()) {
+        this.inter.emitMessage(`${def.name} activates Double Image! ${atk.name} misses.`);
+        didHit=false;
+      } else if(!atk.hasFury() && !atk.hasStrike() && def.activatesJammer(atk.weapons[atkWep])){
+        this.inter.emitMessage(`${def.name} activates Jammer! ${atk.name} misses.`);
+        didHit=false;
+      } else if(Math.floor(Math.random()*100) < crit){
         this.inter.emitMessage(`${atk.name} hits ${def.name} for ${Math.floor(damage*1.25)} damage`);
         def.applyDamage(Math.floor(damage*1.25));
+        didHit=true;
       } else {
         this.inter.emitMessage(`${atk.name} hits ${def.name} for ${Math.floor(damage)} damage`);
         def.applyDamage(Math.floor(damage));
+        didHit=true;
       }
     } else {
       this.inter.emitMessage(`${atk.name} misses ${def.name}!`);
+      didHit=false;
     }
+    atk.afterAttack(didHit);
+    def.afterDefense(!didHit);
   }
 
   //emit defense options to the defender player
@@ -778,7 +801,7 @@ class Game  {
 
     if(defRef.status.includes(Status.alert))
       return 0;
-    if(atkRef.status.includes(Status.strike))
+    if(atkRef.status.includes(Status.strike) || atkRef.status.includes(Status.attune))
       return 100;
 
     //Range Adjust = (5 - Range from Attacker to Defender) x 3
@@ -789,7 +812,11 @@ class Game  {
     var baseHit = (atkRef.hit/2+140) * (atkRef.terPer(ter)) + wep.hit + (atkRef.modHit());
     var baseEvd = (defRef.evd/2 + defRef.mob) * (defRef.terPer(ter)) + (defRef.modEvd(!counter));
     var finalHit = (baseHit-baseEvd) * (defRef.sizeAdjust()) + rangeAdjust + (0) - (0);
-    console.log(baseHit, baseEvd, finalHit);
+    // console.log(`${atkRef.name} attacking`);
+    // console.log(atkRef.terPer(ter), atkRef.modHit());
+    // console.log(defRef.terPer(ter), defRef.modEvd(!counter));
+    // console.log(defRef.sizeAdjust());
+    // console.log(baseHit, baseEvd, finalHit);
 
     if(finalHit>100)
       return 100;
@@ -820,7 +847,12 @@ class Game  {
     var baseAtk = (wep.damage + atkRef.modDmgFlat(wep.cat) ) * (pilotStat + atkRef.will) / 200 * (wep.terPer(ter));
     var baseDef = (defRef.armor * defRef.modArmScale()) * (defRef.def + defRef.will) / 200 * (defRef.sizeAdjust());
     var damage = (baseAtk - baseDef) * (100 * (defRef.terPer(ter))) / 100 * (atkRef.modDmgScale() * defRef.modDefScale()); 
-    var damage = damage - defRef.modDefFlat(wep.cat);
+    // console.log(baseAtk, baseDef, damage);
+    damage = damage - defRef.modDefFlat(wep.cat, atkRef.hasFury());
+    // console.log(damage);
+
+    if(atkRef.hasValor())
+      damage = damage*2;
 
     if(damage<0)
       return 0;
@@ -851,11 +883,33 @@ class Game  {
       return Math.floor(chance);
   }
 
-  checkAliveness(unit, isCurrentUnit) {
+  playerEnemyShotDown(atkUnit) {
+    var player;
+    for(let i=0; i<this.players.length; ++i) {
+      if(this.players[i].id === atkUnit.owner){
+        this.players[i].enemyShotDown(atkUnit.id);
+        atkUnit.enemyShotDown();
+      }
+    }
+  }
+
+  playerAllyShotDown(unit) {
+    var player;
+    for(let i=0; i<this.players.length; ++i) {
+      if(this.players[i].id === unit.owner){
+        this.players[i].allyShotDown(unit.id);
+      }
+    }
+  }
+
+  checkAliveness(unit, isCurrentUnit, atkUnit) {
     if(!unit.isAlive) {
       this.inter.emitMessage(`${unit.name} has been shot down!`);
       this.map.tiles[unit.r][unit.c] = null;
       this.inter.emitMap(this.map.getAsciiMap());
+  
+      this.playerEnemyShotDown(atkUnit)
+      this.playerAllyShotDown(unit);
     }
 
     if(isCurrentUnit) {
@@ -866,7 +920,7 @@ class Game  {
   //Checks the flags, and advances the game based off them.
   checkFlags() {
     if(this.inFlags(Flags.turnOver)){
-      //this.checkPlayers();
+      this.uRef.afterTurn();
       this.checkGameOver();
       if(this.inFlags(Flags.gameOver)) {
         this.inter.gameOver(this.winner);
