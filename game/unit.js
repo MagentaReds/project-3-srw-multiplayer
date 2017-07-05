@@ -47,19 +47,21 @@ class Unit {
     this.hasMoved=false;
 
     this.status=[];
-    this.flags=[];
     this.skills = new Map();
     this.spirits = new Map();
     this.fillSkillsAndSpirits();
+    this.reset();
   }
 
   reset() {
     this.hp=this.hpMax;
     this.sp=this.spMax;
     this.will=100;
+    if(this.skills.has(Skill.resolve))
+      this.will=105;
     this.isAlive=true;
     this.hasMoved=false;
-    this.flags=[];
+    this.status=[];
     this.refillAmmo();
   }
 
@@ -81,6 +83,7 @@ class Unit {
     var res="";
     var temp=0;
     for(let i=0; i<4; ++i) {
+      temp=0;
       switch(ter1.charAt(i)) {
         case 'S':
           temp+=4;
@@ -217,10 +220,36 @@ class Unit {
   hasAssail() {
     return this.status.includes(Status.assail);
   }
-
-  hasFlag(flag) {
-    return this.flags.includes(flag);
+  hasValor() {
+    return this.status.includes(Status.valor);
   }
+  hasFury() {
+    return this.status.includes(Status.fury);
+  }
+  hasStrike() {
+    return this.status.includes(Status.strike) || this.status.includes(Status.attune);
+  }
+  doesCounterAttack(atkRef) {
+    if(this.skills.has(Skill.counter)) {
+      // [(Pilot man - Enemy man)/10 + Counter Level]/16
+      var chance = ((this.man - atkRef.man)/10 + this.skills.get(Skill.counter))/16;
+      return (Math.random() < chance);
+    } else
+      return false;
+  }
+  activatesDoubleImage() {
+    if(this.abilities.includes(Ability.doubleImage))
+      return (this.will>130 && Math.random() < .5);
+    else
+      return false;
+  }
+  activatesJammer(wepRef) {
+    if(this.abilities.includes(Ability.jammer) && wepRef.cat==="Missile")
+      return Math.random() < .5;
+    else
+      return false;
+  }
+
 
   terPer(terrain) {
     var index=-1;
@@ -328,7 +357,10 @@ class Unit {
     return res;
   }
 
-  modDefFlat(wepCat) {
+  modDefFlat(wepCat, atkHasFury) {
+    if(atkHasFury)
+      return 0;
+
     var res=0;
     if(this.abilities.includes(Ability.beamCoat) && wepCat===WepCategory.energyBeam && this.en>=5)
       res+=900;
@@ -670,6 +702,73 @@ class Unit {
           return false;
       
     }
+  }
+
+  removeStatus(s) {
+    var index = this.status.indexOf(s);
+    if(index !== -1)
+      this.status.splice(index, 1);
+  }
+
+  startTurn() {
+    this.addEn(5);
+
+    if(this.skills.has(Skill.morale))
+      this.addWill(2);
+    if(this.skills.has(Skill.spRegen))
+      this.addSp(10);
+
+    
+    this.removeStatus(Status.strike);
+    this.removeStatus(Status.assail);
+    this.removeStatus(Status.guard);
+    this.removeStatus(Status.focus);
+    this.removeStatus(Status.resolve);
+    this.removeStatus(Status.net);
+    this.removeStatus(Status.wepBreak);
+    this.removeStatus(Status.armBreak);
+    this.removeStatus(Status.spBlock);
+
+  }
+  afterAttack(didHit) {
+    if(didHit)
+      this.addWill(this.willGain[0]);
+    else
+      this.addWill(this.willGain[1]);
+
+    this.removeStatus(Status.gain);
+    this.removeStatus(Status.cheer);
+    this.removeStatus(Status.luck);
+    this.removeStatus(Status.bless);
+    
+    this.removeStatus(Status.valor);
+    this.removeStatus(Status.mercy);
+    this.removeStatus(Status.snipe);
+    this.removeStatus(Status.fury);
+  }
+  afterDefense(didEvd) {
+    if(didEvd)
+      this.addWill(this.willGain[2]);
+    else
+      this.addWill(this.willGain[3]);
+
+    this.removeStatus(Status.gain);
+    this.removeStatus(Status.cheer);
+    this.removeStatus(Status.luck);
+    this.removeStatus(Status.bless);
+
+    this.removeStatus(Status.alert);
+  }
+  afterTurn() {
+    this.removeStatus(Status.attune);
+  }
+
+  enemyShotDown() {
+    this.addWill(this.willGain[5]);
+  }
+
+  allyShotDown() {
+    this.addWill(this.willGain[4]);
   }
 
 }
