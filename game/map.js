@@ -160,8 +160,10 @@ class Map {
 
   //simple movement, will need to update once tiles becomes their own objects rather than just holding a unit reference
   move(r,c,toR,toC) {
-    this.tiles[toR][toC].unit = this.tiles[r][c].unit;
-    this.tiles[r][c].unit = null;
+    if(this.tiles[toR][toC].unit===null) {
+      this.tiles[toR][toC].unit = this.tiles[r][c].unit;
+      this.tiles[r][c].unit = null;
+    }
   }
 
   //returns an array of valid targets based on the id and passed list of tiles to check
