@@ -8,6 +8,7 @@ var Status = require("./statesAndFlags.js").unit.status;
 var Skill = require("./statesAndFlags.js").pilot.skill;
 var Ability = require("./statesAndFlags.js").mech.abilities;
 var WepCategory = require("./statesAndFlags.js").weapon.category;
+var Spirit = require("./statesAndFlags.js").pilot.spiritCommand;
 
 class Unit {
   constructor(playerId, pilotDb, mechDb, pilotLevel=50) {
@@ -54,16 +55,19 @@ class Unit {
 
   reset() {
     this.hp=this.hpMax;
-    this.en=this.enMax;
     this.sp=this.spMax;
     this.will=100;
     this.isAlive=true;
     this.hasMoved=false;
     this.flags=[];
+    this.refillAmmo();
+  }
+
+  refillAmmo() {
+    this.en=this.enMax;
     for(let i=0; i<this.weapons.length; ++i){
       this.weapons[i].refill();
     }
-
   }
 
   makeWeapons(db) {
@@ -119,6 +123,45 @@ class Unit {
 
     return res;
   }
+
+  getMove(ter='Spc') {
+    if(this.stats.includes(Status.net))
+      return 0;
+
+    var add=0;
+    if(this.skills.has(Skill.infight))
+      if(this.skills.get(Skill.infight)>=7)
+        add+=2;
+      else if(this.skills.get(Skill.infight)>=4)
+        add+=1;
+    
+    if(this.status.includes(Status.accel))
+      add+=3;
+
+    add+=this.move;
+    if((ter==='Spc' || ter==='Air') && add>this.en)
+      return this.en;
+    else
+      return add;
+  }
+
+  getRange(wepId) {
+    var arr=[0,0];
+    var wep=this.weapons[wepId];
+    if(!wep)
+      return arr;
+    arr[0]=wep.range[0];
+    arr[1]=wep.range[1];
+
+    if(this.status.includes(Status.snipe) && !wep.prop.includes('MAP') && wep.range[1]>1)
+      arr[1]+=2;
+
+    if(this.skills.has(Skill.gunfight))
+      if(this.skills.get(Skill.gunfight)>=7)
+        arr[1]+=2;
+      else if(this.skills.get(Skill.gunfight)>=4)
+        arr[1]+=1;
+  }
   
   skillLevel(skill) {
     for(let i=0; i<this.pilotSkills.length; ++i)
@@ -146,6 +189,26 @@ class Unit {
       default:
         return 0;
     }
+  }
+
+  getSpiritList() {
+    var arr=[];
+    arr.push(`${this.sp}/${this.spMax}:SP`);
+    for(let i=0; i<this.sc.length; ++i)
+      arr.push(`${i}: ${this.sc[i][0]} (${this.sc[i][1]})`);
+
+    return arr;
+  }
+
+  getStatus() {
+    var obj = []
+    obj.push(this.name);
+    obj.push(`HP:${this.hp}/${this.hpMax}`);
+    obj.push(`EN:${this.en}/${this.enMax}`);
+    obj.push(`SP:${this.sp}/${this.spMax}`);
+    obj.push(`Status: ${this.status.toString()}`);
+    obj.push("Other stuff");
+    return obj;
   }
 
   hasHitAndAway() {
@@ -323,6 +386,290 @@ class Unit {
     this.hp-=dmg;
     if(this.hp<0)
       this.isAlive=false;
+  }
+  
+  addHp(h) {
+    if(this.hp<this.hpMax) {
+      if(this.hp+h >this.hpMax)
+        this.hp=this.hpMax;
+      else
+        this.hp+=h;
+      return true;
+    }
+    else
+      return false;
+  }
+
+  addEn(e) {
+    if(this.en<this.enMax) {
+      if(this.en+e >this.enMax)
+        this.en=this.enMax;
+      else
+        this.en+=e;
+      return true;
+    }
+    else
+      return false;
+  }
+
+  addSp(sp) {
+    if(this.sp<this.spMax) {
+      if(this.sp+sp >this.spMax)
+        this.sp=this.spMax;
+      else
+        this.sp+=sp;
+      return true;
+    }
+    else
+      return false;
+  }
+
+  addWill(w) {
+    if(w<0 && this.will===100)
+      return false;
+    else if(w>0 && this.will===150)
+      return false;
+
+    if(this.will+w < 100)
+      this.will=100;
+    else if(this.will+w > 150)
+      this.will=150;
+    else
+      this.will
+
+    return true;
+  }
+
+  addStatus(sta) {
+    var index=this.status.indexOf(sta);
+    if(index===-1){
+      this.status.push(sta);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  castSC(spiritId, tarUnit) {
+    var spirit = this.sc[spiritId];
+    if(!spirit || spirit[1]>this.sp)
+      return false;
+    
+    switch(spirit[0]) {
+      case Spirit.valor:
+        if(this.addStatus(Status.valor)) {
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.gain:
+        if(this.addStatus(Status.gain)) {
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.strike:
+        if(this.addStatus(Status.strike)) {
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.zeal:
+        if(this.addStatus(Status.zeal)) {
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.trust:
+        //other check
+        if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive) {
+          if(tarUnit.addHp(2000)) {
+            this.sp-=spirit[1];
+            return true;
+          } else
+            return false;
+        } else
+          return false;
+      case Spirit.rouse:
+        //pother ehce
+        return false;
+      case Spirit.cheer:
+      //otherche
+        if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive)
+          if(tarUnit.addStatus(Status.cheer)) {
+            this.sp-=spirit[1];
+            return true;
+          } else
+            return false;
+        else
+          return false;
+      case Spirit.attune:
+        //othercheck
+        if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive)
+          if(tarUnit.addStatus(Status.strike)) {
+            this.sp-=spirit[1];
+            return true;
+          } else
+            return false;
+        else
+          return false
+      case Spirit.vigor:
+        let hp30 = Math.floor(this.hp*.3);
+        if(this.addHp(hp30)) {
+          this.sp-=spirit[1];
+            return true;
+          } else
+            return false;
+      case Spirit.faith:
+        //do
+        if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive) {
+          if(tarUnit.addHp(100000)){
+            this.sp-=spirit[1];
+            return true;
+          } else
+            return false;
+        } else
+          return false;
+      case Spirit.hope:
+        //do
+        if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive) {
+          if(tarUnit.addSp(50)){
+            this.sp-=spirit[1];
+            return true;
+          } else
+            return false;
+        } else
+          return false;
+      case Spirit.mercy:
+        if(this.addStatus(Status.mercy)) {
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.luck:
+        if(this.addStatus(Status.luck)) {
+        this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.guts:
+        //do
+        if(this.addHp(100000)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.renew:
+        //do
+        if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive) {
+          if(tarUnit.refillAmmo()) {
+            this.sp-=spirit[1];
+            return true;
+          } else
+            return false;
+        } else
+          return false;
+      case Spirit.assail:
+        if(this.addStatus(Status.assail)) {
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.snipe:
+        if(this.addStatus(Status.snipe)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.bless:
+        //do
+        if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive)
+          if(tarUnit.addStatus(Status.luck)) {
+            this.sp-=spirit[1];
+            return true;
+          } else
+            return false;
+        else
+          return false
+      case Spirit.guard:
+        if(this.addStatus(Status.guard)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.spirit:
+        //do
+        if(this.addWill(10)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.enable:
+        //do
+        return false;
+      case Spirit.fury:
+        if(this.addStatus(Status.fury)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.alert:
+        if(this.addStatus(Status.alert)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.focus:
+        if(this.addStatus(Status.focus)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.accel:
+        if(this.addStatus(Status.accel)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.drive:
+        //do
+        if(this.addWill(30)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.scan:
+        //do
+        return false;
+      case Spirit.resolve:
+        if(this.addStatus(Status.resolve)){
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      case Spirit.prayer:
+        if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive)
+          if(tarUnit.addStatus(Status.resolve)){
+            this.sp-=spirit[1];
+            return true;
+          } else
+            return false;
+        else
+          return false
+      case Spirit.love:
+        //do
+        if(this.addStatus(Status.accel)
+                || this.addStatus(Status.strike)
+                || this.addStatus(Status.alert)
+                || this.addStatus(Status.valor)
+                || this.addStatus(Status.gain)
+                || this.addStatus(Status.luck)) {
+          this.sp-=spirit[1];
+          return true;
+        } else
+          return false;
+      
+    }
   }
 
 }
