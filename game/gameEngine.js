@@ -134,7 +134,7 @@ class Game  {
   //returns list of options that a player can do at that map tile
   getActions(playerId, r, c) {
     //need to expand once Spirit commands are introduced
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -162,7 +162,7 @@ class Game  {
     //This pattern is used for all getSomething, doSomething requests coming from the client
 
     //get tile at r,c
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     //if current players is the player requesting the get
     if(this.pRef.id===playerId){
@@ -209,7 +209,7 @@ class Game  {
     var sucRes = {success: true, tiles: this.map.getPossibleMovement(r, c, this.uRef.move), actions:["Cancel"]};
     var failRes = {success: false, tiles: [], actions:[]};
     var failRes2 = {success: false, tiles: [], actions:["Cancel"]};
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -248,7 +248,7 @@ class Game  {
 
     var posMov = this.map.getPossibleMovement(r, c, this.uRef.move);
 
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -293,7 +293,7 @@ class Game  {
   }
 
   getSpirit(playerId, r, c) {
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     if(!selUnit) {
       return {success:false, spirits:[], msg: "Target square is empty"};
@@ -313,11 +313,8 @@ class Game  {
       return failRes2;
     }
 
-    var selUnit = this.map.tiles[r][c];
-    var tarUnit = null;
-    console.log(toR, toC);
-    if((toR!==null && toR!==undefined && toR!=='') && (toC!==null && toC!==undefined && toC!=='') )
-      tarUnit=this.map.tiles[toR][toC];
+    var selUnit = this.map.getUnit(r,c);
+    var tarUnit = this.map.getUnit(toR,toC);
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -354,7 +351,7 @@ class Game  {
       return failRes2;
     }
 
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -403,7 +400,7 @@ class Game  {
       return failRes2;
     }
 
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -437,7 +434,7 @@ class Game  {
     var sucRes = {success: true, type: "weapons", weapons: this.uRef.weapons, actions:["Targets", "Cancel"]};
     var failRes = {success: false, type: "", weapons:[], actions:[]};
     var failRes2 = {success: false, type: "", weapons:[], actions:["Cancel"]};
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -474,7 +471,7 @@ class Game  {
     var failRes = {success: false, range: [], targets: [], actions:[]};
     var failRes2 = {success: false, range: [], targets: [], actions:["Cancel"]};
 
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -501,8 +498,8 @@ class Game  {
   //Returns hit statstic about a specific weapon when target a unit at toR, toC
   getStats(playerId, r, c, toR=0, toC=0, weaponId) {
     var wepRef = this.uRef.weapons[weaponId];
-    var selUnit = this.map.tiles[r][c];
-    var tarUnit = this.map.tiles[toR][toC];
+    var selUnit = this.map.getUnit(r,c);
+    var tarUnit = this.map.getUnit(toR,toC);
 
     if(!selUnit || !tarUnit) {
       return {success: false, actions:[]};
@@ -535,7 +532,7 @@ class Game  {
   }
 
   getStatus(playerId, r, c) {
-    var selUnit = this.map.tiles[r][c];
+    var selUnit = this.map.getUnit(r,c);
 
     if(!selUnit) {
       return {success: false, msg:"Target square is empty"};
@@ -560,8 +557,8 @@ class Game  {
     var failRes = {success: false, actions:[]};
     var failRes2 = {success: false, actions:[]};
 
-    var selUnit = this.map.tiles[r][c];
-    var tarUnit = this.map.tiles[toR][toC];
+    var selUnit = this.map.getUnit(r,c);
+    var tarUnit = this.map.getUnit(toR,toC);
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -630,8 +627,8 @@ class Game  {
   //can the unit at r,c attack the unit at toR,toC with weapon wepId
   canAttack(r,c,toR,toC,wepId) {
     //console.log("Checking to see if can attack");
-    var selUnit = this.map.tiles[r][c];
-    var tarUnit = this.map.tiles[toR][toC];
+    var selUnit = this.map.getUnit(r,c);
+    var tarUnit = this.map.getUnit(toR,toC);
     var targets;
 
     var wepRef;
@@ -905,7 +902,7 @@ class Game  {
   checkAliveness(unit, isCurrentUnit, atkUnit) {
     if(!unit.isAlive) {
       this.inter.emitMessage(`${unit.name} has been shot down!`);
-      this.map.tiles[unit.r][unit.c] = null;
+      this.map.setUnit(unit.r, unit.c, null);
       this.inter.emitMap(this.map.getAsciiMap());
   
       this.playerEnemyShotDown(atkUnit)
@@ -978,8 +975,8 @@ class Game  {
   spawnUnits(){
     this.players[0].units[0].setRC(5,2);
     this.players[1].units[0].setRC(5,4);
-    this.map.tiles[5][2]=this.players[0].units[0];
-    this.map.tiles[5][4]=this.players[1].units[0];
+    this.map.setUnit(5, 2, this.players[0].units[0]);
+    this.map.setUnit(5, 4, this.players[1].units[0]);
     console.log(this.map.getAsciiMap());
   }
   
