@@ -17,7 +17,10 @@ function populateDatabase() {
   //starts chain inot promise hell!
   //this then calls importWeapons
   ///which then calls importMechs;
-  importPilots();
+  return new Promise(function(resolve, reject) {
+    importPilots();
+    resolve();
+  });
 }
 
 function importMechs() {
