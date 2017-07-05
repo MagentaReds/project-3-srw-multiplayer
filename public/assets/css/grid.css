@@ -1,3 +1,7 @@
+body {
+    background-image: url("./../media/space.jpg");
+}
+
 #grid {
 	list-style-type: none;
 	margin: 0;
@@ -16,4 +20,134 @@
 	height: 50px;
 	font-size: 4em;
 	text-align: center;
+}
+
+#grid li img {
+	margin-bottom: 10px;
+}
+
+.grid-style {
+	position: absolute;
+	float: left;
+	height: 50px;
+	width: 50px;
+	margin: 0px;
+	padding: 0px;
+}
+
+#status {
+	top: 37px;
+}
+
+#endSurrender {
+	top: 37px;
+}
+
+/*STATUS STYLE*/
+
+#mechData {
+	float: left;
+}
+
+#mechName {
+	width: 150px;
+	height: 20px;
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	padding-top: 5px;
+}
+
+#mechPic {
+	float: left;
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	margin-left: 1px;
+}
+
+#dataBars {
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	margin-top: 1px;
+	height: 79px;
+
+}
+
+#healthBar .ui-progressbar-value {
+  background-color: #64dd17;
+}
+
+#energyBar .ui-progressbar-value {
+	 background-color: #ffc400;
+}
+
+#healthBar {
+	height: 15px;
+	width: 145px;
+}
+
+#energyBar {
+	height: 15px;
+	width: 145px;
+}
+
+#pilotData {
+	width: 265px;
+	float: left;
+	margin-top: 1px;
+	height: 225px;
+	border-style:solid;
+	border-width: 1px;
+}
+
+#pilotName {
+	position: relative;
+	bottom: 100px;
+	left: 55px;
+	width: 150px;
+}
+
+#pilotWill {
+	position: relative;
+	bottom: 93px;
+	left: 55px;
+	width: 150px;
+}
+
+#weaponColumns {
+	position: relative;
+	bottom: 85px;
+	left: 10px;
+	width: 250px;
+}
+
+#weaponData {
+	position: relative;
+	left: 10px;
+	width: 250px;
+	bottom: 80px;
+	font-size: 90%;
+	text-align: center;
+}
+
+#defendStyle {
+	width: 50px;
+	position: absolute;
+	left: 115px;
+}
+
+.ui-menu {
+	width: 150px;
+	position: fixed;
+}
+
+.blink {
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0.0;
+  }
 }

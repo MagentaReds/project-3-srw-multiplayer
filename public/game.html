@@ -14,13 +14,110 @@
         <script src="lib/jquery-3.2.1.min.js"></script>
         <script src="lib/jquery-ui-1.12.1/jquery-ui.js"></script>
 
-        <!-- Game Scripts -->
-        <!-- <script src="js/game.js"></script> -->
+        <script>
+            $( function() {
+              $( "#menu" ).menu();
+            } );
+            $( function() {
+             $( "#cancel" ).menu();
+            } );
+            $( function() {
+             $( "#status" ).menu();
+            } );
+            $( function() {
+             $( "#endSurrender" ).menu();
+            } );
+            $( function() {
+              $( "#statusModal" ).dialog({
+                autoOpen: false,
+                show: {
+                  effect: "blind",
+                  duration: 500
+                },
+                hide: {
+                  effect: "explode",
+                  duration: 1000
+                }
+              });
+            });
+            $( function() {
+              $( "#defendModal" ).dialog({
+                autoOpen: false,
+                show: {
+                  effect: "blind",
+                  duration: 500
+                },
+                hide: {
+                  effect: "explode",
+                  duration: 1000
+                }
+              });
+            });
+        </script>
 
     </head>
     <body>
+      <!-- JQuery UI Menus below -->
         <ol id="grid">
         </ol>
-    </body>
+        <ul id="menu">
+            <li id="moveLi">
+                <div id="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
+            </li>
+            <li id="attackLi"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
+                <ul id="weapons">
+                </ul>
+            </li>
+            <li id="spiritLi" class="ui-state-disabled">
+                <div id="spirit"><span class="ui-icon ui-icon-star"></span>Spirit Commands</div>
+            </li>
+        </ul>
+        <ul id="cancel">
+            <li id="cancelLi">
+                <div><span class="ui-icon ui-icon-closethick"></span>Cancel Action</div>
+            </li>
+        </ul>
+        <ul id="status">
+            <li id="statusLi">
+                <div id="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
+            </li>
+        </ul>
+        <ul id="endSurrender">
+            <li>
+                <div id="endTurn"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
+            </li>
+            <li id="Surrender">
+                <div><span class="ui-icon ui-icon-alert"></span>Surrender</div>
+            </li>
+        </ul>
+        <!-- Status Modal Below -->
+        <div id="statusModal" title="Status">
+          <div id="mechData">
+            <div id="mechName"></div>
+            <div id="dataBars">
+              <div id="healthNum"></div>
+              <div id="healthBar"></div>
+              <div id="energyNum"></div>
+              <div id="energyBar"></div>
+            </div>
+          </div>
+          <div id="mechPic"></div>
+          <div id="pilotData">
+            <div id="pilotPic"></div>
+            <div id="pilotName"></div>
+            <div id="pilotWill"></div>
+            <div id="weaponColumns"></div>
+            <div id="weaponData"></div>
+           </div>
+          </div>
+          <!-- Defend Modal Below -->
+          <div id="defendModal" title="Select An Option:">
+            <div id="defendStyle">
+              <button id="defendButton">Defend</button>
+              <button id="attackButton">Attack</button>
+              <button id="evadeButton">Evade</button>
+            </div>
+          </div>
+        </body>
         <script src="assets/javascript/grid.js"></script>
 </html>
