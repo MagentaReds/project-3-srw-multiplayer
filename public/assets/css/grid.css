@@ -97,11 +97,9 @@ body {
 	width: 265px;
 	float: left;
 	margin-top: 1px;
-	height: auto;
+	height: 225px;
 	border-style:solid;
 	border-width: 1px;
-	min-height: 125px;
-	/*padding-bottom: -150px;*/
 }
 
 #pilotName {
@@ -130,8 +128,14 @@ body {
 	left: 10px;
 	width: 250px;
 	bottom: 80px;
-	height: auto;
 	font-size: 90%;
+	text-align: center;
+}
+
+#defendStyle {
+	width: 50px;
+	position: absolute;
+	left: 115px;
 }
 
 .ui-menu {

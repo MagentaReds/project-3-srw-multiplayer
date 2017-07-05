@@ -42,33 +42,6 @@ var availableWeapons = {
       canUse: false,
 			hit: 40,
 			ammo: "30/30"
-    },
-		{
-      id: 4,
-      name: "Attack Fulls",
-      range: [3,7],
-      dmg: 1000,
-      canUse: false,
-			hit: 40,
-			ammo: "30/30"
-    },
-		{
-      id: 4,
-      name: "Attack Fulls",
-      range: [3,7],
-      dmg: 1000,
-      canUse: false,
-			hit: 40,
-			ammo: "30/30"
-    },
-		{
-      id: 4,
-      name: "Attack Fulls",
-      range: [3,7],
-      dmg: 1000,
-      canUse: false,
-			hit: 40,
-			ammo: "30/30"
     }
   ]
 }
@@ -301,14 +274,33 @@ $(document).on("click", "div#statusDiv", function(event){
 	$("#weaponColumns").append("Weapon | Ammo | Dmg | Rng | Hit");
 	$("#mechPic").append(`<img src=assets/media/wildwurger-l.png style="margin:-15px 0px 3px -3px; height:115px;">`);
 	$("#pilotPic").append(`<img src=assets/media/alfimi.png style="margin:-50px 0px 0px -50px; height:150px;">`);
-	for (var x = 0; x < availableWeapons.weapons.length; x++) {
-		$("#weaponData").append(`${availableWeapons.weapons[x].name} | ${availableWeapons.weapons[x].ammo} | ${availableWeapons.weapons[x].dmg} | ${availableWeapons.weapons[x].range[0]}~${availableWeapons.weapons[x].range[1]} | +${availableWeapons.weapons[x].hit}<br>`);
+	for (var x = 0; x < 9; x++) {
+		if (availableWeapons.weapons[x] == null)
+			$("#weaponData").append(`[ empty weapon slot #${x+1} ]<br>`);
+		else
+			$("#weaponData").append(`${availableWeapons.weapons[x].name} | ${availableWeapons.weapons[x].ammo} | ${availableWeapons.weapons[x].dmg} | ${availableWeapons.weapons[x].range[0]}~${availableWeapons.weapons[x].range[1]} | +${availableWeapons.weapons[x].hit}<br>`);
 	}
-	// if (availableWeapons.weapons.length > 2) {
-	// 	$("#pilotData").css("height", "185px");
-	// }
+});
 
-})
+function defendOptions () {
+	$("#defendModal").dialog("open");
+	$("#defendButton").on("click", function(){
+		console.log("SEND DATA DEFEND");
+		$("#defendModal").dialog("close");
+	});
+	$("#attackButton").on("click", function(){
+		console.log("SEND DATA ATTACK");
+		$("#defendModal").dialog("close");
+	});
+	$("#evadeButton").on("click", function(){
+		console.log("SEND DATA EVADE");
+		$("#defendModal").dialog("close");
+	});
+}
+
+// $(document).ready(function(){
+// 	defendOptions();
+// });
 
 // code for checking and displaying which tile was clicked on
 // also the UI for displaying options for clicked grid square should pop up here

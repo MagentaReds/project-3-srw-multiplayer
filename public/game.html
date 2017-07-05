@@ -40,6 +40,19 @@
                 }
               });
             });
+            $( function() {
+              $( "#defendModal" ).dialog({
+                autoOpen: false,
+                show: {
+                  effect: "blind",
+                  duration: 500
+                },
+                hide: {
+                  effect: "explode",
+                  duration: 1000
+                }
+              });
+            });
         </script>
 
     </head>
@@ -96,6 +109,14 @@
             <div id="weaponColumns"></div>
             <div id="weaponData"></div>
            </div>
+          </div>
+          <!-- Defend Modal Below -->
+          <div id="defendModal" title="Select An Option:">
+            <div id="defendStyle">
+              <button id="defendButton">Defend</button>
+              <button id="attackButton">Attack</button>
+              <button id="evadeButton">Evade</button>
+            </div>
           </div>
         </body>
         <script src="assets/javascript/grid.js"></script>
