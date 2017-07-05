@@ -53,6 +53,18 @@ class Player {
   getUnit(index) {
 
   }
+
+  enemyShotDown(unitId) {
+    for(let i=0; i<this.units.length; ++i)
+      if(this.units[i].id !== unitId)
+        this.units[i].addWill(1);
+  }
+
+  allyShotDown(unitId) {
+    for(let i=0; i<this.units.length; ++i)
+      if(this.units[i].id !== unitId)
+        this.units[i].allyShotDown();
+  }
  
 }
 
