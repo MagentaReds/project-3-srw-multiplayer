@@ -15,11 +15,11 @@ class GameRoom {
     this.io=io;
     this.nsp=nsp;
     this.gameInter=gameInter;
-    
+
     this.game=null;
     this.maxPlayers  = 2;
 
-    this.clients = new Array(this.maxPlayers); 
+    this.clients = new Array(this.maxPlayers);
   }
 
   //Instantiates the gameEngine for this room
@@ -60,7 +60,7 @@ class GameRoom {
         if(!arr[i].me.ready)
           return false;
       }
-    
+
     return count>1;
   }
 
@@ -80,7 +80,7 @@ class GameRoom {
 
   emitRealMap(map) {
     console.log(`Sending Map Update to Room ${this.roomNum}`);
-    this.nsp.to(this.name).emit("update map real", {map: map, msg: "Updated map!"});
+    this.nsp.to(this.name).emit("update map", {map: map, msg: "Updated map!"});
   }
 
   //Emits a 'room message' event to the all sockets/clients in this room
@@ -103,7 +103,7 @@ class GameRoom {
         socketMeRef = this.clients[i].me;
 
     console.log(`Sending 'get counter' to Player ${socketMeRef.name} in Room ${this.roomNum}`);
-    this.nsp.to(socketMeRef.socketId).emit("get counter", data);   
+    this.nsp.to(socketMeRef.socketId).emit("get counter", data);
   }
 
   gameOver(playerRef) {
@@ -163,7 +163,7 @@ class GameInterface {
     //console.log("Setting Listeners");
     this.nsp.on("connection", (socket)=>{
       console.log('A user has connected to the game!');
-      
+
       this.emitRooms();
 
       //adding new data to the socket itself
@@ -174,7 +174,7 @@ class GameInterface {
       socket.on("new player", (cb)=>{
         //this.bindSocketListeners1(socket);
         // socket.join("Room Alpha");
-        
+
         // console.log(Object.keys(this.nsp.adapter.rooms["Room Alpha"]));
         // console.log(this.nsp.adapter.rooms["Room Alpha"].sockets);
         //cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.id} \n\n ${Object.keys(this.nsp.connected)}`});
@@ -186,7 +186,7 @@ class GameInterface {
       socket.on("join room", (roomId, cb)=>{this.onJoinRoom(socket, roomId, cb);});
       socket.on("leave room", (cb)=>{this.onLeaveRoom(socket, cb)});
       socket.on("toggle ready", (cb)=>{this.onToggleReady(socket, cb)});
-      
+
       //game listeners
       socket.on("get actions", (data,cb)=>{this.onGetActions(socket, data, cb)});
       socket.on("get move", (data,cb)=>{this.onGetMove(socket, data, cb)});
@@ -222,7 +222,7 @@ class GameInterface {
   }
 
   //Rest of methods are handlers for each socket.io event type we are listening for.
-  
+
   //These first few handlers deal with room administration.
 
   onJoinRoom(socket, roomNum, cb) {
@@ -428,7 +428,7 @@ class GameInterface {
     if(room)
       room.receiveChat(socket.me, msg);
   }
-  
+
 }
 
 module.exports = GameInterface;

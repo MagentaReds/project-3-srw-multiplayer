@@ -84,7 +84,7 @@ class Game  {
     this.uRef.startTurn();
 
     console.log(`It is ${this.pRef.name} Unit's ${this.uRef.name} Turn`);
-    this.emitMap(); 
+    this.emitMap();
   }
 
   //Returns the player to go next;
@@ -169,32 +169,32 @@ class Game  {
       //if the r,c square is empty
       if(!selUnit) {
         return ["Status", "Skip Turn", "Surrender"];
-      } 
+      }
       //if the the tile contains a unit is not the active unit
       else if(selUnit.id !== this.uRef.id  || selUnit.owner !== playerId){
         return ["Status"];
-      } 
+      }
       //State1:  if it is the start of a new round (the active unit has not commited any actions)
       else if(this.inFlags(Flags.newRound)) {
         return ["Move", "Attack", "Status"];
-      } 
+      }
       //State2: if the unit has moved but not attacked yet
       else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return ["Attack", "Standby", "Cancel"];
-      } 
+      }
       //state3: If the unit has attacked but not moved and has attack and away
       else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return ["Move", "Standby"];
-      } 
+      }
       //State4: current Unit is done for the round (or should be if they here to this else)
       else {
         return [];
       }
-    } 
+    }
     //if selected unit is an empty square (and you are not the current playern requesting)
     else if(!selUnit) {
       return ["Surrender"];
-    } 
+    }
     //else the tile holds something
     else {
       return ["Status"];
@@ -232,7 +232,7 @@ class Game  {
     }
   }
 
-  //GameInterface to Game method: 
+  //GameInterface to Game method:
   //returns a list move squares that a unit at r,c can move to, no checking game state
   requestMoveTiles(playerId, r, c){
     return this.map.getPossibleMovement(r, c, this.uRef.move);
@@ -647,7 +647,7 @@ class Game  {
     var distance = (Math.abs(r-toR)+Math.abs(c-toC));
     if(distance<wepRef.range[0] || distance>wepRef.range[1])
       return false;
-    else 
+    else
       return wepRef.canAttack(selUnit, selUnit.hasMoved);
   }
 
@@ -684,7 +684,7 @@ class Game  {
 
     this.inter.emitMessage(`${atkRef.name} is attacking ${defRef.name} with ${atkRef.weapons[wepAtk].name}`);
     this.inter.emitMessage(`${defRef.name} is choosing to "${counterType}" on defense!`);
-    
+
     if(counterType==="Attack" && defRef.doesCounterAttack(atkRef)) {
       this.inter.emitMessage(`${defRef.name} Counters and attacks first!`);
       this.computeAttackHelper2(counterType);
@@ -700,7 +700,7 @@ class Game  {
     var hit = this.getHitPercent(this.uRef, this.defender, this.weapon);
     var damage = this.getDamage(this.uRef, this.defender, this.weapon);
     var crit = this.getCritPercent(this.uRef, this.defender, this.weapon);
-    
+
     if(counterType === "Evade" && !atkRef.hasStrike())
       hit = Math.floor(hit/2);
     else if(counterType === "Defend")
@@ -719,7 +719,7 @@ class Game  {
       this.applyAttack(this.defender, this.uRef, this.defWep, hit, damage, crit);
       this.checkAliveness(this.uRef, true, this.defender);
       this.checkPlayer(this.uRef.owner);
-    }     
+    }
   }
 
   //removes ammo/en from unit attacking, and applies damage to defender if it hits
@@ -836,14 +836,14 @@ class Game  {
     if(distance<wep.range[0] || distance>wep.range[1])
       return 0;
 
-    
+
     // 1.Base Attack = WP Attack x (Attack Side Pilot Melee/Ranged + Attack Side Pilot Will)/200 x Attack Side WP Performance Adjustment
     // 2.Base Defense = Defense Side Armor x (Defense Side Pilot Defense + Defense Side Pilot will)/200 x Defense Side Unit Size Adjustment
     // 3.Damage = (1-2) x (100 * Defense Side Performance Adjustment)/100 x Special Skill Adjustment
     var pilotStat = atkRef.getAttackStat(wep.type);
     var baseAtk = (wep.damage + atkRef.modDmgFlat(wep.cat) ) * (pilotStat + atkRef.will) / 200 * (wep.terPer(ter));
     var baseDef = (defRef.armor * defRef.modArmScale()) * (defRef.def + defRef.will) / 200 * (defRef.sizeAdjust());
-    var damage = (baseAtk - baseDef) * (100 * (defRef.terPer(ter))) / 100 * (atkRef.modDmgScale() * defRef.modDefScale()); 
+    var damage = (baseAtk - baseDef) * (100 * (defRef.terPer(ter))) / 100 * (atkRef.modDmgScale() * defRef.modDefScale());
     // console.log(baseAtk, baseDef, damage);
     damage = damage - defRef.modDefFlat(wep.cat, atkRef.hasFury());
     // console.log(damage);
@@ -904,7 +904,7 @@ class Game  {
       this.inter.emitMessage(`${unit.name} has been shot down!`);
       this.map.setUnit(unit.r, unit.c, null);
       this.inter.emitMap(this.map.getAsciiMap());
-  
+
       this.playerEnemyShotDown(atkUnit)
       this.playerAllyShotDown(unit);
     }
@@ -934,7 +934,7 @@ class Game  {
         temp=this.players[i];
         //console.log("Found player", temp.name, temp.id);
       }
-        
+
 
     if(temp && temp.isDefeated()) {
       this.inter.emitMessage(`${temp.name} has been defeated!`);
@@ -967,7 +967,8 @@ class Game  {
 
   //emits the ascrii map
   emitMap() {
-    this.inter.emitMap(this.map.getAsciiMap());
+    // this.inter.emitMap(this.map.getAsciiMap());
+    console.log("in game engine");
     this.inter.emitRealMap(this.map.getRealMap());
   }
 
@@ -981,7 +982,7 @@ class Game  {
     this.map.setUnit(5, 4, this.players[1].units[0]);
     console.log(this.map.getAsciiMap());
   }
-  
+
 
 }
 

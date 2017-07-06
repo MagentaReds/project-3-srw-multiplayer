@@ -75,7 +75,7 @@ class Map {
 
     if(m===0)
       return;
-    
+
     if(this.isInBounds(r, c+1) && !Helpers.isInArr(history,[r, c+1]) && this.farther(oR,oC,r,c,r,c+1))
       this.getPTHelper(r, c+1, min, max, oR, oC, m-1, history);
     if(this.isInBounds(r+1, c) && !Helpers.isInArr(history,[r+1, c]) && this.farther(oR,oC,r,c,r+1,c))
@@ -134,7 +134,7 @@ class Map {
     if(this.isInBounds(r,c+1) && this.tiles[r][c+1].unit===null) {
       //grab index of adjacent square from history array
       temp=Helpers.getIndexArr(history,[r, c+1]);
-      //then if adjacent square is not in the history 
+      //then if adjacent square is not in the history
       //  OR it is in the history but it took more steps than current (has less movement remaining) to get to
       //then step into and recurse
       if(temp===-1 || his2[temp]<(m-1))
@@ -155,7 +155,7 @@ class Map {
       if(temp===-1 || his2[temp]<(m-1))
         this.getPMHelper(r-1,c,m-1,oR,oC,oM,history,his2,temp,counter);
     }
-      
+
   }
 
   //simple movement, will need to update once tiles becomes their own objects rather than just holding a unit reference
@@ -198,11 +198,14 @@ class Map {
   }
 
   getRealMap() {
+    console.log("in game map");
     var output=new Array(this.rows);
     for(let r=0; r<this.rows; ++r) {
-      output[r]=new Array(thuis.cols);
-      for(let c=0; c<this.cols; ) {
-        output[r][c]=this.tiles[r][c].unit;
+      output[r]=new Array(this.cols);
+      for(let c=0; c<this.cols; ++c) {
+        if (this.tiles[r][c].unit) {
+          output[r][c]="icon1.png";
+        }
       }
     }
     return output;
