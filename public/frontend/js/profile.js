@@ -1,7 +1,14 @@
 $(document).ready(function() {
+    var counter = 0;
     $("#unlock").click(function() {
-        $("input").removeAttr("readonly");
-        $("#unlock").after('<button id="save" type="button" class="btn btn-success" onclick=>Save</button>');
+        var readonly = $('input').attr('readonly');
+        if (typeof readonly !== undefined && readonly !== false && counter == 0) {
+            $("input").removeAttr("readonly");
+            $("select").removeAttr("readonly");
+            $("#unlock").after('<button id="save" type="button" class="btn btn-success" onclick=>Save</button>');
+            counter++;
+            console.log(counter);
+        }
     });
 
     $("#save").click(function() {
@@ -11,8 +18,14 @@ $(document).ready(function() {
     $(document.body).on('click', 'button', function() {
         if (this.id == 'save') {
             $("input").attr('readonly', true);
+            $("select").attr("readonly", true);
             $(this).hide();
+            counter--;
         }
+
+        });
+
+    $("#example-password-input").on("change keyup paste", function(){
     });
 
 });

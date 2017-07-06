@@ -3,101 +3,112 @@
 
 <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    <title>Profile Page</title>
+  <title>Profile Page</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="css/landing-page.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="css/landing-page.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+  <!-- Custom Fonts -->
+  <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-    </head>
+      </head>
 
-    <body>
+      <body>
 
         <!-- Page Content -->
 
         <a  name="services"></a>
         <div class="content-section-a">
 
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-5">
-                        <div class="form-group row">
-                          <label for="example-email-input" class="col-2 col-form-label">Email</label>
-                          <div class="col-10">
-                            <input class="form-control" type="email" value="bootstrap@example.com" id="example-email-input" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                      <label for="example-url-input" class="col-2 col-form-label">Username</label>
-                      <div class="col-10">
-                        <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input" readonly>
-                    </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-5">
+                <div class="form-group row">
+                  <label for="example-email-input" class="col-2 col-form-label">Email</label>
+                  <div class="col-10">
+                    <input class="form-control" type="email" value="bootstrap@example.com" id="example-email-input" readonly>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="example-url-input" class="col-2 col-form-label">Username</label>
+                  <div class="col-10">
+                    <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input" readonly>
+                  </div>
                 </div>
                 <div class="form-group row">
                   <label for="example-password-input" class="col-2 col-form-label">Password</label>
                   <div class="col-10">
                     <input class="form-control" type="password" value="hunter2" id="example-password-input" readonly>
+                  </div>
                 </div>
+                <div class="form-group row">
+                  <label for="example-select-input" class="col-2 col-form-label">Team</label>
+                  <div class="col-10">
+                    <select class="form-control" id="example-select-input" readonly>
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <!-- /.container -->
+
+              <button id="unlock" type="button" class="btn btn-default">Change Info</button>
             </div>
-        </div>
-        <!-- /.container -->
+            <a  name="contact"></a>
+            <div class="banner">
 
-        <button id="unlock" type="button" class="btn btn-default">Change Info</button>
-    </div>
-    <a  name="contact"></a>
-    <div class="banner">
+              <div class="container">
 
-        <div class="container">
-
-            <div class="row">
-                <div class="col-lg-6">
+                <div class="row">
+                  <div class="col-lg-6">
                     <h2>Check out the code:</h2>
-                </div>
-                <div class="col-lg-6">
+                  </div>
+                  <div class="col-lg-6">
                     <ul class="list-inline banner-social-buttons">
-                        <li>
-                            <a href="https://github.com/MagentaReds/project-3-srw-multiplayer" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
-                        </li>
+                      <li>
+                        <a href="https://github.com/MagentaReds/project-3-srw-multiplayer" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                      </li>
                     </ul>
+                  </div>
                 </div>
+
+              </div>
+              <!-- /.container -->
+
             </div>
+            <!-- /.banner -->
 
-        </div>
-        <!-- /.container -->
+            <!-- jQuery -->
+            <script src="js/jquery.js"></script>
 
-    </div>
-    <!-- /.banner -->
+            <!-- Bootstrap Core JavaScript -->
+            <script src="js/bootstrap.min.js"></script>
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+            <script src="js/profile.js"></script>
+            <script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+            </script>
 
-    <script src="js/profile.js"></script>
-    <script>
+          </body>
 
-    </script>
-
-</body>
-
-</html>
+          </html>

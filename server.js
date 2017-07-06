@@ -84,23 +84,24 @@ var strategy = new Auth0Strategy({
   clientSecret: process.env.AUTH0_CLIENT_SECRET,
   callbackURL:  'http://localhost:8080/callback'
 }, function(accessToken, refreshToken, extraParams, profile, done) {
+    // random team for now
+    var teamNum = Math.floor(Math.random() * (4 - 1) + 1);
     // profile has all the information from the user
     var user = {
-      email: profile.email,
+      email: profile._json.email,
 
-      id: profile.user_id,
+      id: profile.identities[0].user_id,
 
       nickname: profile.nickname,
 
-      team: -1
+      team: teamNum
     };
     console.log(user);
     dbUser.findOne({
       id: profile.user_id
     }, function(error, data) {
-      console.log("we in here");
       if (error) {
-        dbUser.create(user).then(function() {
+        dbUser.create(user).then(function(data){
           return done(null, data);
         });
       }
@@ -122,12 +123,10 @@ passport.use(strategy);
 
 // The searlize and deserialize user methods will allow us to get the user data once they are logged in.
 passport.serializeUser(function(user, done) {
-  console.log(user);
   done(null, user);
 });
 
 passport.deserializeUser(function(user, done) {
-  console.log(user);
   done(null, user);
 });
 
@@ -152,7 +151,6 @@ var apiRoutes = require("./routes/apiRoutes.js");
 var htmlRoutes = require("./routes/htmlRoutes.js");
 app.use(apiRoutes);
 app.use("/", htmlRoutes);
-
 
 
 // Listen on port 3000, using http instead of app due to socket.io

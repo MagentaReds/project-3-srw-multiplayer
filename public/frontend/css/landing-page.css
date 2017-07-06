@@ -47,8 +47,13 @@ h6 {
 
 .intro-message > h1 {
     margin: 0;
-    text-shadow: 1px 5px 5px rgba(0,0,0,0.6);
+    /*text-shadow: 1px 5px 5px rgba(0,0,0,0.6);*/
+    text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
     font-size: 5em;
+}
+
+.welcome > h2 {
+    text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
 }
 
 .intro-divider {
@@ -58,7 +63,7 @@ h6 {
 }
 
 .intro-message > h3 {
-    text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 @media(max-width:767px) {
