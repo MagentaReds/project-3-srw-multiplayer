@@ -172,7 +172,7 @@ class Map {
     var tempUnit=null;
     for(var i=0; i<arr.length; ++i){
       tempUnit=this.getUnit(arr[i][0], arr[i][1]);
-      if(tempUnit && tempUnit.unit.owner!==id)
+      if(tempUnit && tempUnit.owner!==id)
         res.push(arr[i]);
     }
     return res;
@@ -194,6 +194,17 @@ class Map {
       output+='\n';
     }
 
+    return output;
+  }
+
+  getRealMap() {
+    var output=new Array(this.rows);
+    for(let r=0; r<this.rows; ++r) {
+      output[r]=new Array(thuis.cols);
+      for(let c=0; c<this.cols; ) {
+        output[r][c]=this.tiles[r][c].unit;
+      }
+    }
     return output;
   }
 }
