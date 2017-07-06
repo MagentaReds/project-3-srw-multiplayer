@@ -367,7 +367,7 @@ class Game  {
         selUnit.hasMoved=false;
         this.posR=this.oldR;
         this.posC=this.oldC;
-        this.inter.emitMap(this.map.getAsciiMap());
+        this.emitMap();
         this.emptyFlags();
         this.addFlag(Flags.newRound);
         return sucRes;
@@ -379,7 +379,7 @@ class Game  {
         selUnit.hasMoved=false;
         this.posR=this.oldR;
         this.posC=this.oldC;
-        this.inter.emitMap(this.map.getAsciiMap());
+        this.emitMap();
         this.removeFlag(Flags.hasMoved);
         return sucRes;
       }
@@ -903,7 +903,7 @@ class Game  {
     if(!unit.isAlive) {
       this.inter.emitMessage(`${unit.name} has been shot down!`);
       this.map.setUnit(unit.r, unit.c, null);
-      this.inter.emitMap(this.map.getAsciiMap());
+      this.emitMap();
 
       this.playerEnemyShotDown(atkUnit)
       this.playerAllyShotDown(unit);
@@ -965,10 +965,9 @@ class Game  {
 
   }
 
-  //emits the ascrii map
+  //emits the ascii map and real map.
   emitMap() {
-    // this.inter.emitMap(this.map.getAsciiMap());
-    console.log("in game engine");
+    this.inter.emitMap(this.map.getAsciiMap());
     this.inter.emitRealMap(this.map.getRealMap());
   }
 
