@@ -10,6 +10,8 @@ var passport = require("passport");
 var Auth0Strategy = require("passport-auth0");
 var dbUser = require("./models/user.js");
 var GameInterface = require("./game/gameInterface.js");
+var LocalStrategy = require("passport-local").Strategy;
+var bcrypt = require("bcrypt");
 var gameInt;
 
 // Load environmental variables from .env file
@@ -32,15 +34,18 @@ app.use(cookieParser());
 app.use(session({
   // Create unique session identifier
   secret: 'hushhush',
-  resave: true,
-  saveUnitiailized: true
+  resave: false,
+  saveUnitiailized: false,
+  cookie: {}
 }));
 // Make public a static dir
 app.use(express.static(path.join(__dirname, "public/frontend")));
 app.use(passport.initialize());
 app.use(passport.session());
 app.set('views', path.join(__dirname, 'public/frontend'));
-app.set('view engine', 'jade');
+// app.set('view engine', 'jade');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 //adding app to http, since socket uses http to handle connections
 var http = require('http').Server(app);
@@ -74,52 +79,36 @@ db.once("open", function() {
       gameInt= new GameInterface(http, io);
     });
   } else
-    gameInt= new GameInterface(http, io);
+  gameInt= new GameInterface(http, io);
 });
 
-// This will configure Passport to use Auth0
-var strategy = new Auth0Strategy({
-  domain:       process.env.AUTH0_DOMAIN,
-  clientID:     process.env.AUTH0_CLIENT_ID,
-  clientSecret: process.env.AUTH0_CLIENT_SECRET,
-  callbackURL:  'http://localhost:8080/callback'
-}, function(accessToken, refreshToken, extraParams, profile, done) {
-    // random team for now
-    var teamNum = Math.floor(Math.random() * (4 - 1) + 1);
-    // profile has all the information from the user
-    var user = {
-      email: profile._json.email,
+passport.use(new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password',
+  passReqToCallback: true
+}, function(req, username, password, done) {
+  var loggedUser = {
+    email: username,
+    password: password
+  };
 
-      id: profile.identities[0].user_id,
+  dbUser.findOne({email: loggedUser.email}, function(error, data) {
+    if (error) {
+      return done(null, false, {message: "No account found, check email"});
+    }
 
-      nickname: profile.nickname,
-
-      team: teamNum
-    };
-    console.log(user);
-    dbUser.findOne({
-      id: profile.user_id
-    }, function(error, data) {
-      if (error) {
-        dbUser.create(user).then(function(data){
-          return done(null, data);
-        });
-      }
-      if (data == null) {
-        dbUser.create(user).then(function() {
-          return done(null, data);
-        });
-      } else {
+    bcrypt.compare(loggedUser.password, res.hash, function(err, res) {
+      if(res===true){
+        console.log("User logged in!");
         return done(null, data);
+      } else {
+        console.log("User not logged in");
+        return done(null, false, {message: "Incorrect Password"});
       }
-
     });
-
-    // return done(null, profile);
   });
+}));
 
-// Here we are adding the Auth0 Strategy to our passport framework
-passport.use(strategy);
 
 // The searlize and deserialize user methods will allow us to get the user data once they are logged in.
 passport.serializeUser(function(user, done) {

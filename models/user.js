@@ -7,13 +7,22 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema({
   // Just a string
   email: {
+  	unique: true,
+  	required: true,
   	type: String
   },
-  id: {
+  hash: {
+  	required: true,
   	type: String
   },
-  nickname: String,
-  team: Number
+  username: {
+  	required: true,
+  	type: String
+  },
+  team: {
+  	required: true,
+  	type: Number
+  }
 });
 
 // Remember, Mongoose will automatically save the ObjectIds of the notes

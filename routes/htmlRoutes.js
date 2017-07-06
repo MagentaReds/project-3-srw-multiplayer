@@ -15,9 +15,9 @@ router.get("/", function(req, res) {
 	res.render('index', {env: env });
 });
 
-router.get('/login',function(req, res) {
-	res.render('login', { env: env });
-});
+router.get("/createaccount", function(req, res) {
+	res.render('createaccount');
+})
 
 router.get('/profile',function(req, res) {
 	res.sendFile(path.join(__dirname, "../public/frontend/profile.html"));
