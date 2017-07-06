@@ -75,7 +75,7 @@ class GameRoom {
   //Emits a 'update map' event (the ascii map) to the all sockets/clients in this room
   emitMap(map) {
     console.log(`Sending Map Update to Room ${this.roomNum}`);
-    this.nsp.to(this.name).emit("update map", {map: map, msg: "Updated map!"});
+    this.nsp.to(this.name).emit("update ascii map", {map: map, msg: "Updated map!"});
   }
 
   emitRealMap(map) {
