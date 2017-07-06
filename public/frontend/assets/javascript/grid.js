@@ -29,9 +29,8 @@ socket.on("game start", function(data){
 	$("#gameField").toggleClass("hidden");
 	$("#roomMessageDiv").text("Game is starting!");
 	$("#messageDiv").text(data.msg);
-	displayActiveTile(activeUnit);
 	socket.emit("active unit", function(data){
-		console.log([data.r, data.c]);
+		displayActiveTile([data.r, data.c]);
 	});
 });
 
@@ -178,39 +177,31 @@ function blinkActiveTile(locate) {
 }
 // call these functions on load
 // from server we will get an array where the active unit on current turn is located
-// in our example case, we have set active unit at [5,5] which is what we set as the argument
-// for the displayActiveUnit function
-// displayActiveTile(activeUnit);
-// blinkActiveTile(activeUnit);
 
 function displayAvailableMoveTiles(locate) {
 	// locates and loops through available tiles that active unit can move to, coloring them blue and toggling the CSS blink class
-	// setTimeout(function(){
-	// 	for (var y = 0; y < locate.length; y++) {
-	// 		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").toggleClass('blink');
-	// 		$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", moveToTile);
-	// 	}
-	// }, 5);
 	var data = {};
 	data.player = id;
-	data.r=activeUnit[0];
-	data.c=activeUnit[1];
-	socket.emit("get move", data, function(data){
-		if(data.success) {
-			// $("#arrayName").text(data.type);
-			console.log(data.type);
-			// displayArray(data.array);
-			setTimeout(function(){
-				for (var y = 0; y < data.array.length; y++) {
-					$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5");//.toggleClass('blink');
-					$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).bind("click", moveToTile);
-				}
-			}, 5);
-			setTimeout(function(){
-				displayActiveTile(activeUnit);
-			}, 50);
-		}
-		writeMessage(data);
+	socket.emit("active unit", function(data){
+		socket.emit("get move", data, function(data){
+			if(data.success) {
+				// $("#arrayName").text(data.type);
+				console.log(data.type);
+				// displayArray(data.array);
+				setTimeout(function(){
+					for (var y = 0; y < data.array.length; y++) {
+						$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5");//.toggleClass('blink');
+						$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).bind("click", moveToTile);
+					}
+				}, 5);
+				setTimeout(function(){
+					socket.emit("active unit", function(data){
+						displayActiveTile([data.r, data.c]);
+					});
+				}, 50);
+			}
+			writeMessage(data);
+		});
 	});
 }
 
@@ -218,25 +209,27 @@ function hideAvailableMoveTiles(locate) {
 	// function that is called by the cancel button to hide and unbind click event available move tiles
 	var data = {};
 	data.player = id;
-	data.r=activeUnit[0];
-	data.c=activeUnit[1];
-	socket.emit("get move", data, function(data){
-		if(data.success) {
-			// $("#arrayName").text(data.type);
-			console.log(data.type);
-			// displayArray(data.array);
-			setTimeout(function(){
-				for (var y = 0; y < data.array.length; y++) {
-					$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "transparent").css('opacity', "1");//.toggleClass('blink');
-					$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).unbind("click");
-				}
-			}, 5);
-			// set time out function here so code above doesn't hide active unit green square
-			setTimeout(function(){
-				displayActiveTile(activeUnit);
-			}, 50);
-		}
-		writeMessage(data);
+	socket.emit("active unit", function(data){
+		socket.emit("get move", data, function(data){
+			if(data.success) {
+				// $("#arrayName").text(data.type);
+				console.log(data.type);
+				// displayArray(data.array);
+				setTimeout(function(){
+					for (var y = 0; y < data.array.length; y++) {
+						$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "transparent").css('opacity', "1");//.toggleClass('blink');
+						$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).unbind("click");
+					}
+				}, 5);
+				// set time out function here so code above doesn't hide active unit green square
+				setTimeout(function(){
+					socket.emit("active unit", function(data){
+						displayActiveTile([data.r, data.c]);
+					});
+				}, 50);
+			}
+			writeMessage(data);
+		});
 	});
 }
 
@@ -249,19 +242,22 @@ function moveToTile() {
 	var toC = parseInt($(this).attr("data-c"));
 	var data = {};
 	data.player = id;
-	data.r=activeUnit[0];
-	data.c=activeUnit[1];
-	data.toR=toR;
-	data.toC=toC;
-	console.log(data);
-	socket.emit("do move", data, function(data){
+	socket.emit("active unit", function(data){
+		data.toR=toR;
+		data.toC=toC;
 		console.log(data);
-		if(data.success) {
-			socket.emit("update map");
-		}
-		writeMessage(data);
-		console.log(data.actions);
-		//fillActionList(data.actions);
+		socket.emit("do move", data, function(data){
+			console.log(data);
+			if(data.success) {
+				socket.emit("update map");
+				socket.emit("active unit", function(data){
+					displayActiveTile([data.r, data.c]);
+				});
+			}
+			writeMessage(data);
+			console.log(data.actions);
+			//fillActionList(data.actions);
+		});
 	});
 }
 
@@ -277,7 +273,6 @@ function moveOptions (e) {
 
 function cancelMove (e) {
 	hideAvailableMoveTiles();
-	//displayActiveTile(activeUnit);
 	// hide and unbind cancel button so we don't double up on its functionality later on
 	$("#cancel").hide();
 	$("#cancel").unbind("click");
@@ -404,9 +399,17 @@ function defendOptions () {
 function getActions(r,c) {
 	var actionLocation = [r,c];
 	var response = {};
-	if (activePlayer === myId) {
-		if (activeUnit[0] == r && activeUnit[1] == c) {
-			response.actions = ["Move", "Attack"];
+	socket.emit("active unit", function(data){
+		if (activePlayer === myId) { // <- will need to emit for activePlayer and myId as well
+			if (data.r == r && data.c == c) {
+				response.actions = ["Move", "Attack"];
+			}
+			else if (/*there is a unit here*/ 5 == r && 7 == c) {
+				response.actions = ["Status"];
+			}
+			else {
+				response.actions = ["End Turn", "Surrender"];
+			}
 		}
 		else if (/*there is a unit here*/ 5 == r && 7 == c) {
 			response.actions = ["Status"];
@@ -414,17 +417,10 @@ function getActions(r,c) {
 		else {
 			response.actions = ["End Turn", "Surrender"];
 		}
-	}
-	else if (/*there is a unit here*/ 5 == r && 7 == c) {
-		response.actions = ["Status"];
-	}
-	else {
-		response.actions = ["End Turn", "Surrender"];
-	}
-	console.log(response);
-	return response;
+		console.log(response);
+		return response;
+	});
 }
-getActions(5,5);
 
 function enableActions(actions) {
 	// var menu = $("#menu");
@@ -448,7 +444,6 @@ function enableActions(actions) {
 			$("#menu").hide();
 			$("#status").hide();
 		}
-	//}
 }
 
 
@@ -459,8 +454,10 @@ $(document).on("click", "li.grid-square", function(event) {
 	//console.log([dataR,dataC]);
 	var response = getActions(dataR,dataC);
 
-	//socket.emit("getActions", {r: dataR,c: dataC} function(response){enableActions(response.actions)}
-	enableActions(response.actions);
+	socket.emit("get actions", {r: dataR,c: dataC}, function(response){
+		console.log(response.actions);
+		enableActions(response.actions)
+	});
 
 	$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
 	$(document).one("click", "li", function(event) {
@@ -468,21 +465,9 @@ $(document).on("click", "li.grid-square", function(event) {
 		if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
 				$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
 			// call this function so it's background doesn't become transparent
-			displayActiveTile(activeUnit);
+			socket.emit("active unit", function(data){
+				displayActiveTile([data.r, data.c]);
+			});
 		}
 	});
 });
-
-// test code to show which grid-square your mouse has rolled on...
-// it makes things a little slow, and theres always 1 following, this might not work
-
-// $(document).on("mouseenter", "li", function(event) {
-// 	var dataR = $(this).attr("data-r");
-// 	var dataC = $(this).attr("data-c");
-// 	$(`li[data-r=${dataR}][data-c=${dataC}]`).css('border', "solid 1px #000000");
-// 	$(document).on("mouseleave", "li", function(event) {
-// 		if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)) {
-// 			$(`li[data-r=${dataR}][data-c=${dataC}]`).css('border', "dashed 1px grey");
-// 		}
-// 	})
-// });
