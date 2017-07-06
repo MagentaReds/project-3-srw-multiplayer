@@ -751,6 +751,13 @@ class Game  {
     def.afterDefense(!didHit);
   }
 
+  getActiveUnit(playerId) {
+    return {
+              r: this.uRef.r,
+              c: this.uRef.c
+          };
+  }
+
   //emit defense options to the defender player
   //actioncs ["Attack", "Evade", "Defend"]
   //later on will get  also get options if there are Off.Supp and Off.Def Units around, get teir data too

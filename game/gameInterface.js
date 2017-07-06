@@ -202,6 +202,7 @@ class GameInterface {
       socket.on("do cancel", (data, cb)=>{this.onDoCancel(socket, data, cb)});
       socket.on("do standby", (data, cb)=>{this.onDoStandby(socket, data, cb)});
       socket.on("send chat", (data, cb)=>{this.onSendChat(socket, data)});
+      socket.on("active unit", (cb)=>{this.onActiveUnit(socket, cb)});
 
     });
   }
@@ -427,6 +428,16 @@ class GameInterface {
     var room=this.rooms[rNum];
     if(room)
       room.receiveChat(socket.me, msg);
+  }
+
+  onActiveUnit(socket, cb) {
+    console.log(`Active unit requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.getActiveUnit(socket.me.id);
+      cb(response);
+    }
   }
 
 }
