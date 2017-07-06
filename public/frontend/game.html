@@ -14,6 +14,9 @@
         <script src="lib/jquery-3.2.1.min.js"></script>
         <script src="lib/jquery-ui-1.12.1/jquery-ui.js"></script>
 
+        <!-- socket.io -->
+        <script src="./js/socket.io.js"></script>
+
         <script>
             $( function() {
               $( "#menu" ).menu();
@@ -57,7 +60,63 @@
 
     </head>
     <body>
+      <div id="roomDiv">
+        <div class="roomCol">
+          Room Alpha (<span id="room5Count">0</span>/2)
+          <br/>
+          <ul>
+            <li id="room0_slot0"></li>
+            <li id="room0_slot1"></li>
+          </ul>
+          <br/>
+          <button id="joinRoom0" class="joinRoom" data-room="0">Join</button>
+        </div>
+        <div class="roomCol">
+          Room Beta (<span id="room1Count">0</span>/2)
+          <br/>
+          <ul>
+            <li id="room1_slot0"></li>
+            <li id="room1_slot1"></li>
+          </ul>
+          <br/>
+          <button id="joinRoom1" class="joinRoom" data-room="1">Join</button>
+        </div>
+        <div class="roomCol">
+          Room Gamma (<span id="room2Count">0</span>/2)
+          <br/>
+          <ul>
+            <li id="room2_slot0"></li>
+            <li id="room2_slot1"></li>
+          </ul>
+          <br/>
+          <button id="joinRoom2" class="joinRoom" data-room="2">Join</button>
+        </div>
+        <div class="roomCol">
+          Room Delta (<span id="room3Count">0</span>/2)
+          <br/>
+          <ul>
+            <li id="room3_slot0"></li>
+            <li id="room3_slot1"></li>
+          </ul>
+          <br/>
+          <button id="joinRoom3" class="joinRoom" data-room="3">Join</button>
+        </div>
+        <div class="roomCol">
+          Room Epsilon (<span id="room4Count">0</span>/2)
+          <br/>
+          <ul>
+            <li id="room4_slot0"></li>
+            <li id="room4_slot1"></li>
+          </ul>
+          <br/>
+          <button id="joinRoom4" class="joinRoom" data-room="4">Join</button>
+        </div>
+        <button id="leaveRoom">Leave</button>
+        <button id="ready" data-state="unready">Ready?</button>
+      </div>
+
       <!-- JQuery UI Menus below -->
+       <div id="gameField" class="hidden">
         <ol id="grid">
         </ol>
         <ul id="menu">
@@ -118,6 +177,7 @@
               <button id="evadeButton">Evade</button>
             </div>
           </div>
+        </div>
         </body>
         <script src="assets/javascript/grid.js"></script>
 </html>

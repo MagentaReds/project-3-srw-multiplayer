@@ -2,6 +2,16 @@ body {
     background-image: url("./../media/space.jpg");
 }
 
+.hidden {
+  display: none;
+}
+
+#roomDiv {
+  display: flex;
+  flex: 1;
+  color: white;
+}
+
 #grid {
 	list-style-type: none;
 	margin: 0;

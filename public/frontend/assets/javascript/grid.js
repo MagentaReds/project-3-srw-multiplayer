@@ -1,7 +1,115 @@
+var socket = io("/game");
+var gameRoom = null;
+var roomSlot = null;
+var id = null;
+var ready=false;
+
+var rooms=new Array(5);
+rooms[0]=new Array(2);
+rooms[1]=new Array(2);
+rooms[2]=new Array(2);
+rooms[3]=new Array(2);
+rooms[4]=new Array(2);
+
+socket.on("update rooms", function(data){
+	console.log("Updating room values and display");
+	rooms=data.rooms;
+	updateRoomDisplay(rooms);
+});
+
+socket.on("update map", function(data){
+	console.log("Updating map");
+	buildGrid(data.map);
+	writeMessage(data.msg);
+});
+
+socket.on("game start", function(data){
+	console.log("Game is start");
+	$("#roomDiv").hide();
+	$("#gameField").toggleClass("hidden");
+	$("#roomMessageDiv").text("Game is starting!");
+	$("#messageDiv").text(data.msg);
+});
+
+function updateRoomDisplay(rooms) {
+  var count=0;
+  for(var i=0; i<rooms.length; ++i){
+    for(var k=0; k<rooms[i].length; ++k) {
+      if(rooms[i][k]) {
+        $(`#room${i}_slot${k}`).text(rooms[i][k]);
+        ++count;
+      } else
+        $(`#room${i}_slot${k}`).text('_');
+    }
+    $(`#room${i}Count`).text(count);
+    count=0;
+  }
+}
+
+$(".joinRoom").on("click", function(e){
+	console.log("Trying to Join a room");
+	e.preventDefault();
+	var room=parseInt($(this).attr("data-room"));
+
+	socket.emit("join room", room, function(data){
+		if(data.success) {
+			gameRoom=room;
+			roomSlot=data.slot;
+		}
+		writeMessage(data);
+	});
+});
+
+$("#leaveRoom").on("click", function(e){
+	console.log("Trying to leave a room");
+	e.preventDefault();
+
+	socket.emit("leave room", function(data){
+		console.log("Do we get here?");
+		if(data.success) {
+			gameRoom=null;
+			roomSlot=null;
+		}
+		writeMessage(data);
+	})
+});
+
+$("#ready").on("click", function(e){
+	console.log("Toggling Ready");
+	e.preventDefault();
+	var state=$("#ready").attr("data-state");
+
+	socket.emit("toggle ready", function(data){
+		ready=data.ready;
+		writeMessage(data);
+	});
+});
+
+function writeMessage (msg) {
+	$("#messageDiv").text(msg);
+}
+
 // code that makes 900 grid-tiles with each row and column's data index stored
-for (var r = 0; r < 30; r++) {
-	for (var c = 0; c < 30; c++) {
-		$("#grid").append(`<li class="grid-square" data-r = "${r}" data-c = "${c}"><div class="blink grid-style" data-r = "${r}" data-c = "${c}"></div></li>`);
+function buildGrid (map) {
+	for (var r = 0; r < map.length; r++) {
+		for (var c = 0; c < map[0].length; c++) {
+			$("#grid").append(`<li class="grid-square" data-r = "${r}" data-c = "${c}"><div class="blink grid-style" data-r = "${r}" data-c = "${c}"></div></li>`);
+			if (map[r][c]) {
+				$(`li[data-r=${r}][data-c=${c}]`).append(`<img src=assets/media/${map[r][c]} style="margin:-15px 0px 3px -3px; height:60px;">`);
+			}
+		}
+	}
+}
+
+function updateGrid () {
+	$("#grid").empty();
+	for (var r = 0; r < 30; r++) {
+		for (var c = 0; c < 30; c++) {
+			$("#grid").append(`<li class="grid-square" data-r = "${r}" data-c = "${c}"><div class="blink grid-style" data-r = "${r}" data-c = "${c}"></div></li>`);
+			if (map[r][c]) {
+				$(`li[data-r=${r}][data-c=${c}]`).append(`<img src=assets/media/${map[r][c]} style="margin:-15px 0px 3px -3px; height:60px;">`);
+			}
+		}
 	}
 }
 // .grid-square will handle click events and icons for units will be appended to here
@@ -122,8 +230,8 @@ var availableMoveSpaces = [
 activeUnitFunctionality(activeUnit);
 
 
-$(`li[data-r=${5}][data-c=${5}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
-$(`li[data-r=${5}][data-c=${7}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
+// $(`li[data-r=${5}][data-c=${5}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
+// $(`li[data-r=${5}][data-c=${7}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
 
 function displayActiveTile(locate) {
 	// locates active tile where unit will be and colors in tile with green
@@ -327,7 +435,7 @@ function getActions(r,c) {
 	console.log(response);
 	return response;
 }
-getActions(5,7);
+getActions(5,5);
 
 function enableActions(actions) {
 	// var menu = $("#menu");
