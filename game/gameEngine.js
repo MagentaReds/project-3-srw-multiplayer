@@ -968,7 +968,9 @@ class Game  {
   //emits the ascrii map
   emitMap() {
     this.inter.emitMap(this.map.getAsciiMap());
+    this.inter.emitRealMap(this.map.getRealMap());
   }
+
 
   //put each player's units on the map
   //right now hard coded for just 2 playes an one unit each
