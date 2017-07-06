@@ -28,19 +28,39 @@ $(document).ready(function(){
   });
 
   socket.on("game start", function(data){
+    console.log("Game is start");
     $("#roomMessageDiv").text("Game is starting!");
     $("#messageDiv").text(data.msg);
   });
 
   socket.on("update map", function(data){
+    console.log("Map has been updated");
     $("#mapDiv").text(data.map);
     $("#messageDiv").text(data.msg);
   });
 
   socket.on("get counter", function(data) {
+    console.log("You are being attacked! Choose a defense action!");
     $("#messageDiv").text("Choose a Counter action!");
     displayWeapons2(data.weapons, data.stats);
     fillCounterList(data.actions);
+  });
+
+  socket.on("room message", function(data){
+    console.log(data.msg);
+    $("#roomMessageDiv").text(data.msg);
+    var p = $("<p>");
+    var strong =$("<strong>");
+    strong.text(data.msg);
+    $("#chatDisplay").append(p.append(strong));
+  });
+
+  socket.on("chat message", function(data){
+    console.log(data.msg);
+    var p = $("<p>");
+    p.text(data.msg);
+    $("#chatDisplay").append(p);
+    $("#chatDisplay").scrollTop($("#chatDisplay")[0].scrollHeight);
   });
 
   //jquery listeners
@@ -54,7 +74,7 @@ $(document).ready(function(){
         gameRoom=room;
         roomSlot=data.slot;
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -68,18 +88,18 @@ $(document).ready(function(){
         gameRoom=null;
         roomSlot=null;
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     })
   });
 
   $("#ready").on("click", function(e){
-    console.log("Toggleing Ready");
+    console.log("Toggling Ready");
     e.preventDefault();
     var state=$("#ready").attr("data-state");
 
     socket.emit("toggle ready", function(data){
       ready=data.ready;
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -91,7 +111,7 @@ $(document).ready(function(){
     var c = parseInt($("#col").val());
 
     socket.emit("get actions", {player: id, r, c}, function(data){
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
       fillActionList(data.actions);
     });
   });
@@ -109,7 +129,7 @@ $(document).ready(function(){
         $("#arrayName").text(data.type);
         displayArray(data.array);
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -129,7 +149,65 @@ $(document).ready(function(){
       console.log(data);
       if(data.success) {
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
+      fillActionList(data.actions);
+    });
+  });
+
+  $(document).on("click", "button.get_Status", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    socket.emit("get status", data, function(data){
+      console.log(data);
+      if(data.success) {
+        $("#arrayName").text(data.type);
+        displayArray(data.status);
+      }
+      writeMessage(data);
+    });
+  });
+
+  $(document).on("click", "button.get_Spirit", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    socket.emit("get spirit", data, function(data){
+      if(data.success) {
+        $("#arrayName").text(data.type);
+        displayArray(data.spirits);
+      }
+      writeMessage(data);
+    });
+  });
+
+  $(document).on("click", "button.Spirit", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var toR = parseInt($("#row1").val());
+    var toC = parseInt($("#col2").val());
+    var spirit = parseInt($("#weapon").val())
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    data.toR=toR;
+    data.toC=toC;
+    data.spirit=spirit;
+    socket.emit("do spirit", data, function(data){
+      console.log(data);
+      if(data.success) {
+      }
+      writeMessage(data);
       fillActionList(data.actions);
     });
   });
@@ -149,7 +227,41 @@ $(document).ready(function(){
         fillActionList(data.actions);
         displayWeapons(data.weapons);
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
+    });
+  });
+
+  $(document).on("click", "button.Cancel", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    socket.emit("do cancel", data, function(data){
+      console.log(data);
+      if(data.success) {
+        
+      }
+      writeMessage(data);
+    });
+  });
+
+  $(document).on("click", "button.Standby", function(e){
+    e.preventDefault();
+    var r = parseInt($("#row").val());
+    var c = parseInt($("#col").val());
+    var data = {};
+    data.player = id;
+    data.r=r;
+    data.c=c;
+    socket.emit("do standby", data, function(data){
+      console.log(data);
+      if(data.success) {
+        
+      }
+      writeMessage(data);
     });
   });
 
@@ -172,7 +284,7 @@ $(document).ready(function(){
       console.log(data);
       if(data.success) {
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -193,7 +305,7 @@ $(document).ready(function(){
         fillActionList(data.actions);
         displayArray([...data.targets, "I AM A BREAK", ...data.range]);
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -218,7 +330,7 @@ $(document).ready(function(){
         fillActionList(data.actions);
         displayArray([...data.targets, "I AM A BREAK", ...data.range]);
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
@@ -232,11 +344,23 @@ $(document).ready(function(){
       if(data.success) {
         $(".counterAction").empty();
       }
-      $("#messageDiv").text(data.msg);
+      writeMessage(data);
     });
   });
 
+  $(document).on("submit", "#chatForm", function(e){
+    e.preventDefault();
+    var msg = $("#chatInput").val().trim();
+    socket.emit("send chat", msg);
+    $("#chatInput").val("");
+  });
+
 });
+
+function writeMessage(data) {
+  console.log(`Server Response: ${data.msg}`);
+  $("#messageDiv").text(data.msg);
+}
 
 function fillActionList(act) {
   var ul = $("#actionList");

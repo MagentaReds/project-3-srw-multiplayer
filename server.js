@@ -9,6 +9,8 @@ var dotenv = require("dotenv");
 var passport = require("passport");
 var Auth0Strategy = require("passport-auth0");
 var dbUser = require("./models/user.js");
+var GameInterface = require("./game/gameInterface.js");
+var gameInt;
 
 // Load environmental variables from .env file
 dotenv.load();
@@ -44,29 +46,36 @@ app.set('view engine', 'jade');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+// Database configuration with mongoose
 if(process.env.MONGODB_URI) {
-  // Database configuration with mongoose
+  mongoose.connect(process.env.MONGODB_URI);
+} else {
   mongoose.connect("mongodb://localhost/project3");
-  var db = mongoose.connection;
-
-  // Show any mongoose errors
-  db.on("error", function(error) {
-    console.log("Mongoose Error: ", error);
-  });
-
-  // Once logged in to the db through mongoose, log a success message
-  db.once("open", function() {
-    console.log("Mongoose connection successful.");
-
-
-    if(process.env.POPULATE_MONGODB){
-      //imported data from file into mongodb.
-      console.log("Repopulating MONGODB");
-      var importScript = require("./database/import_script.js");
-      importScript();
-    }
-  });
 }
+
+var db = mongoose.connection;
+
+// Show any mongoose errors
+db.on("error", function(error) {
+  console.log("Mongoose Error: ", error);
+});
+
+// Once logged in to the db through mongoose, log a success message
+db.once("open", function() {
+  console.log("Mongoose connection successful.");
+
+  //if populate mongodb, wait for import script to finish then make the gameIntercae
+  //otherwise just make the gameInterface.
+  if(process.env.POPULATE_MONGODB){
+    //imported data from file into mongodb.
+    console.log("Repopulating MONGODB");
+    var importScript = require("./database/import_script.js");
+    importScript().then(()=>{
+      gameInt= new GameInterface(http, io);
+    });
+  } else
+    gameInt= new GameInterface(http, io);
+});
 
 // This will configure Passport to use Auth0
 var strategy = new Auth0Strategy({

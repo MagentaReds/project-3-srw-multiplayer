@@ -12,7 +12,18 @@ class Player {
     this.name=client.name;
     //will need to make a unit.clone utility to kepe things nice a seperate
     this.units=client.units;
+    this.resetUnits();
     this.currentUnit = -1;
+
+    this.defeated=false;
+    this.hasSurrendered =false;
+  }
+
+  //resetting units due not deep copy
+  resetUnits() {
+    for(let i=0; i<this.units.length; ++i) {
+      this.units[i].reset();
+    }
   }
 
   //need to expand to account for when unit is dead, but testing will ignore for now
@@ -24,8 +35,14 @@ class Player {
     return this.units[this.currentUnit];
   }
 
+  //returns true if all units are dead
   isDefeated(){
+    for(var i=0; i<this.units.length; ++i)
+      if(this.units[i].isAlive)
+        return false;
 
+    this.defeated=true;
+    return true;
   }
   isReady() {
 
@@ -35,6 +52,18 @@ class Player {
   }
   getUnit(index) {
 
+  }
+
+  enemyShotDown(unitId) {
+    for(let i=0; i<this.units.length; ++i)
+      if(this.units[i].id !== unitId)
+        this.units[i].addWill(1);
+  }
+
+  allyShotDown(unitId) {
+    for(let i=0; i<this.units.length; ++i)
+      if(this.units[i].id !== unitId)
+        this.units[i].allyShotDown();
   }
  
 }

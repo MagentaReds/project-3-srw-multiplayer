@@ -17,7 +17,10 @@ function populateDatabase() {
   //starts chain inot promise hell!
   //this then calls importWeapons
   ///which then calls importMechs;
-  importPilots();
+  return new Promise(function(resolve, reject) {
+    importPilots();
+    resolve();
+  });
 }
 
 function importMechs() {
@@ -53,6 +56,8 @@ function addMechsHelper(dataSource, mechCodeName, wpWeapons){
       wpSpace: tempMech.wpSpace,
       partSlots: tempMech.partSlots,
       fub: tempMech.fub,
+      size: tempMech.size,
+      terrain: tempMech.terrain,
       abilities: tempMech.abilities,
       type: tempMech.type.split("/"),
       weapons: [],

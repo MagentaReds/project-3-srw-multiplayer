@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Test Game Page</title>
-  <script src="./lib/jquery-3.2.1.min.js"></script>
-  <script src="./lib/socket.io.js"></script>
+  <script src="./js/jquery.js"></script>
+  <script src="./js/socket.io.js"></script>
 </head>
 <body>
   <style>
@@ -27,6 +27,8 @@
     #chatDisplay {
       height: 200px;
       width: 400px;
+      overflow-y:scroll;
+      word-wrap: break-word;
     }
     #roomDiv {
       display: flex;
@@ -137,5 +139,5 @@
     </form>
   </div>
 </body>
-  <script src="./assets/javascript/gameTest.js"></script>
+  <script src="./js/gameTest.js"></script>
 </html>

@@ -4,7 +4,7 @@
 
 var statesAndFlags ={
   game : {
-    state: {
+    flags: {
       newRound: "Start of new Round",
       isMoving: "Unit has started moving",
       hasMoved: "Unit has moved",
@@ -15,7 +15,8 @@ var statesAndFlags ={
       standby: "Unit has stoodby, Moving on",
       hasHitAndAway: "Unit can move after attcking",
       turnOver: "Unit's turn has ended",
-      waitingForDef: "Game is on hold, waiting for Defender"
+      waitingForDef: "Game is on hold, waiting for Defender",
+      gameOver: "The game is over"
     },
     action: {
       move: "Move",
@@ -192,16 +193,28 @@ var statesAndFlags ={
   },
   unit: {
     status: {
-      accel: "Ac",
-      net: "Net",
-      goAgain: "+1",
+      valor: "Va",
+      gain: "Ga",
       strike: "St",
-      focus: "Fo",
+      zeal: "Ze",
+      cheer: "Ga",
+      attune: "At",
+      mercy: "Me",
+      luck: "Lu",
+      assail: "As",
+      snipe: "Sn",
+      bless: "Lu",
       guard: "Gu",
-      guts: "Gt",
-      mercy: "Mc",
+      fury: "Fu",
       alert: "Al",
-      assail: "As"
+      focus: "Fo",
+      accel: "Ac",
+      resolve: "Re",
+      enable: "En",
+      net: "NT",
+      wepBreak: "WB",
+      armBreak: "AB",
+      spBlock: "SB"
     }
   }
 };
