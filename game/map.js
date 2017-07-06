@@ -198,12 +198,12 @@ class Map {
   }
 
   getRealMap() {
-    console.log("in game map");
     var output=new Array(this.rows);
     for(let r=0; r<this.rows; ++r) {
       output[r]=new Array(this.cols);
       for(let c=0; c<this.cols; ++c) {
         if (this.tiles[r][c].unit) {
+          //Will need to be url to per unit later on.
           output[r][c]="icon1.png";
         }
       }
