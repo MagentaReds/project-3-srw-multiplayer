@@ -74,9 +74,10 @@ db.once("open", function() {
     //imported data from file into mongodb.
     console.log("Repopulating MONGODB");
     var importScript = require("./database/import_script.js");
-    importScript().then(()=>{
-      gameInt= new GameInterface(http, io);
-    });
+    importScript();
+    setTimeout(()=>{
+      console.log("Time out over");
+      gameInt= new GameInterface(http, io);}, 3*1000);
   } else
     gameInt= new GameInterface(http, io);
 });
@@ -112,7 +113,7 @@ app.use(function(err, req, res, next) {
   	error: err
   });
 
-});
+});                                                                                                                            
 
 
 //Routes
