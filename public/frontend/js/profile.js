@@ -29,8 +29,10 @@ $(document).ready(function() {
     });
 
     $.get("/user", function(data, status) {
-        console.log(JSON.stringify(data));
-        console.log("Data: " + data + "\nStatus: " + status);
+        $("#email").val(data.email);
+        $("#username").val(data.username);
+        var teamNum = "val" + data.team;
+        $("div.col-10 select").val(teamNum);
     })
 
 });
