@@ -1,3 +1,12 @@
+var Unit = require("../game/unit.js");
+
+var dbUser = require("../models/user.js");
+var dbTeam = require("../models/team.js");
+var dbPilot = require("../models/pilot.js");
+var dbMech = require("../models/mech.js");
+
+var Promise = require("bluebird");
+
 //Just some helper functions
 
 var helpers = {
@@ -73,6 +82,32 @@ var helpers = {
       return (level-1)*50;
     else if(level>=6 && level<=9)
       return (level-2)*50;
+  },
+
+  makeUnitsFromTeam(userId) {
+    console.log(userId);
+    return new Promise(function(resolve, reject) {
+      var client= {
+        
+      };
+      var units=new Array(6);
+      dbUser.findById(userId, function(err, res){
+        if(err) return reject();
+        dbTeam.findOne({number: res.team}, function(err, res2){
+          for(let i=0; i<6; ++i){
+            dbPilot.findOne({name: res2.units[i].pilotName}, function(err, res3){
+              dbMech.findOne({name: res2.units[i].mechName}, function(err, res4){
+                units[i] = new Unit(userId, res3, res4);
+              });
+            });
+          }
+          client.id=res._id;
+          client.name=res.name;
+          client.units=units;
+          resolve(client);
+        })
+      })
+    });
   }
 }
 
