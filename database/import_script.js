@@ -12,6 +12,8 @@ var pilotFlags = require("../game/statesAndFlags").pilot;
 var weaponFlags = require("../game/statesAndFlags").weapon;
 var mechFlags = require("../game/statesAndFlags").mech;
 
+var Promise = require("bluebird");
+
 
 function populateDatabase() {
   //starts chain inot promise hell!
