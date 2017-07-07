@@ -1,5 +1,11 @@
 $(document).ready(function() {
     var counter = 0;
+    $.get("/user", function(data, status) {
+        $("#email").val(data.email);
+        $("#username").val(data.username);
+        var teamNum = "val" + data.team;
+        $("div.col-10 select").val(teamNum);
+    });
     $("#save").hide();
     $("#unlock").click(function() {
         var readonly = $('input').attr('readonly');
@@ -33,22 +39,14 @@ $(document).ready(function() {
         data.email = $("#email").val().trim();
         data.team = $("#team option:selected").text();
         $.post('/updateaccount', data, function(res) {
-            // console.log(res);
-            // if (res.success) {
-            //     console.log("successful");
-            //     window.location.href = '/login';
-            // } else {
-            //     console.log("ERROR IN PROFILE.JS");
-            // }
+            // $.get("/user", function(data, status) {
+            //     $("#email").val(data.email);
+            //     $("#username").val(data.username);
+            //     var teamNum = "val" + data.team;
+            //     $("div.col-10 select").val(teamNum);
+            // });
         });
 
-});
-
-$.get("/user", function(data, status) {
-    $("#email").val(data.email);
-    $("#username").val(data.username);
-    var teamNum = "val" + data.team;
-    $("div.col-10 select").val(teamNum);
-})
+    });
 
 });

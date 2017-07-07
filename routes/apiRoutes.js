@@ -58,13 +58,15 @@ router.post("/updateaccount", function(req, res) {
 	dbUser.findByIdAndUpdate(req.user._id, { $set: { email: req.body.email, username: req.body.username, team: req.body.team }}, { new: true }, function (err, updatedUser) {
 		if (err) return handleError(err);
 		res.send(updatedUser);
+		req.session.passport.user = updatedUser;
+		req.session.save(function(err) {console.log(err);});
 	});
 });
 
 router.post('/login',
 	passport.authenticate('local', { successRedirect: '/profile',
 		failureRedirect: '/login',
-		failureFlash: true }));
+		failureFlash: false }));
 
 router.get("/login", function(req, res){
 	if(req.isAuthenticated())
