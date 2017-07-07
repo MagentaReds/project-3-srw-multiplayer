@@ -19,6 +19,9 @@ var PORT = process.env.PORT || 8080;
 
 mongoose.Promise = Promise;
 
+console.log("ARE WE EVEN LOGGING THIS!?!?!");
+console.log(process.env.MONGODB_URI);
+
 // Initialize Express
 var app = express();
 
@@ -49,7 +52,7 @@ passport.deserializeUser(function(user, done) {
 	done(null, user);
 });
 
-console.log(process.env.MONGODB_URI);
+
 // Database configuration with mongoose
 if(process.env.MONGODB_URI) {
   mongoose.connect(process.env.MONGODB_URI);
