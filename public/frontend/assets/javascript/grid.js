@@ -3,8 +3,10 @@ var gameRoom = null;
 var roomSlot = null;
 var id = null;
 var ready=false;
+// some global game variables below to help alleve server of some duties
 var attackTiles = [];
 var moveTiles = [];
+var currentWeaponId;
 
 var rooms=new Array(5);
 rooms[0]=new Array(2);
@@ -23,6 +25,10 @@ socket.on("update map", function(data){
 	console.log("Updating map");
 	buildGrid(data.map);
 	writeMessage(data.msg);
+	socket.emit("active unit", function(data){
+		displayActiveTile([data.r, data.c]);
+		blinkActiveTile([data.r, data.c]);
+	});
 });
 
 socket.on("game start", function(data1){
@@ -123,6 +129,7 @@ $("#menu2").hide();
 $("#cancel").hide();
 $("#status").hide();
 $("#endSurrender").hide();
+$("#surrender").hide();
 // toggleclass blink for all li.grid-square, otherwise when we wont to show active unit tile, all tiles will start blinking
 
 // example location of where an active unit could be
@@ -238,7 +245,6 @@ function moveToTile() {
 		socket.emit("do move", data, function(data){
 			console.log(data);
 			if(data.success) {
-				socket.emit("update map");
 				socket.emit("active unit", function(data){
 					displayActiveTile([data.r, data.c]);
 					blinkActiveTile([data.r, data.c]);
@@ -264,12 +270,29 @@ function moveOptions (e) {
 }
 
 function cancelMoveBeforeDoingMove (e) {
+	// use global varaible moveTiles to pass as argument to hide move tiles so we aren't pinging back to server which tiles to hide
 	hideAvailableMoveTiles(moveTiles);
 	moveTiles = [];
 	// hide and unbind cancel button so we don't double up on its functionality later on
 	$("#cancel").hide();
 	$("#cancel").unbind("click");
 }
+
+$(".cancelMove").on("click", function() {
+	socket.emit("active unit", function(data){
+		socket.emit("do cancel", {r:data.r, c:data.c}, function (response){
+			console.log(response);
+			if(response.success) {
+				$("#menu2").hide();
+				// $("#menu").show();
+				socket.emit("active unit", function(data){
+				displayActiveTile([data.r, data.c]);
+				blinkActiveTile([data.r, data.c]);
+				});
+			}
+		});
+	});
+});
 
 function cancelAttack (e) {
 	hideAttackTiles(attackTiles);
@@ -321,8 +344,31 @@ function hideAttackTiles(locate) {
 
 function attackEnemy () {
 	console.log("Request Attack Action sent to server");
-	console.log([parseInt($(this).attr("data-r")),parseInt($(this).attr("data-c"))]);
+	var dataToR = parseInt($(this).attr("data-r"));
+	var dataToC = parseInt($(this).attr("data-c"));
+	console.log(currentWeaponId);
+	console.log([dataToR, dataToC]);
+	socket.emit("active unit", function(data){
+		socket.emit("do attack", {r:data.r, c:data.c, toR: dataToR, toC: dataToC, weapon: currentWeaponId}, function(data){
+			if (data.success) {
+				console.log(data);
+				currentWeaponId = null;
+				$("#cancel").hide();
+				$("#cancel").unbind("click");
+			}
+			else if (!data.success) {
+				console.log("can't use that weapon");
+				console.log(data);
+				cancelAttack();
+			}
+		});
+	});
 }
+
+socket.on("get counter", function(data){
+	console.log(data);
+	defendOptions(data);
+});
 
 
 function buildWeaponUi () {
@@ -333,10 +379,9 @@ function buildWeaponUi () {
 			console.log(wepObj);
 			$(".weapons").empty();
 			for (var x = 0; x < wepObj.weapons.length; x++) {
-				console.log(wepObj.weapons);
 				$(".weapons").append(`<li>
 																<div class = "weapon" data="${wepObj.weapons[x].id}">
-																	<span class="ui-icon ui-icon-notice">
+																	<span class="ui-icon ui-icon-radio-on">
 																	</span>
 																	${wepObj.weapons[x].name}
 																</div>
@@ -351,6 +396,7 @@ function buildWeaponUi () {
 // clicking on weapon
 $(document).on("click", "div.weapon", function(event){
 	var wepId = parseInt($(this).attr("data"));
+	currentWeaponId = wepId;
 	console.log("WEAPON ID: " + wepId);
 	$("#menu").hide();
 	$("#menu2").hide();
@@ -367,7 +413,7 @@ $(document).on("click", "div.weapon", function(event){
 	$("#cancel").show().bind("click", cancelAttack);
 });
 
-$(document).on("click", "div#statusDiv", function(event){
+$(document).on("click", "div.statusDiv", function(event){
 	console.log("GET DATA PACKET FROM BACK END");
 	$("#mechName").empty();
 	$("#mechPic").empty();
@@ -407,7 +453,7 @@ $(document).on("click", "div#statusDiv", function(event){
 	}
 });
 
-function defendOptions () {
+function defendOptions (data) {
 	$("#defendModal").dialog("open");
 	$("#defendButton").on("click", function(){
 		console.log("SEND DATA DEFEND");
@@ -418,6 +464,9 @@ function defendOptions () {
 		$("#defendModal").dialog("close");
 	});
 	$("#evadeButton").on("click", function(){
+		socket.emit("do counter", {action: "Evade", weapon: null}, function(data){
+			console.log(data);
+		});
 		console.log("SEND DATA EVADE");
 		$("#defendModal").dialog("close");
 	});
@@ -461,28 +510,45 @@ function enableActions(actions) {
 			$("#menu2").hide();
 			$("#endSurrender").hide();
 			$("#status").hide();
+			$("#surrender").hide();
 		}
 		if (actions === 1) { // active unit has moved and can now attack, standby or CANCEL his movement
 			$("#endSurrender").hide();
 			$("#status").hide();
 			$("#menu").hide();
 			$("#menu2").show();
-			console.log("Attack, standby, or cancel movement...");
+			$("#surrender").hide();
 		}
 		if (actions === 4) { // get status if active player or not
 			$("#status").show();
 			$("#menu").hide();
 			$("#menu2").hide();
 			$("#endSurrender").hide();
+			$("#surrender").hide();
 		}
 		if (actions === 5) { // if you click on an empty square AS an active player, can end turn or surrender
 			$("#endSurrender").show();
 			$("#menu").hide();
 			$("#menu2").hide();
 			$("#status").hide();
+			$("#surrender").hide();
+		}
+		if (actions === 6) { // if you click on an empty square NOT as active player, you can only Surrender
+			$("#surrender").show();
+			$("#status").hide();
+			$("#endSurrender").hide();
+			$("#menu").hide();
+			$("#menu2").hide();
 		}
 }
 
+socket.on("room message", function(data){
+	console.log(data.msg);
+});
+
+socket.on("chat message", function(data){
+	console.log(data.msg);
+});
 
 $(document).on("click", "li.grid-square", function(event) {
 	// if (activePlayer === myId)
@@ -504,6 +570,7 @@ $(document).on("click", "li.grid-square", function(event) {
 			// call this function so it's background doesn't become transparent
 			socket.emit("active unit", function(data){
 				displayActiveTile([data.r, data.c]);
+				blinkActiveTile([data.r, data.c]);
 			});
 		}
 	});

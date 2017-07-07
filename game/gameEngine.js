@@ -367,7 +367,7 @@ class Game  {
         selUnit.hasMoved=false;
         this.posR=this.oldR;
         this.posC=this.oldC;
-        this.inter.emitMap(this.map.getAsciiMap());
+        this.emitMap();
         this.emptyFlags();
         this.addFlag(Flags.newRound);
         return sucRes;
@@ -379,7 +379,7 @@ class Game  {
         selUnit.hasMoved=false;
         this.posR=this.oldR;
         this.posC=this.oldC;
-        this.inter.emitMap(this.map.getAsciiMap());
+        this.emitMap();
         this.removeFlag(Flags.hasMoved);
         return sucRes;
       }
@@ -541,7 +541,7 @@ class Game  {
     else {
       return {success: true, weapons: selUnit.getWeapons()}
     }
-    
+
   }
 
   getStatus(playerId, r, c) {
@@ -714,7 +714,7 @@ class Game  {
     var damage = this.getDamage(this.uRef, this.defender, this.weapon);
     var crit = this.getCritPercent(this.uRef, this.defender, this.weapon);
 
-    if(counterType === "Evade" && !atkRef.hasStrike())
+    if(counterType === "Evade" && !this.uRef.hasStrike())
       hit = Math.floor(hit/2);
     else if(counterType === "Defend")
       damage = Math.floor(damage/2);

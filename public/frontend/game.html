@@ -34,6 +34,9 @@
     $( "#endSurrender" ).menu();
   } );
   $( function() {
+    $( "#surrender" ).menu();
+  } );
+  $( function() {
     $( "#statusModal" ).dialog({
       autoOpen: false,
       show: {
@@ -135,6 +138,9 @@
       <li id="spiritLi" class="ui-state-disabled">
         <div id="spirit"><span class="ui-icon ui-icon-star"></span>Spirit Commands</div>
       </li>
+      <li id="statusLi">
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
+      </li>
     </ul>
     <!-- cancel button, gets used to cancel move and attack BEFORE a movement or attack is made -->
     <ul id="cancel">
@@ -145,7 +151,7 @@
     <!-- status menu i.e. actions === 4, will be used by both active and non-active players -->
     <ul id="status">
       <li id="statusLi">
-        <div id="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
       </li>
     </ul>
     <!-- this menu pops up if you are active player and you click on and empty square i.e. actions === 5 -->
@@ -153,7 +159,7 @@
       <li>
         <div class="endTurn"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
       </li>
-      <li id="Surrender">
+      <li>
         <div><span class="ui-icon ui-icon-alert"></span>Surrender</div>
       </li>
     </ul>
@@ -167,7 +173,13 @@
         <div class="endTurn"><span class="ui-icon ui-icon-flag"></span>Standby</div>
       </li>
       <li>
-        <div id="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+        <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+      </li>
+    </ul>
+    <!-- actions === 6, if you are not active player and click on empty square (can only surrender here)-->
+    <ul id="surrender">
+      <li>
+        <div class = "surrender"><span class="ui-icon ui-icon-alert"></span>Surrender</div>
       </li>
     </ul>
     <!-- Status Modal Below -->
