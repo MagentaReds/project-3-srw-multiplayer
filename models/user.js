@@ -21,7 +21,13 @@ var UserSchema = new Schema({
   },
   team: {
   	required: true,
-  	type: Number
+  	type: Number,
+    validate: {
+      validator: function(v) {
+        return v>0 && v<7;
+      },
+      message: "{Value} is not a valid team number"
+    }
   }
 });
 
