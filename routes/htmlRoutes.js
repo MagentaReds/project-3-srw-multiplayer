@@ -30,7 +30,7 @@ router.get('/profile',function(req, res) {
 
 router.get("/user", function(req, res) {
 	if (req.isAuthenticated()) {
-		res.json(req.user);
+		res.json({success: true, user: req.user});
 	} else {
 		res.json({success: false, message: "You are not logged in"});
 	}
@@ -41,4 +41,13 @@ router.get('/callback',
 	function(req, res) {
 		res.redirect('/profile');
 	});
+
+router.get("/game", function(req, res){
+	if (req.isAuthenticated()) {
+		res.render('game');
+	} else {
+		res.redirect('/login');
+	}
+});
+
 module.exports = router;
