@@ -76,7 +76,7 @@ class Unit {
     for(var i=0; i<db.weapons.length; i++)
       this.weapons.push(new Weapon(db.weapons[i]));
     for(var i=0; i<db.iWeapons.length; i++)
-      this.weapons.push(new Weapon(db.iWeapons[i]));  
+      this.weapons.push(new Weapon(db.iWeapons[i]));
   }
 
   combineTerrain(ter1, ter2) {
@@ -137,7 +137,7 @@ class Unit {
         add+=2;
       else if(this.skills.get(Skill.infight)>=4)
         add+=1;
-    
+
     if(this.status.includes(Status.accel))
       add+=3;
 
@@ -146,6 +146,27 @@ class Unit {
       return this.en;
     else
       return add;
+  }
+
+  getWeapons() {
+    var output=[];
+    var temp;
+    for (var i = 0; i < this.weapons.length; ++i) {
+      temp = {};
+      temp.name = this.weapons[i].name;
+      temp.damage = this.weapons[i].damage;
+      temp.hit = this.weapons[i].hit;
+      temp.crit = this.weapons[i].crit;
+      temp.range = this.getRange(i);
+      temp.props = this.weapons[i].props;
+      temp.curAmmo = this.weapons[i].curAmmo;
+      temp.maxAmmo = this.weapons[i].maxAmmo;
+      temp.en = this.weapons[i].en;
+      temp.will = this.weapons[i].will;
+      temp.id = i;
+      output.push(temp);
+    }
+    return output;
   }
 
   getRange(wepId) {
@@ -165,7 +186,7 @@ class Unit {
       else if(this.skills.get(Skill.gunfight)>=4)
         arr[1]+=1;
   }
-  
+
   skillLevel(skill) {
     for(let i=0; i<this.pilotSkills.length; ++i)
       if(this.pilotSkills[i][0]===skill)
@@ -353,7 +374,7 @@ class Unit {
       res+=.2;
     if(this.skills.has(Skill.revenge) && counter)
       res+=.2;
-    
+
     return res;
   }
 
@@ -374,7 +395,7 @@ class Unit {
       res+=1800;
     if(this.abilities.includes(Ability.tkField) && this.will>=110 && this.en>=5)
       res+=Helpers.getTKField(this.skills.has(Skill.telekinesis));
-    
+
     return res;
   }
 
@@ -382,7 +403,7 @@ class Unit {
     var res=1.0;
     if(this.skills.has(Skill.guard) && this.will>=130)
       res+=.2;
-    
+
     return res;
   }
 
@@ -401,11 +422,11 @@ class Unit {
     var result=this.move;
     if(this.hasFlag(Flags.accel))
       result+=2;
-    
+
     if(air)
       if(this.en<result)
         return this.en;
-    
+
     return result;
   }
 
@@ -419,7 +440,7 @@ class Unit {
     if(this.hp<0)
       this.isAlive=false;
   }
-  
+
   addHp(h) {
     if(this.hp<this.hpMax) {
       if(this.hp+h >this.hpMax)
@@ -486,7 +507,7 @@ class Unit {
     var spirit = this.sc[spiritId];
     if(!spirit || spirit[1]>this.sp)
       return false;
-    
+
     switch(spirit[0]) {
       case Spirit.valor:
         if(this.addStatus(Status.valor)) {
@@ -700,7 +721,7 @@ class Unit {
           return true;
         } else
           return false;
-      
+
     }
   }
 
@@ -718,7 +739,7 @@ class Unit {
     if(this.skills.has(Skill.spRegen))
       this.addSp(10);
 
-    
+
     this.removeStatus(Status.strike);
     this.removeStatus(Status.assail);
     this.removeStatus(Status.guard);
@@ -740,7 +761,7 @@ class Unit {
     this.removeStatus(Status.cheer);
     this.removeStatus(Status.luck);
     this.removeStatus(Status.bless);
-    
+
     this.removeStatus(Status.valor);
     this.removeStatus(Status.mercy);
     this.removeStatus(Status.snipe);

@@ -203,6 +203,7 @@ class GameInterface {
       socket.on("do standby", (data, cb)=>{this.onDoStandby(socket, data, cb)});
       socket.on("send chat", (data, cb)=>{this.onSendChat(socket, data)});
       socket.on("active unit", (cb)=>{this.onActiveUnit(socket, cb)});
+      socket.on("get weapons", (data,cb)=>{this.onGetWeapons(socket, data, cb)});
 
     });
   }
@@ -436,6 +437,17 @@ class GameInterface {
     var room=this.rooms[rNum];
     if(room) {
       var response = this.rooms[rNum].game.getActiveUnit(socket.me.id);
+      cb(response);
+    }
+  }
+
+  onGetWeapons(socket, data, cb) {
+    console.log(`Get Weapons requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.getWeapons(socket.me.id, data.r, data.c);
+
       cb(response);
     }
   }

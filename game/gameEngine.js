@@ -138,22 +138,22 @@ class Game  {
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
-        return ["Status", "Skip Turn", "Surrender"];
+        return 5; // empty square and active player
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
-        return ["Status"];
+        return 4; // active player but not active unit
       } else if(this.inFlags(Flags.newRound)) {
-        return ["Move", "Attack", "Spirit", "Status"];
+        return 0; // active player and active unit
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
-        return ["Attack", "Standby", "Cancel"];
+        return 1; // active player after unit has moved
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
-        return ["Move", "Standby"];
-      } else {
-        return [];
+        return 2; // hit away, have attack and now can move
+      } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
+        return 3; // hit away, have attacked and have moved
       }
     } else if(!selUnit) {
-      return ["Surrender"];
+      return 6; // empty square and NOT active player
     } else {
-      return ["Status"];
+      return 4; // not active player and unit is in square
     }
 
 
@@ -241,10 +241,10 @@ class Game  {
   //GameInterface to Game method: returns a response based on the games state and which socket called it
   //Tries to move the unit, and then returns a success and then list of actions that can be taken aftwards
   doMove(playerId, r, c, toR, toC) {
-    var sucRes = {success: true, actions:["Attack", "Standby", "Cancel"], msg: `${this.uRef.name} has from ${r},${c} to ${toR},${toC}`};
-    var sucRes2 = {success: true, actions:["Standby", "Cancel"], msg: `${this.uRef.name} has from ${r},${c} to ${toR},${toC}`};
+    var sucRes = {success: true, actions:1, msg: `${this.uRef.name} has from ${r},${c} to ${toR},${toC}`}; // ["Attack", "Standby", "Cancel"]
+    var sucRes2 = {success: true, actions:3, msg: `${this.uRef.name} has from ${r},${c} to ${toR},${toC}`}; // ["Standby", "Cancel"]
     var failRes = {success: false, actions:[], msg: `Cannot move this square`};
-    var failRes2 = {success: false, actions:["Attack", "Standby","Cancel"], msg: `${this.uRef.name} has already moved this turn`};
+    var failRes2 = {success: false, actions:1, msg: `${this.uRef.name} has already moved this turn`}; // ["Attack", "Standby","Cancel"]
 
     var posMov = this.map.getPossibleMovement(r, c, this.uRef.move);
 
@@ -529,6 +529,19 @@ class Game  {
     } else {
       return failRes;
     }
+  }
+
+  getWeapons(playerId, r, c, weaponId) {
+    var wepRef = this.uRef.weapons[weaponId];
+    var selUnit = this.map.getUnit(r,c);
+
+    if(!selUnit) {
+      return {success: false, weapons:[]};
+    }
+    else {
+      return {success: true, weapons: selUnit.getWeapons()}
+    }
+    
   }
 
   getStatus(playerId, r, c) {

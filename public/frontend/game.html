@@ -1,183 +1,204 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
+<head>
 
-        <!-- Meta information -->
-        <title>Super Robot Wars!</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- Meta information -->
+  <title>Super Robot Wars!</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <!-- CSS -->
-        <link rel="stylesheet" href="lib/jquery-ui-1.12.1/jquery-ui.css">
-        <link rel="stylesheet" href="assets/css/grid.css">
+  <!-- CSS -->
+  <link rel="stylesheet" href="lib/jquery-ui-1.12.1/jquery-ui.css">
+  <link rel="stylesheet" href="assets/css/grid.css">
 
-        <!-- jQuery -->
-        <script src="lib/jquery-3.2.1.min.js"></script>
-        <script src="lib/jquery-ui-1.12.1/jquery-ui.js"></script>
+  <!-- jQuery -->
+  <script src="lib/jquery-3.2.1.min.js"></script>
+  <script src="lib/jquery-ui-1.12.1/jquery-ui.js"></script>
 
-        <!-- socket.io -->
-        <script src="./js/socket.io.js"></script>
+  <!-- socket.io -->
+  <script src="./js/socket.io.js"></script>
 
-        <script>
-            $( function() {
-              $( "#menu" ).menu();
-            } );
-            $( function() {
-             $( "#cancel" ).menu();
-            } );
-            $( function() {
-             $( "#status" ).menu();
-            } );
-            $( function() {
-             $( "#endSurrender" ).menu();
-            } );
-            $( function() {
-              $( "#statusModal" ).dialog({
-                autoOpen: false,
-                show: {
-                  effect: "blind",
-                  duration: 500
-                },
-                hide: {
-                  effect: "explode",
-                  duration: 1000
-                }
-              });
-            });
-            $( function() {
-              $( "#defendModal" ).dialog({
-                autoOpen: false,
-                show: {
-                  effect: "blind",
-                  duration: 500
-                },
-                hide: {
-                  effect: "explode",
-                  duration: 1000
-                }
-              });
-            });
-        </script>
+  <script>
+  $( function() {
+    $( "#menu" ).menu();
+  } );
+  $( function() {
+    $( "#menu2" ).menu();
+  } );
+  $( function() {
+    $( "#cancel" ).menu();
+  } );
+  $( function() {
+    $( "#status" ).menu();
+  } );
+  $( function() {
+    $( "#endSurrender" ).menu();
+  } );
+  $( function() {
+    $( "#statusModal" ).dialog({
+      autoOpen: false,
+      show: {
+        effect: "blind",
+        duration: 500
+      },
+      hide: {
+        effect: "explode",
+        duration: 1000
+      }
+    });
+  });
+  $( function() {
+    $( "#defendModal" ).dialog({
+      autoOpen: false,
+      show: {
+        effect: "blind",
+        duration: 500
+      },
+      hide: {
+        effect: "explode",
+        duration: 1000
+      }
+    });
+  });
+  </script>
 
-    </head>
-    <body>
-      <div id="roomDiv">
-        <div class="roomCol">
-          Room Alpha (<span id="room5Count">0</span>/2)
-          <br/>
-          <ul>
-            <li id="room0_slot0"></li>
-            <li id="room0_slot1"></li>
-          </ul>
-          <br/>
-          <button id="joinRoom0" class="joinRoom" data-room="0">Join</button>
+</head>
+<body>
+  <div id="roomDiv">
+    <div class="roomCol">
+      Room Alpha (<span id="room5Count">0</span>/2)
+      <br/>
+      <ul>
+        <li id="room0_slot0"></li>
+        <li id="room0_slot1"></li>
+      </ul>
+      <br/>
+      <button id="joinRoom0" class="joinRoom" data-room="0">Join</button>
+    </div>
+    <div class="roomCol">
+      Room Beta (<span id="room1Count">0</span>/2)
+      <br/>
+      <ul>
+        <li id="room1_slot0"></li>
+        <li id="room1_slot1"></li>
+      </ul>
+      <br/>
+      <button id="joinRoom1" class="joinRoom" data-room="1">Join</button>
+    </div>
+    <div class="roomCol">
+      Room Gamma (<span id="room2Count">0</span>/2)
+      <br/>
+      <ul>
+        <li id="room2_slot0"></li>
+        <li id="room2_slot1"></li>
+      </ul>
+      <br/>
+      <button id="joinRoom2" class="joinRoom" data-room="2">Join</button>
+    </div>
+    <div class="roomCol">
+      Room Delta (<span id="room3Count">0</span>/2)
+      <br/>
+      <ul>
+        <li id="room3_slot0"></li>
+        <li id="room3_slot1"></li>
+      </ul>
+      <br/>
+      <button id="joinRoom3" class="joinRoom" data-room="3">Join</button>
+    </div>
+    <div class="roomCol">
+      Room Epsilon (<span id="room4Count">0</span>/2)
+      <br/>
+      <ul>
+        <li id="room4_slot0"></li>
+        <li id="room4_slot1"></li>
+      </ul>
+      <br/>
+      <button id="joinRoom4" class="joinRoom" data-room="4">Join</button>
+    </div>
+    <button id="leaveRoom">Leave</button>
+    <button id="ready" data-state="unready">Ready?</button>
+  </div>
+
+  <!-- JQuery UI Menus below -->
+  <div id="gameField" class="hidden">
+    <!-- grid filled in by js file -->
+    <ol id="grid">
+    </ol>
+    <!-- main actions menu i.e. actions === 0 -->
+    <ul id="menu">
+      <li id="moveLi">
+        <div id="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
+      </li>
+      <li id="attackLi"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
+        <ul class="weapons">
+        </ul>
+      </li>
+      <li id="spiritLi" class="ui-state-disabled">
+        <div id="spirit"><span class="ui-icon ui-icon-star"></span>Spirit Commands</div>
+      </li>
+    </ul>
+    <!-- cancel button, gets used to cancel move and attack BEFORE a movement or attack is made -->
+    <ul id="cancel">
+      <li id="cancelLi">
+        <div><span class="ui-icon ui-icon-closethick"></span>Cancel Action</div>
+      </li>
+    </ul>
+    <!-- status menu i.e. actions === 4, will be used by both active and non-active players -->
+    <ul id="status">
+      <li id="statusLi">
+        <div id="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
+      </li>
+    </ul>
+    <!-- this menu pops up if you are active player and you click on and empty square i.e. actions === 5 -->
+    <ul id="endSurrender">
+      <li>
+        <div class="endTurn"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
+      </li>
+      <li id="Surrender">
+        <div><span class="ui-icon ui-icon-alert"></span>Surrender</div>
+      </li>
+    </ul>
+    <!-- actions === 1, if active player has moved then this menu pops up (can attack not move) -->
+    <ul id="menu2">
+      <li><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
+        <ul class="weapons">
+        </ul>
+      </li>
+      <li>
+        <div class="endTurn"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+      <li>
+        <div id="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+      </li>
+    </ul>
+    <!-- Status Modal Below -->
+    <div id="statusModal" title="Status">
+      <div id="mechData">
+        <div id="mechName"></div>
+        <div id="dataBars">
+          <div id="healthNum"></div>
+          <div id="healthBar"></div>
+          <div id="energyNum"></div>
+          <div id="energyBar"></div>
         </div>
-        <div class="roomCol">
-          Room Beta (<span id="room1Count">0</span>/2)
-          <br/>
-          <ul>
-            <li id="room1_slot0"></li>
-            <li id="room1_slot1"></li>
-          </ul>
-          <br/>
-          <button id="joinRoom1" class="joinRoom" data-room="1">Join</button>
-        </div>
-        <div class="roomCol">
-          Room Gamma (<span id="room2Count">0</span>/2)
-          <br/>
-          <ul>
-            <li id="room2_slot0"></li>
-            <li id="room2_slot1"></li>
-          </ul>
-          <br/>
-          <button id="joinRoom2" class="joinRoom" data-room="2">Join</button>
-        </div>
-        <div class="roomCol">
-          Room Delta (<span id="room3Count">0</span>/2)
-          <br/>
-          <ul>
-            <li id="room3_slot0"></li>
-            <li id="room3_slot1"></li>
-          </ul>
-          <br/>
-          <button id="joinRoom3" class="joinRoom" data-room="3">Join</button>
-        </div>
-        <div class="roomCol">
-          Room Epsilon (<span id="room4Count">0</span>/2)
-          <br/>
-          <ul>
-            <li id="room4_slot0"></li>
-            <li id="room4_slot1"></li>
-          </ul>
-          <br/>
-          <button id="joinRoom4" class="joinRoom" data-room="4">Join</button>
-        </div>
-        <button id="leaveRoom">Leave</button>
-        <button id="ready" data-state="unready">Ready?</button>
       </div>
-
-      <!-- JQuery UI Menus below -->
-       <div id="gameField" class="hidden">
-        <ol id="grid">
-        </ol>
-        <ul id="menu">
-            <li id="moveLi">
-                <div id="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
-            </li>
-            <li id="attackLi"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
-                <ul id="weapons">
-                </ul>
-            </li>
-            <li id="spiritLi" class="ui-state-disabled">
-                <div id="spirit"><span class="ui-icon ui-icon-star"></span>Spirit Commands</div>
-            </li>
-        </ul>
-        <ul id="cancel">
-            <li id="cancelLi">
-                <div><span class="ui-icon ui-icon-closethick"></span>Cancel Action</div>
-            </li>
-        </ul>
-        <ul id="status">
-            <li id="statusLi">
-                <div id="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
-            </li>
-        </ul>
-        <ul id="endSurrender">
-            <li>
-                <div id="endTurn"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
-            </li>
-            <li id="Surrender">
-                <div><span class="ui-icon ui-icon-alert"></span>Surrender</div>
-            </li>
-        </ul>
-        <!-- Status Modal Below -->
-        <div id="statusModal" title="Status">
-          <div id="mechData">
-            <div id="mechName"></div>
-            <div id="dataBars">
-              <div id="healthNum"></div>
-              <div id="healthBar"></div>
-              <div id="energyNum"></div>
-              <div id="energyBar"></div>
-            </div>
-          </div>
-          <div id="mechPic"></div>
-          <div id="pilotData">
-            <div id="pilotPic"></div>
-            <div id="pilotName"></div>
-            <div id="pilotWill"></div>
-            <div id="weaponColumns"></div>
-            <div id="weaponData"></div>
-           </div>
-          </div>
-          <!-- Defend Modal Below -->
-          <div id="defendModal" title="Select An Option:">
-            <div id="defendStyle">
-              <button id="defendButton">Defend</button>
-              <button id="attackButton">Attack</button>
-              <button id="evadeButton">Evade</button>
-            </div>
-          </div>
-        </div>
-        </body>
-        <script src="assets/javascript/grid.js"></script>
+      <div id="mechPic"></div>
+      <div id="pilotData">
+        <div id="pilotPic"></div>
+        <div id="pilotName"></div>
+        <div id="pilotWill"></div>
+        <div id="weaponColumns"></div>
+        <div id="weaponData"></div>
+      </div>
+    </div>
+    <!-- Defend Modal Below -->
+    <div id="defendModal" title="Select An Option:">
+      <div id="defendStyle">
+        <button id="defendButton">Defend</button>
+        <button id="attackButton">Attack</button>
+        <button id="evadeButton">Evade</button>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="assets/javascript/grid.js"></script>
 </html>

@@ -23,14 +23,31 @@ socket.on("update map", function(data){
 	writeMessage(data.msg);
 });
 
-socket.on("game start", function(data){
+socket.on("game start", function(data1){
 	console.log("Game is starting");
 	$("#roomDiv").hide();
 	$("#gameField").toggleClass("hidden");
 	$("#roomMessageDiv").text("Game is starting!");
-	$("#messageDiv").text(data.msg);
+	$("#messageDiv").text(data1.msg);
 	socket.emit("active unit", function(data){
 		displayActiveTile([data.r, data.c]);
+		//activeUnitFunctionality([data.r, data.c]);
+		socket.emit("get weapons", {r:data.r, c:data.c}, function(wepObj){
+			console.log(wepObj);
+			$(".weapons").empty();
+			for (var x = 0; x < wepObj.weapons.length; x++) {
+				console.log(wepObj.weapons);
+				$(".weapons").append(`<li>
+																<div class = "weapon" data="weapon_${wepObj.weapons[x].id}">
+																	<span class="ui-icon ui-icon-notice">
+																	</span>
+																	${wepObj.weapons[x].name}
+																</div>
+															</li>`);
+			}
+			$("#menu").menu("disable");
+			$("#menu").menu("enable");
+		});
 	});
 });
 
@@ -114,6 +131,7 @@ function buildGrid (map) {
 
 // hide our JQuery UI
 $("#menu").hide();
+$("#menu2").hide();
 $("#cancel").hide();
 $("#status").hide();
 $("#endSurrender").hide();
@@ -151,8 +169,6 @@ var availableWeapons = {
   ]
 }
 
-// console.log(availableWeapons.weapons[1].id);
-
 var availableAttackTiles = [
 	[5,4],
 	[5,6],
@@ -160,7 +176,7 @@ var availableAttackTiles = [
 	[6,5]
 ];
 
-activeUnitFunctionality(activeUnit);
+// activeUnitFunctionality(activeUnit);
 
 
 // $(`li[data-r=${5}][data-c=${5}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
@@ -256,22 +272,24 @@ function moveToTile() {
 			}
 			writeMessage(data);
 			console.log(data.actions);
-			//fillActionList(data.actions);
+			$("#cancel").hide();
+			enableActions(data.actions);
 		});
 	});
 }
 
 function moveOptions (e) {
 	// function that will be bound to JQuery UI's menu button with the "move" label.
-	// use availableMoveSpaces as argument for displayAvailableMoveTiles function and show cancel button as well as bind it to cancelMove function
+	// use availableMoveSpaces as argument for displayAvailableMoveTiles function and show cancel button as well as bind it to cancelMoveBeforeDoingMove function
 	// will need request to server to see what the available move spaces are
 	displayAvailableMoveTiles();
 	$("#menu").hide();
+	$("#menu2").hide();
 	$("#status").hide();
-	$("#cancel").show().bind("click", cancelMove);
+	$("#cancel").show().bind("click", cancelMoveBeforeDoingMove);
 }
 
-function cancelMove (e) {
+function cancelMoveBeforeDoingMove (e) {
 	hideAvailableMoveTiles();
 	// hide and unbind cancel button so we don't double up on its functionality later on
 	$("#cancel").hide();
@@ -285,17 +303,41 @@ function cancelAttack (e) {
 }
 
 function displayAttackTiles(locate) {
-	setTimeout(function(){
-		for (var y = 0; y < locate.length; y++) {
-			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").toggleClass('blink');
-			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", attackEnemy);
-		}
-	}, 5);
+	// setTimeout(function(){
+	// 	for (var y = 0; y < locate.length; y++) {
+	// 		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5");//.toggleClass('blink');
+	// 		$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", attackEnemy);
+	// 	}
+	// }, 5);
+	var data = {};
+	data.player = id;
+	socket.emit("active unit", function(data){
+		socket.emit("get attack", data, function(data){
+			if(data.success) {
+				// $("#arrayName").text(data.type);
+				console.log(data.type);
+				console.log(data);
+				// displayArray(data.array);
+				// setTimeout(function(){
+				// 	for (var y = 0; y < data.array.length; y++) {
+				// 		$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5");//.toggleClass('blink');
+				// 		$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).bind("click", attackEnemy);
+				// 	}
+				// }, 5);
+				// setTimeout(function(){
+				// 	socket.emit("active unit", function(data){
+				// 		displayActiveTile([data.r, data.c]);
+				// 	});
+				// }, 50);
+			}
+			writeMessage(data);
+		});
+	});
 }
 
 function hideAttackTiles(locate) {
 	for (var y = 0; y < locate.length; y++) {
-		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink');
+		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1");//.toggleClass('blink');
 		$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
 	}
 }
@@ -305,21 +347,37 @@ function attackEnemy () {
 	console.log([parseInt($(this).attr("data-r")),parseInt($(this).attr("data-c"))]);
 }
 
+// $(".weapons").append("<li><div>hey</div></li>");
+
 // function that ensures when player clicks on the active unit grid tile, the UI will pop up that shows we can either
 // move, attack or use spirit command for the active unit
 // function is called when this file is loaded
-function activeUnitFunctionality(locate) {
-		if (activePlayer === myId) {
-			// will need to unbind this when turn is over
-			$("#move").bind("click", moveOptions);
+function activeUnitFunctionalityx(locate) {
+	// will need to unbind this when turn is over
+	$("#move").bind("click", moveOptions);
+// 	function buildWeaponUi () {
+// 	socket.emit("active unit", function(data1){
+// 		socket.emit("get weapons", {r:data1.r, c:data1.c}, function(data){
+// 			console.log(data.weapons);
+// 			$(".weapons").empty();
+// 			for (var x = 0; x < data.weapons.length; x++) {
+// 				$(".weapons").append(`<li><div class = "weapon" data="weapon_${data.weapons[x].id}"><span class="ui-icon ui-icon-notice"></span>${data.weapons[x].name}<div></li>`);
+// 			}
+// 		})
+// 	});
+// 			// will need to unbind this when turn is over
+// 			// $("#move").bind("click", moveOptions);
+if (activePlayer === myId) {
 			function buildWeaponUi () {
-				$("#weapons").empty();
+				// $(".weapons").empty();
 				for (var x = 0; x < availableWeapons.weapons.length; x++) {
-					$("#weapons").append(`<li><div class = weapon data="weapon_${availableWeapons.weapons[x].id}"><span class="ui-icon ui-icon-notice"></span>${availableWeapons.weapons[x].name}<div></li>`);
+					$(".weapons").append("<li><div>hey</div></li>");
 				}
 			}
-			buildWeaponUi();
-	}
+
+//
+ }
+buildWeaponUi();
 }
 
 // clicking on weapon
@@ -327,6 +385,7 @@ $(document).on("click", "div.weapon", function(event){
 	var data = $(this).attr("data");
 	console.log(data);
 	$("#menu").hide();
+	$("#menu2").hide();
 	// need request from server to see what the availableAttackTiles are;
 	// var availableAttackTiles = [];
 	// availableAttackTiles =[response];
@@ -396,52 +455,56 @@ function defendOptions () {
 
 // code for checking and displaying which tile was clicked on
 // also the UI for displaying options for clicked grid square should pop up here
-function getActions(r,c) {
-	var actionLocation = [r,c];
-	var response = {};
-	socket.emit("active unit", function(data){
-		if (activePlayer === myId) { // <- will need to emit for activePlayer and myId as well
-			if (data.r == r && data.c == c) {
-				response.actions = ["Move", "Attack"];
-			}
-			else if (/*there is a unit here*/ 5 == r && 7 == c) {
-				response.actions = ["Status"];
-			}
-			else {
-				response.actions = ["End Turn", "Surrender"];
-			}
-		}
-		else if (/*there is a unit here*/ 5 == r && 7 == c) {
-			response.actions = ["Status"];
-		}
-		else {
-			response.actions = ["End Turn", "Surrender"];
-		}
-		console.log(response);
-		return response;
-	});
-}
+// function getActions(r,c) {
+// 	var actionLocation = [r,c];
+// 	var response = {};
+// 	socket.emit("active unit", function(data){
+// 		if (activePlayer === myId) { // <- will need to emit for activePlayer and myId as well
+// 			if (data.r == r && data.c == c) {
+// 				response.actions = ["Move", "Attack"];
+// 			}
+// 			else if (/*there is a unit here*/ 5 == r && 7 == c) {
+// 				response.actions = ["Status"];
+// 			}
+// 			else {
+// 				response.actions = ["End Turn", "Surrender"];
+// 			}
+// 		}
+// 		else if (/*there is a unit here*/ 5 == r && 7 == c) {
+// 			response.actions = ["Status"];
+// 		}
+// 		else {
+// 			response.actions = ["End Turn", "Surrender"];
+// 		}
+// 		console.log(response);
+// 		return response;
+// 	});
+// }
 
 function enableActions(actions) {
-	// var menu = $("#menu");
-	// menu.show();
-	//for (var i = 0; i < actions.length; i++) {
-		// will need to append all menu actions
-		//console.log(actions[i]);
-		if (actions[0] === "Status") {
-			$("#status").show();
-			$("#menu").hide();
-			$("#endSurrender").hide();
-		}
-		if (actions[0] === "Move") {
+		if (actions === 0) { // click on active unit AS active player, brings up main actions menu
 			$("#menu").show();
+			$("#menu2").hide();
 			$("#endSurrender").hide();
 			$("#status").hide();
-			console.log("hi");
 		}
-		if (actions[0] === "End Turn") {
+		if (actions === 1) { // active unit has moved and can now attack, standby or CANCEL his movement
+			$("#endSurrender").hide();
+			$("#status").hide();
+			$("#menu").hide();
+			$("#menu2").show();
+			console.log("Attack, standby, or cancel movement...");
+		}
+		if (actions === 4) { // get status if active player or not
+			$("#status").show();
+			$("#menu").hide();
+			$("#menu2").hide();
+			$("#endSurrender").hide();
+		}
+		if (actions === 5) { // if you click on an empty square AS an active player, can end turn or surrender
 			$("#endSurrender").show();
 			$("#menu").hide();
+			$("#menu2").hide();
 			$("#status").hide();
 		}
 }
@@ -452,7 +515,7 @@ $(document).on("click", "li.grid-square", function(event) {
 	var dataR = $(this).attr("data-r");
 	var dataC = $(this).attr("data-c");
 	//console.log([dataR,dataC]);
-	var response = getActions(dataR,dataC);
+	// var response = getActions(dataR,dataC);
 
 	socket.emit("get actions", {r: dataR,c: dataC}, function(response){
 		console.log(response.actions);
