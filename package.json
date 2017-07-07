@@ -18,19 +18,25 @@
   },
   "homepage": "https://github.com/MagentaReds/project-3-project-harder#readme",
   "dependencies": {
+    "auth0-lock": "^10.18.0",
+    "bcrypt": "^1.0.2",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "connect-ensure-login": "^0.1.1",
     "cookie-parser": "^1.4.3",
     "debug": "^2.6.8",
     "dotenv": "^4.0.0",
+    "ejs": "^2.5.6",
     "express": "^4.15.3",
+    "express-jwt": "^5.3.0",
     "express-session": "^1.15.3",
     "jade": "^1.11.0",
+    "jwks-rsa": "^1.2.0",
     "mongoose": "^4.10.0",
     "morgan": "^1.8.2",
     "passport": "^0.3.2",
     "passport-auth0": "^0.6.0",
+    "passport-local": "^1.0.0",
     "socket.io": "^2.0.1"
   }
 }
