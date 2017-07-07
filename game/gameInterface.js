@@ -5,6 +5,8 @@ var Promise = require("bluebird");
 var Game = require("./gameEngine.js");
 var Client = require("./client.js");
 
+var Helpers = require("../config/helpers.js");
+
 
 //Helper Class to contain information about game Rooms
 class GameRoom {
@@ -133,7 +135,7 @@ class GameRoom {
 
 //This class will make and manage all socket.io namespaces/rooms and how they itneract with the Game object
 class GameInterface {
-  constructor(http, io)  {
+  constructor(http, io, testing=true)  {
     //this.test = "test YO";
     this.http = http;
     this.io=io;
@@ -150,10 +152,15 @@ class GameInterface {
     this.uniqueIdCounter = 0;
 
     //used for testing/dev work, will replace with actual user info later.
-    this.tempClientList=null;
-    require("../config/gameSetTeams.js")(10).then((clientList)=>{
-      this.tempClientList = clientList;
-    });
+    this.testing=testing;
+    if(testing) {
+      this.tempClientList=null;
+      require("../config/gameSetTeams.js")(10).then((clientList)=>{
+        this.tempClientList = clientList;
+      });
+    } else {
+      
+    }
 
     this.setNspListeners();
   }
@@ -166,19 +173,22 @@ class GameInterface {
 
       this.emitRooms();
 
-      //adding new data to the socket itself
-      socket.me = new Client(socket, this.tempClientList[this.uniqueIdCounter]);
-      this.uniqueIdCounter++,
-
       //joining/leaving the fun!
-      socket.on("new player", (cb)=>{
-        //this.bindSocketListeners1(socket);
-        // socket.join("Room Alpha");
-
-        // console.log(Object.keys(this.nsp.adapter.rooms["Room Alpha"]));
-        // console.log(this.nsp.adapter.rooms["Room Alpha"].sockets);
-        //cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.id} \n\n ${Object.keys(this.nsp.connected)}`});
-        cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.me.id}`});
+      socket.on("new player", (data, cb)=>{
+        if(this.testing) {
+          //adding new data to the socket itself
+          socket.me = new Client(socket, this.tempClientList[this.uniqueIdCounter]);
+          this.uniqueIdCounter++,
+          cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.me.id}`});
+        }
+        else {
+          console.log(data);
+          Helpers.makeUnitsFromTeam(data.id).then(function(client) {
+            socket.me = new Client(socket, client);
+            console.log(client);
+            cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.me.id}`});
+          });;
+        }
       });
       socket.on("disconnect", ()=>{});
 
