@@ -1,9 +1,9 @@
 $(document).ready(function() {
     var counter = 0;
     $.get("/user", function(data, status) {
-        $("#email").val(data.email);
-        $("#username").val(data.username);
-        var teamNum = "val" + data.team;
+        $("#email").val(data.user.email);
+        $("#username").val(data.user.username);
+        var teamNum = data.user.team;
         $("div.col-10 select").val(teamNum);
     });
     $("#save").hide();
@@ -37,7 +37,7 @@ $(document).ready(function() {
         var data = {};
         data.username = $("#username").val().trim();
         data.email = $("#email").val().trim();
-        data.team = $("#team option:selected").text();
+        data.team = parseInt($("#team option:selected").val());
         $.post('/updateaccount', data, function(res) {
             // $.get("/user", function(data, status) {
             //     $("#email").val(data.email);
