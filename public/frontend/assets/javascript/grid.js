@@ -1,4 +1,4 @@
-var socket = io("/game");
+var socket = io("/game", {reconnection: false});
 var gameRoom = null;
 var roomSlot = null;
 var id = null;
@@ -23,13 +23,37 @@ socket.on("update map", function(data){
 	writeMessage(data.msg);
 });
 
-socket.on("game start", function(data){
-	console.log("Game is start");
+socket.on("game start", function(data1){
+	console.log("Game is starting");
 	$("#roomDiv").hide();
 	$("#gameField").toggleClass("hidden");
 	$("#roomMessageDiv").text("Game is starting!");
-	$("#messageDiv").text(data.msg);
+	$("#messageDiv").text(data1.msg);
+	socket.emit("active unit", function(data){
+		displayActiveTile([data.r, data.c]);
+		//activeUnitFunctionality([data.r, data.c]);
+		socket.emit("get weapons", {r:data.r, c:data.c}, function(wepObj){
+			console.log(wepObj);
+			$(".weapons").empty();
+			for (var x = 0; x < wepObj.weapons.length; x++) {
+				console.log(wepObj.weapons);
+				$(".weapons").append(`<li>
+																<div class = "weapon" data="weapon_${wepObj.weapons[x].id}">
+																	<span class="ui-icon ui-icon-notice">
+																	</span>
+																	${wepObj.weapons[x].name}
+																</div>
+															</li>`);
+			}
+			$("#menu").menu("disable");
+			$("#menu").menu("enable");
+		});
+	});
 });
+
+socket.emit("new player", function(data){
+	console.log(data);
+})
 
 function updateRoomDisplay(rooms) {
   var count=0;
@@ -91,6 +115,7 @@ function writeMessage (msg) {
 
 // code that makes 900 grid-tiles with each row and column's data index stored
 function buildGrid (map) {
+	$("#grid").empty();
 	for (var r = 0; r < map.length; r++) {
 		for (var c = 0; c < map[0].length; c++) {
 			$("#grid").append(`<li class="grid-square" data-r = "${r}" data-c = "${c}"><div class="blink grid-style" data-r = "${r}" data-c = "${c}"></div></li>`);
@@ -101,32 +126,22 @@ function buildGrid (map) {
 	}
 }
 
-function updateGrid () {
-	$("#grid").empty();
-	for (var r = 0; r < 30; r++) {
-		for (var c = 0; c < 30; c++) {
-			$("#grid").append(`<li class="grid-square" data-r = "${r}" data-c = "${c}"><div class="blink grid-style" data-r = "${r}" data-c = "${c}"></div></li>`);
-			if (map[r][c]) {
-				$(`li[data-r=${r}][data-c=${c}]`).append(`<img src=assets/media/${map[r][c]} style="margin:-15px 0px 3px -3px; height:60px;">`);
-			}
-		}
-	}
-}
 // .grid-square will handle click events and icons for units will be appended to here
 // .grid-style will handle all css coloring and blinking aspects of grid
 
 // hide our JQuery UI
 $("#menu").hide();
+$("#menu2").hide();
 $("#cancel").hide();
 $("#status").hide();
 $("#endSurrender").hide();
 // toggleclass blink for all li.grid-square, otherwise when we wont to show active unit tile, all tiles will start blinking
-//$("li.grid-square").toggleClass('blink');
+// $("li.grid-square").toggleClass('blink');
 $(".grid-style").toggleClass('blink');
 
 // example location of where an active unit could be
 var activeUnit = [];
-activeUnit = [5,5];
+activeUnit = [5,2];
 
 var activePlayer = 3;
 var myId = 3;
@@ -154,8 +169,6 @@ var availableWeapons = {
   ]
 }
 
-// console.log(availableWeapons.weapons[1].id);
-
 var availableAttackTiles = [
 	[5,4],
 	[5,6],
@@ -163,71 +176,7 @@ var availableAttackTiles = [
 	[6,5]
 ];
 
-// and their move space spaces which would be sent in from server
-var availableMoveSpaces = [
-	[1,6],
-	[2,6],
-	[2,7],
-	[3,6],
-	[3,7],
-	[3,8],
-	[4,4],
-	[4,3],
-	[4,2],
-	[4,1],
-	[3,2],
-	[3,3],
-	[3,4],
-	[2,3],
-	[2,4],
-	[1,4],
-	[4,6],
-	[4,7],
-	[4,8],
-	[4,9],
-	[5,6],
-	[5,7],
-	[5,8],
-	[5,9],
-	[5,10],
-	[5,4],
-	[5,3],
-	[5,2],
-	[5,1],
-	[5,0],
-	[0,5],
-	[1,5],
-	[2,5],
-	[3,5],
-	[4,5],
-	[6,5],
-	[7,5],
-	[8,5],
-	[9,5],
-	[10,5],
-	[6,1],
-	[6,2],
-	[6,3],
-	[6,4],
-	[6,6],
-	[6,7],
-	[6,8],
-	[6,9],
-	[7,2],
-	[7,3],
-	[7,4],
-	[7,6],
-	[7,7],
-	[7,8],
-	[8,3],
-	[8,4],
-	[8,6],
-	[8,7],
-	[9,4],
-	[9,6]
-];
-
-activeUnitFunctionality(activeUnit);
+// activeUnitFunctionality(activeUnit);
 
 
 // $(`li[data-r=${5}][data-c=${5}]`).append(`<img src=assets/media/icon1.png style="margin:-15px 0px 3px -3px; height:60px;">`);
@@ -244,30 +193,60 @@ function blinkActiveTile(locate) {
 }
 // call these functions on load
 // from server we will get an array where the active unit on current turn is located
-// in our example case, we have set active unit at [5,5] which is what we set as the argument
-// for the displayActiveUnit function
-displayActiveTile(activeUnit);
-blinkActiveTile(activeUnit);
-//console.log($(`li[data-id=${availableWeapons.weapons[0].id}]`).attr("data-id"));
 
 function displayAvailableMoveTiles(locate) {
 	// locates and loops through available tiles that active unit can move to, coloring them blue and toggling the CSS blink class
-	setTimeout(function(){
-		for (var y = 0; y < locate.length; y++) {
-			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").toggleClass('blink');
-			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", moveToTile);
-		}
-	}, 5);
+	var data = {};
+	data.player = id;
+	socket.emit("active unit", function(data){
+		socket.emit("get move", data, function(data){
+			if(data.success) {
+				// $("#arrayName").text(data.type);
+				console.log(data.type);
+				// displayArray(data.array);
+				setTimeout(function(){
+					for (var y = 0; y < data.array.length; y++) {
+						$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5");//.toggleClass('blink');
+						$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).bind("click", moveToTile);
+					}
+				}, 5);
+				setTimeout(function(){
+					socket.emit("active unit", function(data){
+						displayActiveTile([data.r, data.c]);
+					});
+				}, 50);
+			}
+			writeMessage(data);
+		});
+	});
 }
 
 function hideAvailableMoveTiles(locate) {
 	// function that is called by the cancel button to hide and unbind click event available move tiles
-	//setTimeout(function(){
-		for (var y = 0; y < locate.length; y++) {
-			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink');
-			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
-		}
-	//}, 5);
+	var data = {};
+	data.player = id;
+	socket.emit("active unit", function(data){
+		socket.emit("get move", data, function(data){
+			if(data.success) {
+				// $("#arrayName").text(data.type);
+				console.log(data.type);
+				// displayArray(data.array);
+				setTimeout(function(){
+					for (var y = 0; y < data.array.length; y++) {
+						$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "transparent").css('opacity', "1");//.toggleClass('blink');
+						$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).unbind("click");
+					}
+				}, 5);
+				// set time out function here so code above doesn't hide active unit green square
+				setTimeout(function(){
+					socket.emit("active unit", function(data){
+						displayActiveTile([data.r, data.c]);
+					});
+				}, 50);
+			}
+			writeMessage(data);
+		});
+	});
 }
 
 function moveToTile() {
@@ -275,20 +254,43 @@ function moveToTile() {
 	// clicked tile data will need to be sent to server
 	console.log("Request Move Action sent to server");
 	console.log([parseInt($(this).attr("data-r")),parseInt($(this).attr("data-c"))]);
+	var toR = parseInt($(this).attr("data-r"));
+	var toC = parseInt($(this).attr("data-c"));
+	var data = {};
+	data.player = id;
+	socket.emit("active unit", function(data){
+		data.toR=toR;
+		data.toC=toC;
+		console.log(data);
+		socket.emit("do move", data, function(data){
+			console.log(data);
+			if(data.success) {
+				socket.emit("update map");
+				socket.emit("active unit", function(data){
+					displayActiveTile([data.r, data.c]);
+				});
+			}
+			writeMessage(data);
+			console.log(data.actions);
+			$("#cancel").hide();
+			enableActions(data.actions);
+		});
+	});
 }
 
 function moveOptions (e) {
 	// function that will be bound to JQuery UI's menu button with the "move" label.
-	// use availableMoveSpaces as argument for displayAvailableMoveTiles function and show cancel button as well as bind it to cancelMove function
+	// use availableMoveSpaces as argument for displayAvailableMoveTiles function and show cancel button as well as bind it to cancelMoveBeforeDoingMove function
 	// will need request to server to see what the available move spaces are
-	displayAvailableMoveTiles(availableMoveSpaces);
+	displayAvailableMoveTiles();
 	$("#menu").hide();
+	$("#menu2").hide();
 	$("#status").hide();
-	$("#cancel").show().bind("click", cancelMove);
+	$("#cancel").show().bind("click", cancelMoveBeforeDoingMove);
 }
 
-function cancelMove (e) {
-	hideAvailableMoveTiles(availableMoveSpaces);
+function cancelMoveBeforeDoingMove (e) {
+	hideAvailableMoveTiles();
 	// hide and unbind cancel button so we don't double up on its functionality later on
 	$("#cancel").hide();
 	$("#cancel").unbind("click");
@@ -301,17 +303,41 @@ function cancelAttack (e) {
 }
 
 function displayAttackTiles(locate) {
-	setTimeout(function(){
-		for (var y = 0; y < locate.length; y++) {
-			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").toggleClass('blink');
-			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", attackEnemy);
-		}
-	}, 5);
+	// setTimeout(function(){
+	// 	for (var y = 0; y < locate.length; y++) {
+	// 		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5");//.toggleClass('blink');
+	// 		$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", attackEnemy);
+	// 	}
+	// }, 5);
+	var data = {};
+	data.player = id;
+	socket.emit("active unit", function(data){
+		socket.emit("get attack", data, function(data){
+			if(data.success) {
+				// $("#arrayName").text(data.type);
+				console.log(data.type);
+				console.log(data);
+				// displayArray(data.array);
+				// setTimeout(function(){
+				// 	for (var y = 0; y < data.array.length; y++) {
+				// 		$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5");//.toggleClass('blink');
+				// 		$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).bind("click", attackEnemy);
+				// 	}
+				// }, 5);
+				// setTimeout(function(){
+				// 	socket.emit("active unit", function(data){
+				// 		displayActiveTile([data.r, data.c]);
+				// 	});
+				// }, 50);
+			}
+			writeMessage(data);
+		});
+	});
 }
 
 function hideAttackTiles(locate) {
 	for (var y = 0; y < locate.length; y++) {
-		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").toggleClass('blink');
+		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1");//.toggleClass('blink');
 		$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
 	}
 }
@@ -321,21 +347,37 @@ function attackEnemy () {
 	console.log([parseInt($(this).attr("data-r")),parseInt($(this).attr("data-c"))]);
 }
 
+// $(".weapons").append("<li><div>hey</div></li>");
+
 // function that ensures when player clicks on the active unit grid tile, the UI will pop up that shows we can either
 // move, attack or use spirit command for the active unit
 // function is called when this file is loaded
-function activeUnitFunctionality(locate) {
-		if (activePlayer === myId) {
-			// will need to unbind this when turn is over
-			$("#move").bind("click", moveOptions);
+function activeUnitFunctionalityx(locate) {
+	// will need to unbind this when turn is over
+	$("#move").bind("click", moveOptions);
+// 	function buildWeaponUi () {
+// 	socket.emit("active unit", function(data1){
+// 		socket.emit("get weapons", {r:data1.r, c:data1.c}, function(data){
+// 			console.log(data.weapons);
+// 			$(".weapons").empty();
+// 			for (var x = 0; x < data.weapons.length; x++) {
+// 				$(".weapons").append(`<li><div class = "weapon" data="weapon_${data.weapons[x].id}"><span class="ui-icon ui-icon-notice"></span>${data.weapons[x].name}<div></li>`);
+// 			}
+// 		})
+// 	});
+// 			// will need to unbind this when turn is over
+// 			// $("#move").bind("click", moveOptions);
+if (activePlayer === myId) {
 			function buildWeaponUi () {
-				$("#weapons").empty();
+				// $(".weapons").empty();
 				for (var x = 0; x < availableWeapons.weapons.length; x++) {
-					$("#weapons").append(`<li><div class = weapon data="weapon_${availableWeapons.weapons[x].id}"><span class="ui-icon ui-icon-notice"></span>${availableWeapons.weapons[x].name}<div></li>`);
+					$(".weapons").append("<li><div>hey</div></li>");
 				}
 			}
-			buildWeaponUi();
-	}
+
+//
+ }
+buildWeaponUi();
 }
 
 // clicking on weapon
@@ -343,6 +385,7 @@ $(document).on("click", "div.weapon", function(event){
 	var data = $(this).attr("data");
 	console.log(data);
 	$("#menu").hide();
+	$("#menu2").hide();
 	// need request from server to see what the availableAttackTiles are;
 	// var availableAttackTiles = [];
 	// availableAttackTiles =[response];
@@ -412,54 +455,58 @@ function defendOptions () {
 
 // code for checking and displaying which tile was clicked on
 // also the UI for displaying options for clicked grid square should pop up here
-function getActions(r,c) {
-	var actionLocation = [r,c];
-	var response = {};
-	if (activePlayer === myId) {
-		if (activeUnit[0] == r && activeUnit[1] == c) {
-			response.actions = ["Move", "Attack"];
-		}
-		else if (/*there is a unit here*/ 5 == r && 7 == c) {
-			response.actions = ["Status"];
-		}
-		else {
-			response.actions = ["End Turn", "Surrender"];
-		}
-	}
-	else if (/*there is a unit here*/ 5 == r && 7 == c) {
-		response.actions = ["Status"];
-	}
-	else {
-		response.actions = ["End Turn", "Surrender"];
-	}
-	console.log(response);
-	return response;
-}
-getActions(5,5);
+// function getActions(r,c) {
+// 	var actionLocation = [r,c];
+// 	var response = {};
+// 	socket.emit("active unit", function(data){
+// 		if (activePlayer === myId) { // <- will need to emit for activePlayer and myId as well
+// 			if (data.r == r && data.c == c) {
+// 				response.actions = ["Move", "Attack"];
+// 			}
+// 			else if (/*there is a unit here*/ 5 == r && 7 == c) {
+// 				response.actions = ["Status"];
+// 			}
+// 			else {
+// 				response.actions = ["End Turn", "Surrender"];
+// 			}
+// 		}
+// 		else if (/*there is a unit here*/ 5 == r && 7 == c) {
+// 			response.actions = ["Status"];
+// 		}
+// 		else {
+// 			response.actions = ["End Turn", "Surrender"];
+// 		}
+// 		console.log(response);
+// 		return response;
+// 	});
+// }
 
 function enableActions(actions) {
-	// var menu = $("#menu");
-	// menu.show();
-	//for (var i = 0; i < actions.length; i++) {
-		// will need to append all menu actions
-		//console.log(actions[i]);
-		if (actions[0] === "Status") {
+		if (actions === 0) { // click on active unit AS active player, brings up main actions menu
+			$("#menu").show();
+			$("#menu2").hide();
+			$("#endSurrender").hide();
+			$("#status").hide();
+		}
+		if (actions === 1) { // active unit has moved and can now attack, standby or CANCEL his movement
+			$("#endSurrender").hide();
+			$("#status").hide();
+			$("#menu").hide();
+			$("#menu2").show();
+			console.log("Attack, standby, or cancel movement...");
+		}
+		if (actions === 4) { // get status if active player or not
 			$("#status").show();
 			$("#menu").hide();
+			$("#menu2").hide();
 			$("#endSurrender").hide();
 		}
-		if (actions[0] === "Move") {
-			$("#menu").show();
-			$("#endSurrender").hide();
-			$("#status").hide();
-			console.log("hi");
-		}
-		if (actions[0] === "End Turn") {
+		if (actions === 5) { // if you click on an empty square AS an active player, can end turn or surrender
 			$("#endSurrender").show();
 			$("#menu").hide();
+			$("#menu2").hide();
 			$("#status").hide();
 		}
-	//}
 }
 
 
@@ -468,10 +515,12 @@ $(document).on("click", "li.grid-square", function(event) {
 	var dataR = $(this).attr("data-r");
 	var dataC = $(this).attr("data-c");
 	//console.log([dataR,dataC]);
-	var response = getActions(dataR,dataC);
+	// var response = getActions(dataR,dataC);
 
-	//socket.emit("getActions", {r: dataR,c: dataC} function(response){enableActions(response.actions)}
-	enableActions(response.actions);
+	socket.emit("get actions", {r: dataR,c: dataC}, function(response){
+		console.log(response.actions);
+		enableActions(response.actions)
+	});
 
 	$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
 	$(document).one("click", "li", function(event) {
@@ -479,21 +528,9 @@ $(document).on("click", "li.grid-square", function(event) {
 		if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
 				$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
 			// call this function so it's background doesn't become transparent
-			displayActiveTile(activeUnit);
+			socket.emit("active unit", function(data){
+				displayActiveTile([data.r, data.c]);
+			});
 		}
 	});
 });
-
-// test code to show which grid-square your mouse has rolled on...
-// it makes things a little slow, and theres always 1 following, this might not work
-
-// $(document).on("mouseenter", "li", function(event) {
-// 	var dataR = $(this).attr("data-r");
-// 	var dataC = $(this).attr("data-c");
-// 	$(`li[data-r=${dataR}][data-c=${dataC}]`).css('border', "solid 1px #000000");
-// 	$(document).on("mouseleave", "li", function(event) {
-// 		if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)) {
-// 			$(`li[data-r=${dataR}][data-c=${dataC}]`).css('border', "dashed 1px grey");
-// 		}
-// 	})
-// });
