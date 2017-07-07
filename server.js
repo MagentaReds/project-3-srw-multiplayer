@@ -75,10 +75,13 @@ db.once("open", function() {
     console.log("Repopulating MONGODB");
     var importScript = require("./database/import_script.js");
     importScript().then(()=>{
-      gameInt= new GameInterface(http, io);
+      var importTeams = require("./database/make_premade_teams.js");
+      importTeams().then(()=>{
+        gameInt= new GameInterface(http, io, false);
+      });
     });
   } else
-  gameInt= new GameInterface(http, io);
+  gameInt= new GameInterface(http, io, false);
 });
 
 passport.use(new LocalStrategy({
