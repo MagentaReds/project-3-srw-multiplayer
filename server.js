@@ -5,6 +5,7 @@ var mongoose = require("mongoose");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var session = require("express-session");
+var dotenv = require("dotenv");
 var passport = require("passport");
 var Auth0Strategy = require("passport-auth0");
 var GameInterface = require("./game/gameInterface.js");
@@ -17,9 +18,6 @@ var Promise = require("bluebird");
 var PORT = process.env.PORT || 8080;
 
 mongoose.Promise = Promise;
-
-console.log("ARE WE EVEN LOGGING THIS!?!?!");
-console.log(process.env.MONGODB_URI);
 
 // Initialize Express
 var app = express();
@@ -51,11 +49,12 @@ passport.deserializeUser(function(user, done) {
 	done(null, user);
 });
 
-
 // Database configuration with mongoose
 if(process.env.MONGODB_URI) {
   mongoose.connect(process.env.MONGODB_URI);
-} 
+} else {
+  mongoose.connect("mongodb://localhost/project3");
+}
 
 var db = mongoose.connection;
 
