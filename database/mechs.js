@@ -171,7 +171,7 @@ var ptx = {
     fub: "HP +20% and EN +15%",
     abilities: ["AB Field"],
     iWeapons: ["Split Missile", "Mega Blaster", "Yell! Gespenst Kick!"],
-    weapons: []
+    weapons: ["M95 Machine Gun", "Plasma Sword"]
   },
   Gespenst: {
     name: "Gespenst",
