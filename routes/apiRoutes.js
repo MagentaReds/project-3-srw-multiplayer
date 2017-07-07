@@ -53,6 +53,14 @@ router.get("/createaccount", function(req, res) {
 	}
 });
 
+router.post("/updateaccount", function(req, res) {
+	console.log(req.body);
+	dbUser.findByIdAndUpdate(req.user._id, { $set: { email: req.body.email, username: req.body.username, team: req.body.team }}, { new: true }, function (err, updatedUser) {
+		if (err) return handleError(err);
+		res.send(updatedUser);
+	});
+});
+
 router.post('/login',
 	passport.authenticate('local', { successRedirect: '/profile',
 		failureRedirect: '/login',

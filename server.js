@@ -95,6 +95,9 @@ passport.use(new LocalStrategy({
     if (error) {
       return done(null, false, {message: "No account found, check email"});
     }
+    if (!data) {
+      return done(null, false, {message: "No account found, check email"});
+    }
 
     bcrypt.compare(loggedUser.password, data.hash, function(err, res) {
       if(res===true){

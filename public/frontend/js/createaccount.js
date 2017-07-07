@@ -1,5 +1,4 @@
 $(document).ready(function() {
-	console.log("IN CREATE ACCOUNT JS");
 	$("form").on("submit", function(event) {
 		event.preventDefault();
 		var data = {};
