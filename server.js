@@ -49,7 +49,7 @@ passport.deserializeUser(function(user, done) {
 	done(null, user);
 });
 
-
+console.log(process.env.MONGODB_URI);
 // Database configuration with mongoose
 if(process.env.MONGODB_URI) {
   mongoose.connect(process.env.MONGODB_URI);
