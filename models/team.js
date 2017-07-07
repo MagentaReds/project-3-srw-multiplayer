@@ -5,12 +5,22 @@ var TeamSchema = new Schema({
   name: {
     type: String
   },
-  body: {
-    type: String
+  number: {
+    type: Number
+  },
+  units: {
+    type: [{
+      pilotName: {
+        type: String
+      },
+      mechName: {
+        type: String
+      }
+    }]
   }
 });
 
 
-var Item = mongoose.model("Team", TeamSchema);
+var Team = mongoose.model("Team", TeamSchema);
 
 module.exports = Team;
