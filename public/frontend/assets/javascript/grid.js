@@ -3,6 +3,8 @@ var gameRoom = null;
 var roomSlot = null;
 var id = null;
 var ready=false;
+var attackTiles = [];
+var moveTiles = [];
 
 var rooms=new Array(5);
 rooms[0]=new Array(2);
@@ -184,7 +186,7 @@ function displayAvailableMoveTiles(locate) {
 			if(data.success) {
 				// $("#arrayName").text(data.type);
 				console.log(data.type);
-				// displayArray(data.array);
+				moveTiles = data.array;
 				setTimeout(function(){
 					for (var y = 0; y < data.array.length; y++) {
 						$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").addClass('blink');
@@ -205,18 +207,10 @@ function displayAvailableMoveTiles(locate) {
 
 function hideAvailableMoveTiles(locate) {
 	// function that is called by the cancel button to hide and unbind click event available move tiles
-	var data = {};
-	data.player = id;
-	socket.emit("active unit", function(data){
-		socket.emit("get move", data, function(data){
-			if(data.success) {
-				// $("#arrayName").text(data.type);
-				console.log(data.type);
-				// displayArray(data.array);
 				setTimeout(function(){
-					for (var y = 0; y < data.array.length; y++) {
-						$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "transparent").css('opacity', "1").removeClass('blink');
-						$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).unbind("click");
+					for (var y = 0; y < locate.length; y++) {
+						$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").removeClass('blink');
+						$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
 					}
 				}, 5);
 				// set time out function here so code above doesn't hide active unit green square
@@ -227,10 +221,6 @@ function hideAvailableMoveTiles(locate) {
 					});
 				}, 50);
 			}
-			writeMessage(data);
-		});
-	});
-}
 
 function moveToTile() {
 	// Each available move tile from the above function will bind to this function
@@ -274,50 +264,52 @@ function moveOptions (e) {
 }
 
 function cancelMoveBeforeDoingMove (e) {
-	hideAvailableMoveTiles();
+	hideAvailableMoveTiles(moveTiles);
+	moveTiles = [];
 	// hide and unbind cancel button so we don't double up on its functionality later on
 	$("#cancel").hide();
 	$("#cancel").unbind("click");
 }
 
 function cancelAttack (e) {
-	hideAttackTiles(availableAttackTiles);
+	hideAttackTiles(attackTiles);
+	attackTiles = [];
 	$("#cancel").hide();
 	$("#cancel").unbind("click");
 }
 
 function displayAttackTiles(locate) {
-	// setTimeout(function(){
-	// 	for (var y = 0; y < locate.length; y++) {
-	// 		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
-	// 		$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", attackEnemy);
-	// 	}
-	// }, 5);
-	var data = {};
-	data.player = id;
-	socket.emit("active unit", function(data){
-		socket.emit("get attack", data, function(data){
-			if(data.success) {
-				// $("#arrayName").text(data.type);
-				console.log(data.type);
-				console.log(data);
-				// displayArray(data.array);
-				// setTimeout(function(){
-				// 	for (var y = 0; y < data.array.length; y++) {
-				// 		$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
-				// 		$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).bind("click", attackEnemy);
-				// 	}
-				// }, 5);
-				// setTimeout(function(){
-				// 	socket.emit("active unit", function(data){
-				// 		displayActiveTile([data.r, data.c]);
-				//		blinkActiveTile([data.r, data.c]);
-				// 	});
-				// }, 50);
-			}
-			writeMessage(data);
-		});
-	});
+	setTimeout(function(){
+		for (var y = 0; y < locate.length; y++) {
+			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
+			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", attackEnemy);
+		}
+	}, 5);
+	// var data = {};
+	// data.player = id;
+	// socket.emit("active unit", function(data){
+	// 	socket.emit("get attack", data, function(data){
+	// 		if(data.success) {
+	// 			// $("#arrayName").text(data.type);
+	// 			console.log(data.type);
+	// 			console.log(data);
+	// 			// displayArray(data.array);
+	// 			// setTimeout(function(){
+	// 			// 	for (var y = 0; y < data.array.length; y++) {
+	// 			// 		$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
+	// 			// 		$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).bind("click", attackEnemy);
+	// 			// 	}
+	// 			// }, 5);
+	// 			// setTimeout(function(){
+	// 			// 	socket.emit("active unit", function(data){
+	// 			// 		displayActiveTile([data.r, data.c]);
+	// 			//		blinkActiveTile([data.r, data.c]);
+	// 			// 	});
+	// 			// }, 50);
+	// 		}
+	// 		writeMessage(data);
+	// 	});
+	// });
 }
 
 function hideAttackTiles(locate) {
@@ -343,7 +335,7 @@ function buildWeaponUi () {
 			for (var x = 0; x < wepObj.weapons.length; x++) {
 				console.log(wepObj.weapons);
 				$(".weapons").append(`<li>
-																<div class = "weapon" data="weapon_${wepObj.weapons[x].id}">
+																<div class = "weapon" data="${wepObj.weapons[x].id}">
 																	<span class="ui-icon ui-icon-notice">
 																	</span>
 																	${wepObj.weapons[x].name}
@@ -358,14 +350,20 @@ function buildWeaponUi () {
 
 // clicking on weapon
 $(document).on("click", "div.weapon", function(event){
-	var data = $(this).attr("data");
-	console.log(data);
+	var wepId = parseInt($(this).attr("data"));
+	console.log("WEAPON ID: " + wepId);
 	$("#menu").hide();
 	$("#menu2").hide();
+	socket.emit("active unit", function(data){
+		socket.emit("get targets", {id: id, r: data.r, c: data.c, weapon: wepId}, function(response){
+			displayAttackTiles(response.range);
+			attackTiles = response.range;
+		});
+	});
 	// need request from server to see what the availableAttackTiles are;
 	// var availableAttackTiles = [];
 	// availableAttackTiles =[response];
-	displayAttackTiles(availableAttackTiles);
+	// displayAttackTiles(availableAttackTiles);
 	$("#cancel").show().bind("click", cancelAttack);
 });
 
