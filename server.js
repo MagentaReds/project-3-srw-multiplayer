@@ -5,7 +5,6 @@ var mongoose = require("mongoose");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var session = require("express-session");
-var dotenv = require("dotenv");
 var passport = require("passport");
 var Auth0Strategy = require("passport-auth0");
 var GameInterface = require("./game/gameInterface.js");
@@ -56,9 +55,7 @@ passport.deserializeUser(function(user, done) {
 // Database configuration with mongoose
 if(process.env.MONGODB_URI) {
   mongoose.connect(process.env.MONGODB_URI);
-} else {
-  mongoose.connect("mongodb://localhost/project3");
-}
+} 
 
 var db = mongoose.connection;
 
