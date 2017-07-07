@@ -32,8 +32,7 @@ router.post("/createaccount", function(req, res) {
 
 				bcrypt.hash(req.body.password, saltRounds, function(error, hash) {
 					user.hash = hash;
-					user.team = -1;
-
+					user.team = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
 					dbUser.create(user);
 					res.json({success: true, message: "Account created"});
 				});
@@ -46,17 +45,24 @@ router.post("/createaccount", function(req, res) {
 
 });
 
+router.get("/createaccount", function(req, res) {
+	if (req.isAuthenticated()) {
+		res.redirect('/profile');
+	} else {
+		res.render('createaccount');
+	}
+});
+
 router.post('/login',
 	passport.authenticate('local', { successRedirect: '/profile',
 		failureRedirect: '/login',
-		failureFlash: true })
-	);
+		failureFlash: true }));
 
 router.get("/login", function(req, res){
 	if(req.isAuthenticated())
 		res.redirect("/profile");
 	else {
-		res.redirect("/login");
+		res.render("login");
 	}
 });
 

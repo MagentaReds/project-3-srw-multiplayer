@@ -23,9 +23,14 @@ $(document).ready(function() {
             counter--;
         }
 
-        });
+    });
 
     $("#example-password-input").on("change keyup paste", function(){
     });
+
+    $.get("/user", function(data, status) {
+        console.log(JSON.stringify(data));
+        console.log("Data: " + data + "\nStatus: " + status);
+    })
 
 });
