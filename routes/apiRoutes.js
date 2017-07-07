@@ -32,7 +32,7 @@ router.post("/createaccount", function(req, res) {
 
 				bcrypt.hash(req.body.password, saltRounds, function(error, hash) {
 					user.hash = hash;
-					user.team = -1;
+					user.team = 0;
 
 					dbUser.create(user);
 					res.json({success: true, message: "Account created"});
