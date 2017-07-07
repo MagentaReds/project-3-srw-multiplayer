@@ -32,8 +32,7 @@ router.post("/createaccount", function(req, res) {
 
 				bcrypt.hash(req.body.password, saltRounds, function(error, hash) {
 					user.hash = hash;
-					user.team = 0;
-
+					user.team = Math.floor(Math.random() * (4)) + 1;
 					dbUser.create(user);
 					res.json({success: true, message: "Account created"});
 				});
@@ -46,17 +45,34 @@ router.post("/createaccount", function(req, res) {
 
 });
 
+router.get("/createaccount", function(req, res) {
+	if (req.isAuthenticated()) {
+		res.redirect('/profile');
+	} else {
+		res.render('createaccount');
+	}
+});
+
+router.post("/updateaccount", function(req, res) {
+	console.log(req.body);
+	dbUser.findByIdAndUpdate(req.user._id, { $set: { email: req.body.email, username: req.body.username, team: req.body.team }}, { new: true }, function (err, updatedUser) {
+		if (err) return handleError(err);
+		res.send(updatedUser);
+		req.session.passport.user = updatedUser;
+		req.session.save(function(err) {console.log(err);});
+	});
+});
+
 router.post('/login',
 	passport.authenticate('local', { successRedirect: '/profile',
 		failureRedirect: '/login',
-		failureFlash: true })
-	);
+		failureFlash: false }));
 
 router.get("/login", function(req, res){
 	if(req.isAuthenticated())
 		res.redirect("/profile");
 	else {
-		res.redirect("/login");
+		res.render("login");
 	}
 });
 

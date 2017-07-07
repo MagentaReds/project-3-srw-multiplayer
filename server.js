@@ -7,7 +7,6 @@ var cookieParser = require("cookie-parser");
 var session = require("express-session");
 var dotenv = require("dotenv");
 var passport = require("passport");
-var Auth0Strategy = require("passport-auth0");
 var dbUser = require("./models/user.js");
 var GameInterface = require("./game/gameInterface.js");
 var LocalStrategy = require("passport-local").Strategy;
@@ -97,8 +96,11 @@ passport.use(new LocalStrategy({
     if (error) {
       return done(null, false, {message: "No account found, check email"});
     }
+    if (!data) {
+      return done(null, false, {message: "No account found, check email"});
+    }
 
-    bcrypt.compare(loggedUser.password, res.hash, function(err, res) {
+    bcrypt.compare(loggedUser.password, data.hash, function(err, res) {
       if(res===true){
         console.log("User logged in!");
         return done(null, data);
