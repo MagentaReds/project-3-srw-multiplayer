@@ -6,13 +6,22 @@ var Schema = mongoose.Schema;
 // Create the Note schema
 var UserSchema = new Schema({
   // Just a string
-  userName: {
-    type: String
+  email: {
+  	unique: true,
+  	required: true,
+  	type: String
   },
-
-  // Just a string
-  body: {
-    type: String
+  hash: {
+  	required: true,
+  	type: String
+  },
+  username: {
+  	required: true,
+  	type: String
+  },
+  team: {
+  	required: true,
+  	type: Number
   }
 });
 

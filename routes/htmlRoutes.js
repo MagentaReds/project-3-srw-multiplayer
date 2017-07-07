@@ -3,6 +3,7 @@ var passport = require("passport");
 var router = express.Router();
 var ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();
 var request = require("request");
+var path = require("path");
 
 var env = {
 	AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
@@ -11,16 +12,20 @@ var env = {
 };
 
 router.get("/", function(req, res) {
-	res.render('frontend/index', {env: env });
+	res.render('index', {env: env });
 });
 
-router.get('/login',function(req, res) {
-	res.render('login', { env: env });
+router.get("/createaccount", function(req, res) {
+	res.render('createaccount');
+})
+
+router.get('/profile',function(req, res) {
+	res.sendFile(path.join(__dirname, "../public/frontend/profile.html"));
 });
 
 router.get('/callback',
 	passport.authenticate('auth0', { failureRedirect: '/' }),
 	function(req, res) {
-		res.redirect(req.session.returnTo || '/');
+		res.redirect('/profile');
 	});
 module.exports = router;
