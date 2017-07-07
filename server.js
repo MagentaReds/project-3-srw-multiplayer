@@ -74,10 +74,9 @@ db.once("open", function() {
     //imported data from file into mongodb.
     console.log("Repopulating MONGODB");
     var importScript = require("./database/import_script.js");
-    importScript();
-    setTimeout(()=>{
-      console.log("Time out over");
-      gameInt= new GameInterface(http, io);}, 3*1000);
+    importScript().then(()=>{
+      gameInt= new GameInterface(http, io);
+    });
   } else
   gameInt= new GameInterface(http, io);
 });
@@ -121,10 +120,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
   done(null, user);
 });
-
-//Socket IO
-var GameInterface = require("./game/gameInterface.js");
-var gameInt = new GameInterface(http, io);
 
 
 app.use(function(err, req, res, next) {
