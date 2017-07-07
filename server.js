@@ -11,7 +11,7 @@ var Auth0Strategy = require("passport-auth0");
 var GameInterface = require("./game/gameInterface.js");
 var gameInt;
 // Load environmental variables from .env file
-dotenv.load();
+//dotenv.load();
 
 var Promise = require("bluebird");
 
