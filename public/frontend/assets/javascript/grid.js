@@ -1,8 +1,23 @@
-var socket = io("/game", {reconnection: false});
+var socket = socket = io("/game", {reconnection: false});
 var gameRoom = null;
 var roomSlot = null;
 var id = null;
 var ready=false;
+
+$.get("/user", function(res){
+	if(res.success) {
+		id=res.user._id;
+		console.log(id);
+		socket.emit("new player", {id:res.user._id}, function(data){
+			console.log(data);
+		});
+	} else {
+		socket.emit("new player", {id:null}, function(data){
+			console.log(data);
+		});
+	}
+});
+
 
 var rooms=new Array(5);
 rooms[0]=new Array(2);
@@ -45,15 +60,12 @@ socket.on("game start", function(data1){
 																</div>
 															</li>`);
 			}
-			$("#menu").menu("disable");
-			$("#menu").menu("enable");
+			$("#menu").menu( "refresh" );
 		});
 	});
 });
 
-socket.emit("new player", function(data){
-	console.log(data);
-})
+
 
 function updateRoomDisplay(rooms) {
   var count=0;
