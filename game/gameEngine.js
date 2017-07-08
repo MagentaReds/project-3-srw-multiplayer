@@ -24,7 +24,7 @@ class Game  {
     this.players=[];
     for(var i = 0; i<clientList.length; ++i)
       if(clientList[i]) {
-        this.players.push(new Player(clientList[i].me));
+        this.players.push(new Player(clientList[i].me, i));
       }
 
     this.numPlayers=this.players.length;
@@ -97,20 +97,29 @@ class Game  {
     return this.players[this.currentPlayer];
   }
 
+  isDefeated(playerId) {
+    for(let i=0; i<this.players.length; ++i) 
+      if(playerId===this.players[i].id)
+        return this.players[i].isDefeated();
+
+    return true;
+  }
+
   playerLeft(playerId) {
     for(let i=0; i<this.players.length; ++i) {
       if(playerId===this.players[i].id) {
         this.players[i].surrender();
 
         for(let k=0; k<this.players[i].units.length; ++k) {
+          if(this.players[i].units.isAlive)
+            this.map.setUnit(this.players[i].units.r, this.players[i].units.c, null);
           this.players[i].units.isAlive=false;
-          this.map.setUnit(this.players[i].units.r, this.players[i].units.c, null);
         }
 
         if(this.currentPlayer===i) {
           this.addFlag(Flags.turnOver);
           this.checkFlags();
-        } else if(this.defender.owner === playerId && this.waitingForDef) {
+        } else if(this.defender && this.defender.owner === playerId && this.inFlags(Flags.waitingForDef)) {
           this.removeFlag(Flags.waitingForDef);
           this.checkFlags();
         }
@@ -605,6 +614,8 @@ class Game  {
     if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
       return failRes2;
     }
+    if(!selUnit || !tarUnit || tarUnit.owner===selUnit.owner)
+      return failRes;
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -1023,14 +1034,40 @@ class Game  {
     this.inter.emitRealMap(this.map.getRealMap());
   }
 
+  spawnUnitHelper(unit, r, c) {
+    unit.setRC(r,c);
+    this.map.setUnit(r, c, unit);
+  }
 
   //put each player's units on the map
   //right now hard coded for just 2 playes an one unit each
   spawnUnits(){
-    this.players[0].units[0].setRC(5,2);
-    this.players[1].units[0].setRC(5,4);
-    this.map.setUnit(5, 2, this.players[0].units[0]);
-    this.map.setUnit(5, 4, this.players[1].units[0]);
+    console.log(this.players.length);
+    this.spawnUnitHelper(this.players[0].units[0], 8, 2+5);
+    this.spawnUnitHelper(this.players[0].units[1], 8, 4+5);
+    this.spawnUnitHelper(this.players[0].units[2], 7, 3+5);
+    this.spawnUnitHelper(this.players[0].units[3], 9, 3+5);
+    this.spawnUnitHelper(this.players[0].units[4], 6, 4+5);
+    this.spawnUnitHelper(this.players[0].units[5], 10, 4+5);
+    this.players[0].units[0].order=0;
+    this.players[0].units[1].order=1;
+    this.players[0].units[2].order=2;
+    this.players[0].units[3].order=3;
+    this.players[0].units[4].order=4;
+    this.players[0].units[5].order=5;
+
+    this.spawnUnitHelper(this.players[1].units[0], 8, 26-5);
+    this.spawnUnitHelper(this.players[1].units[1], 8, 24-5);
+    this.spawnUnitHelper(this.players[1].units[2], 7, 25-5);
+    this.spawnUnitHelper(this.players[1].units[3], 9, 25-5);
+    this.spawnUnitHelper(this.players[1].units[4], 6, 24-5);
+    this.spawnUnitHelper(this.players[1].units[5], 10, 24-5);
+    this.players[1].units[0].order=0;
+    this.players[1].units[1].order=1;
+    this.players[1].units[2].order=2;
+    this.players[1].units[3].order=3;
+    this.players[1].units[4].order=4;
+    this.players[1].units[5].order=5;
     console.log(this.map.getAsciiMap());
   }
 
