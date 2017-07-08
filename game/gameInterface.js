@@ -5,7 +5,7 @@ var Promise = require("bluebird");
 var Game = require("./gameEngine.js");
 var Client = require("./client.js");
 
-var Helpers = require("../config/helpers.js");
+var Helpers = require("../config/teamHelper.js");
 
 
 //Helper Class to contain information about game Rooms
@@ -48,7 +48,7 @@ class GameRoom {
     socket.me.roomNum=null;
     socket.leave(this.name);
     if(this.game)
-      if(!this.game.isOver() && !this.game.isDefeated(socket.me.id))
+      if(!this.game.checkGameOver() && !this.game.isDefeated(socket.me.id))
         this.game.playerLeft(socket.me.id);
   }
 
