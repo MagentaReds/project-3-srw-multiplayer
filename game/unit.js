@@ -40,6 +40,9 @@ class Unit {
     this.pilotSkills = [...pilotDb.pilotSkills];
     this.abilities = [...mechDb.abilities];
     this.owner=playerId;
+    this.color="grey";
+    this.id;
+    this.order=null;
     this.willGain=pilotDb.willGain;
     this.will=100;
 
@@ -341,7 +344,7 @@ class Unit {
     if(this.status.includes(Status.focus))
       res+=30;
     if(this.skills.has(Skill.prevail));
-      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.maxHp);
     if(this.skills.has(Skill.telekinesis))
       res+=Helpers.getTKHitEvd(this.skills.get(Skill.telekinesis));
     if(this.skills.has(Skill.genius))
@@ -357,7 +360,7 @@ class Unit {
     if(this.status.includes(Status.focus))
       res+=30;
     if(this.skills.has(Skill.prevail));
-      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.maxHp);
     if(this.skills.has(Skill.telekinesis))
       res+=Helpers.getTKHitEvd(this.skills.get(Skill.telekinesis));
     if(this.skills.has(Skill.genius))
@@ -375,7 +378,7 @@ class Unit {
     if(this.skills.has(Skill.genius))
       res+=20;
     if(this.skills.has(Skill.prevail));
-      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.maxHp);
   }
 
   modDmgFlat(wepCat) {
@@ -430,7 +433,7 @@ class Unit {
   modArmScale() {
     var res=1.0;
     if(this.skills.has(Skill.prevail))
-      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.maxHp);
 
     return res;
   }
