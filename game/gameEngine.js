@@ -250,6 +250,10 @@ class Game  {
 
     var selUnit = this.map.getUnit(r,c);
 
+    if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
+      return failRes2;
+    }
+
     if(this.pRef.id===playerId){
       if(!selUnit) {
         return failRes;
@@ -415,7 +419,9 @@ class Game  {
         this.checkFlags();
         return sucRes;
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
-        return failRes2;
+        this.addFlag(Flags.turnOver);
+        this.checkFlags();
+        return sucRes;
       } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         this.addFlag(Flags.turnOver);
         this.checkFlags();
@@ -574,6 +580,10 @@ class Game  {
     var selUnit = this.map.getUnit(r,c);
     var tarUnit = this.map.getUnit(toR,toC);
 
+    if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
+      return failRes2;
+    }
+
     if(this.pRef.id===playerId){
       if(!selUnit) {
         return failRes;
@@ -620,7 +630,6 @@ class Game  {
 
     var sucRes = {success: true, actions:[]};
     var failRes = {success: false, actions:[]};
-
 
     if(this.defender.owner===playerId){
       if(action==="Attack"){

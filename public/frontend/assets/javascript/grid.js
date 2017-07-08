@@ -25,6 +25,7 @@ socket.on("update map", function(data){
 	console.log("Updating map");
 	buildGrid(data.map);
 	writeMessage(data.msg);
+	buildWeaponUi();
 	$("#surrender").hide();
 	$("#status").hide();
 	$("#endSurrender").hide();
@@ -274,6 +275,7 @@ function moveOptions (e) {
 	displayAvailableMoveTiles();
 	$("#menu").hide();
 	$("#menu2").hide();
+	$("#hitAwayAndHasAttacked").hide();
 	$("#status").hide();
 	$("#cancel").show().bind("click", cancelMoveBeforeDoingMove);
 }
@@ -475,6 +477,9 @@ $(document).on("click", "div.statusDiv", function(event){
 function defendOptions (data) {
 	$("#defendModal").dialog("open");
 	$("#defendButton").on("click", function(){
+		socket.emit("do counter", {action: "Defend", weapon: null}, function(data){
+			console.log(data);
+		});
 		console.log("SEND DATA DEFEND");
 		$("#defendModal").dialog("close");
 	});
@@ -490,38 +495,6 @@ function defendOptions (data) {
 		$("#defendModal").dialog("close");
 	});
 }
-
-// $(document).ready(function(){
-// 	defendOptions();
-// });
-
-// code for checking and displaying which tile was clicked on
-// also the UI for displaying options for clicked grid square should pop up here
-// function getActions(r,c) {
-// 	var actionLocation = [r,c];
-// 	var response = {};
-// 	socket.emit("active unit", function(data){
-// 		if (activePlayer === myId) { // <- will need to emit for activePlayer and myId as well
-// 			if (data.r == r && data.c == c) {
-// 				response.actions = ["Move", "Attack"];
-// 			}
-// 			else if (/*there is a unit here*/ 5 == r && 7 == c) {
-// 				response.actions = ["Status"];
-// 			}
-// 			else {
-// 				response.actions = ["End Turn", "Surrender"];
-// 			}
-// 		}
-// 		else if (/*there is a unit here*/ 5 == r && 7 == c) {
-// 			response.actions = ["Status"];
-// 		}
-// 		else {
-// 			response.actions = ["End Turn", "Surrender"];
-// 		}
-// 		console.log(response);
-// 		return response;
-// 	});
-// }
 
 function enableActions(actions) {
 		if (actions === 0) { // click on active unit AS active player, brings up main actions menu
@@ -597,13 +570,11 @@ socket.on("chat message", function(data){
 	console.log(data.msg);
 });
 
+// code for checking and displaying which tile was clicked on
+// also the UI for displaying options for clicked grid square should pop up here
 $(document).on("click", "li.grid-square", function(event) {
-	// if (activePlayer === myId)
 	var dataR = $(this).attr("data-r");
 	var dataC = $(this).attr("data-c");
-	//console.log([dataR,dataC]);
-	// var response = getActions(dataR,dataC);
-
 	socket.emit("get actions", {r: dataR,c: dataC}, function(response){
 		console.log(response.actions);
 		enableActions(response.actions)
