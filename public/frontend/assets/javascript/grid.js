@@ -7,6 +7,8 @@ var ready=false;
 var attackTiles = [];
 var moveTiles = [];
 var currentWeaponId;
+var globalR;
+var globalC;
 
 var rooms=new Array(5);
 rooms[0]=new Array(2);
@@ -435,6 +437,9 @@ $(".standby").on("click", function(){
 })
 
 $(document).on("click", "div.statusDiv", function(event){
+	socket.emit("get status", {r: globalR, c:globalC}, function(data){
+		console.log(data);
+	});
 	console.log("GET DATA PACKET FROM BACK END");
 	$("#mechName").empty();
 	$("#mechPic").empty();
@@ -590,8 +595,10 @@ socket.on("chat message", function(data){
 // code for checking and displaying which tile was clicked on
 // also the UI for displaying options for clicked grid square should pop up here
 $(document).on("click", "li.grid-square", function(event) {
-	var dataR = $(this).attr("data-r");
-	var dataC = $(this).attr("data-c");
+	var dataR = parseInt($(this).attr("data-r"));
+	var dataC = parseInt($(this).attr("data-c"));
+	globalR = dataR;
+	globalC = dataC;
 	socket.emit("get actions", {r: dataR,c: dataC}, function(response){
 		console.log(response.actions);
 		enableActions(response.actions)
