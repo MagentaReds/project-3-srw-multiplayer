@@ -52,7 +52,8 @@
       hide: {
         effect: "explode",
         duration: 1000
-      }
+      },
+      width: 500
     });
   });
   $( function() {
@@ -128,10 +129,11 @@
   </div>
 
   <!-- JQuery UI Menus below -->
+  <div id="mapContainer">
   <div id="gameField" class="hidden">
     <!-- grid filled in by js file -->
-    <ol id="grid">
-    </ol>
+      <ol id="grid">
+      </ol>
     <!-- main actions menu i.e. actions === 0 -->
     <ul id="menu">
       <li id="moveLi">
@@ -209,19 +211,26 @@
     <!-- Status Modal Below -->
     <div id="statusModal" title="Status">
       <div id="mechData">
-        <div id="mechName"></div>
         <div id="dataBars">
+          <div id="mechName"></div>
           <div id="healthNum"></div>
           <div id="healthBar"></div>
           <div id="energyNum"></div>
           <div id="energyBar"></div>
+          <div id="spNum"></div>
+          <div id="spBar"></div>
         </div>
+        <div id="mechPic"></div>
       </div>
-      <div id="mechPic"></div>
+      
       <div id="pilotData">
         <div id="pilotPic"></div>
-        <div id="pilotName"></div>
-        <div id="pilotWill"></div>
+        <div id= "pilotStats">
+          <div id="pilotName"></div>
+          <div id="pilotWill"></div>
+        </div>
+      </div>
+      <div id="weaponFlex">
         <div id="weaponColumns"></div>
         <div id="weaponData"></div>
       </div>
@@ -235,6 +244,7 @@
         <div id ="defenderWeapons"></div>
       </div>
     </div>
+  </div>
   </div>
 </body>
 <script src="assets/javascript/grid.js"></script>
