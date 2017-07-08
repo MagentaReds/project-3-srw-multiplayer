@@ -174,7 +174,7 @@ function makeTeamsAndUnits() {
           mechName: "Shirogane"
         },
         {
-          pilotName: "Villeta Vadmin",
+          pilotName: "Viletta Vadmin",
           mechName: "Ashsaber"
         },
         {
