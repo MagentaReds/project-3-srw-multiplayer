@@ -53,10 +53,6 @@ body {
 	top: 37px;
 }
 
-/*#surrender {
-	top: 37px;
-}*/
-
 /*STATUS STYLE*/
 
 #mechData {
@@ -123,11 +119,11 @@ body {
 	width: 150px;
 }
 
-#pilotWill {
+#pilotWillAndSp {
 	position: relative;
 	bottom: 93px;
 	left: 55px;
-	width: 150px;
+	width: 215px;
 }
 
 #weaponColumns {
@@ -142,7 +138,8 @@ body {
 	left: 10px;
 	width: 250px;
 	bottom: 80px;
-	font-size: 90%;
+	font-size: 75%;
+  line-height: 140%;
 	text-align: center;
 }
 

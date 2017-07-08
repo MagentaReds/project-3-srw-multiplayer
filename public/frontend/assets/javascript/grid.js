@@ -437,9 +437,7 @@ $(".standby").on("click", function(){
 })
 
 $(document).on("click", "div.statusDiv", function(event){
-	socket.emit("get status", {r: globalR, c:globalC}, function(data){
-		console.log(data);
-	});
+	// status pretty much done, still need to append pilot name, and pictures for mech and pilot
 	console.log("GET DATA PACKET FROM BACK END");
 	$("#mechName").empty();
 	$("#mechPic").empty();
@@ -447,36 +445,39 @@ $(document).on("click", "div.statusDiv", function(event){
 	$("#energyNum").empty();
 	$("#pilotPic").empty();
 	$("#pilotName").empty();
-	$("#pilotWill").empty();
+	$("#pilotWillAndSp").empty();
 	$("#weaponColumns").empty();
 	$("#weaponData").empty();
 	$("#statusModal").dialog("open");
-	$("#mechName").append("Mech Name");
-	var health = parseInt((1500 / 2500)*100);
-	var energy = parseInt((100 / 216)*100);
-	$("#healthNum").append("HP: 1500 / 2500");
-	$( function() {
-    $( "#healthBar" ).progressbar({
-      value: health
-    });
-  } );
-	$("#energyNum").append("EN: 100 / 216");
-	$( function() {
-    $( "#energyBar" ).progressbar({
-      value: energy
-    });
-  } );
-	$("#pilotName").append("Pilot Name");
-	$("#pilotWill").append("Will 100");
-	$("#weaponColumns").append("Weapon | Ammo | Dmg | Rng | Hit");
-	$("#mechPic").append(`<img src=assets/media/wildwurger-l.png style="margin:-15px 0px 3px -3px; height:115px;">`);
-	$("#pilotPic").append(`<img src=assets/media/alfimi.png style="margin:-50px 0px 0px -50px; height:150px;">`);
-	for (var x = 0; x < 9; x++) {
-		if (availableWeapons.weapons[x] == null)
+	socket.emit("get status", {r: globalR, c:globalC}, function(data){
+		console.log(data);
+		$("#mechName").append(data.status.name);
+		var health = (data.status.hp / data.status.hpMax)*100;
+		var energy = (data.status.en / data.status.enMax)*100;
+		$("#healthNum").append(`HP: ${data.status.hp} / ${data.status.hpMax}`);
+		$( function() {
+			$( "#healthBar" ).progressbar({
+				value: health
+			});
+		} );
+		$("#energyNum").append(`EN: ${data.status.en} / ${data.status.enMax}`);
+		$( function() {
+			$( "#energyBar" ).progressbar({
+				value: energy
+			});
+		} );
+		$("#pilotName").append("Pilot Name");
+		$("#pilotWillAndSp").append(`Will: ${data.status.will} SP: ${data.status.sp} / ${data.status.spMax}`);
+		$("#weaponColumns").append("Weapon | Ammo | Dmg | Rng | Hit");
+		$("#mechPic").append(`<img src=assets/media/wildwurger-l.png style="margin:-15px 0px 3px -3px; height:115px;">`);
+		$("#pilotPic").append(`<img src=assets/media/alfimi.png style="margin:-50px 0px 0px -50px; height:150px;">`);
+		for (var x = 0; x < 9; x++) {
+			if (data.status.weapons[x] == null)
 			$("#weaponData").append(`[ empty weapon slot #${x+1} ]<br>`);
-		else
-			$("#weaponData").append(`${availableWeapons.weapons[x].name} | ${availableWeapons.weapons[x].ammo} | ${availableWeapons.weapons[x].dmg} | ${availableWeapons.weapons[x].range[0]}~${availableWeapons.weapons[x].range[1]} | +${availableWeapons.weapons[x].hit}<br>`);
-	}
+			else
+			$("#weaponData").append(`${data.status.weapons[x].name} | ${data.status.weapons[x].ammo}/${data.status.weapons[x].maxAmmo} | ${data.status.weapons[x].damage} | ${data.status.weapons[x].range[0]}~${data.status.weapons[x].range[1]} | +${data.status.weapons[x].hit}<br>`);
+		}
+	});
 });
 
 function defendOptions (data) {
