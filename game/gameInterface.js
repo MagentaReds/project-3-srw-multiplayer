@@ -49,7 +49,7 @@ class GameRoom {
     socket.leave(this.name);
     if(this.game)
       if(!this.game.isOver() && !this.game.isDefeated(socket.me.id))
-        this.game.reset();
+        this.game.playerLeft(socket.me.id);
   }
 
   //checks to see if all people in the room are ready.
@@ -190,7 +190,13 @@ class GameInterface {
           });;
         }
       });
-      socket.on("disconnect", ()=>{});
+      socket.on("disconnect", ()=>{
+        if(!socket.me)
+          return;
+        if(socket.me.roomNum!==null) {
+          this.rooms[socket.me.roomNum].leave(socket, socket.me.slot);
+        } 
+      });
 
       //room listeners
       socket.on("join room", (roomId, cb)=>{this.onJoinRoom(socket, roomId, cb);});
@@ -214,7 +220,7 @@ class GameInterface {
       socket.on("send chat", (data, cb)=>{this.onSendChat(socket, data)});
       socket.on("active unit", (cb)=>{this.onActiveUnit(socket, cb)});
       socket.on("get weapons", (data,cb)=>{this.onGetWeapons(socket, data, cb)});
-
+      socket.on("do surrender", (cb)=>{this.onDoSurrender(socket, cb)});
     });
   }
 
@@ -457,6 +463,17 @@ class GameInterface {
     var room=this.rooms[rNum];
     if(room) {
       var response = this.rooms[rNum].game.getWeapons(socket.me.id, data.r, data.c);
+
+      cb(response);
+    }
+  }
+
+  onDoSurrender(socket, cb) {
+    console.log(`Do Surrender requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.surrender(socket.me.id);
 
       cb(response);
     }
