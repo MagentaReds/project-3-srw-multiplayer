@@ -185,7 +185,7 @@ class GameInterface {
           console.log(data);
           Helpers.makeUnitsFromTeam(data.id).then(function(client) {
             socket.me = new Client(socket, client);
-            console.log(client);
+            //console.log(client);
             cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.me.id}`});
           });;
         }
