@@ -476,25 +476,42 @@ $(document).on("click", "div.statusDiv", function(event){
 
 function defendOptions (data) {
 	$("#defendModal").dialog("open");
+	console.log(data.weapons);
 	$("#defendButton").on("click", function(){
 		socket.emit("do counter", {action: "Defend", weapon: null}, function(data){
 			console.log(data);
 		});
-		console.log("SEND DATA DEFEND");
 		$("#defendModal").dialog("close");
 	});
 	$("#attackButton").on("click", function(){
-		console.log("SEND DATA ATTACK");
-		$("#defendModal").dialog("close");
+		$("#defenderWeapons").empty();
+		$("#defenderWeapons").append("<p>Choose:</p>");
+		console.log(data);
+		for (var i = 0; i < data.weapons.length; i++) {
+			$("#defenderWeapons").append(`<button class="defenderWeaponButton" data=${i}>${data.weapons[i].name}</button>`);
+		}
 	});
 	$("#evadeButton").on("click", function(){
 		socket.emit("do counter", {action: "Evade", weapon: null}, function(data){
 			console.log(data);
 		});
-		console.log("SEND DATA EVADE");
 		$("#defendModal").dialog("close");
 	});
 }
+
+$(document).on("click", "button.defenderWeaponButton", function(event){
+	var defenderWepId = parseInt($(this).attr("data"));
+	socket.emit("do counter", {action: "Attack", weapon: defenderWepId}, function(data){
+			console.log(data);
+			if (data.success) {
+				console.log("Success, you attacked!");
+				$("#defendModal").dialog("close");
+			}
+			else if (!data.succes) {
+				console.log("You cannot attack with that weapon");
+			}
+		});
+});
 
 function enableActions(actions) {
 		if (actions === 0) { // click on active unit AS active player, brings up main actions menu
