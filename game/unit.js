@@ -12,7 +12,10 @@ var Spirit = require("./statesAndFlags.js").pilot.spiritCommand;
 
 class Unit {
   constructor(playerId, pilotDb, mechDb, pilotLevel=50) {
-    this.name = pilotDb.name;
+    this.name = pilotDb.nickname;
+    this.pilotName= pilotDb.name;
+    this.mechName = mechDb.name;
+    this.mechCodeName = mechDb.mechCodeName;
     this.move = mechDb.move;
     this.pilotLevel=pilotLevel;
     this.weapons = [];
@@ -225,13 +228,30 @@ class Unit {
   }
 
   getStatus() {
-    var obj = []
-    obj.push(this.name);
-    obj.push(`HP:${this.hp}/${this.hpMax}`);
-    obj.push(`EN:${this.en}/${this.enMax}`);
-    obj.push(`SP:${this.sp}/${this.spMax}`);
-    obj.push(`Status: ${this.status.toString()}`);
-    obj.push("Other stuff");
+    // var obj = []
+    // obj.push(this.name);
+    // obj.push(`HP:${this.hp}/${this.hpMax}`);
+    // obj.push(`EN:${this.en}/${this.enMax}`);
+    // obj.push(`SP:${this.sp}/${this.spMax}`);
+    // obj.push(`Status: ${this.status.toString()}`);
+    // obj.push("Other stuff");
+    // return obj;
+    var obj = {};
+    obj.name=this.name;
+    obj.pilotName = this.pilotName;
+    obj.mechName = this.mechName;
+    obj.hp = this.hp;
+    obj.hpMax = this.hpMax;
+    obj.en = this.en;
+    obj.enMax= this.en;
+    obj.sp = this.sp;
+    obj.spMax = this.spMax;
+    obj.weapons = this.weapons;
+    obj.status = this.status;
+    obj.mechImg = `/img/mech/${this.mechCodeName}.png`;
+    obj.pilotImg = `/img/pilot/${this.name}.png`;
+    obj.spirits = this.sc;
+    obj.will = this.will;
     return obj;
   }
 
