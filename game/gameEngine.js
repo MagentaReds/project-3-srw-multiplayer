@@ -408,7 +408,9 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
-        return failRes2;
+        this.addFlag(Flags.turnOver);
+        this.checkFlags();
+        return sucRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         this.addFlag(Flags.turnOver);
         this.checkFlags();

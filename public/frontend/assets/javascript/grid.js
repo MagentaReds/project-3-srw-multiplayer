@@ -25,6 +25,11 @@ socket.on("update map", function(data){
 	console.log("Updating map");
 	buildGrid(data.map);
 	writeMessage(data.msg);
+	$("#surrender").hide();
+	$("#status").hide();
+	$("#endSurrender").hide();
+	$("#menu").hide();
+	$("#menu2").hide();
 	socket.emit("active unit", function(data){
 		displayActiveTile([data.r, data.c]);
 		blinkActiveTile([data.r, data.c]);
@@ -37,7 +42,7 @@ socket.on("game start", function(data1){
 	$("#gameField").toggleClass("hidden");
 	$("#roomMessageDiv").text("Game is starting!");
 	$("#messageDiv").text(data1.msg);
-	$("#move").bind("click", moveOptions);
+	$(".move").bind("click", moveOptions);
 	buildWeaponUi();
 	socket.emit("active unit", function(data){
 		displayActiveTile([data.r, data.c]);
@@ -412,6 +417,14 @@ $(document).on("click", "div.weapon", function(event){
 	// displayAttackTiles(availableAttackTiles);
 	$("#cancel").show().bind("click", cancelAttack);
 });
+
+$(".standby").on("click", function(){
+	socket.emit("active unit", function(data){
+		socket.emit("do standby", {r: data.r, c: data.c}, function(response){
+			console.log(response);
+		})
+	})
+})
 
 $(document).on("click", "div.statusDiv", function(event){
 	console.log("GET DATA PACKET FROM BACK END");
