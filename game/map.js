@@ -199,12 +199,14 @@ class Map {
 
   getRealMap() {
     var output=new Array(this.rows);
+    var tempUnit;
     for(let r=0; r<this.rows; ++r) {
       output[r]=new Array(this.cols);
       for(let c=0; c<this.cols; ++c) {
         if (this.tiles[r][c].unit) {
+          tempUnit=this.tiles[r][c].unit;
           //Will need to be url to per unit later on.
-          output[r][c]="icon1.png";
+          output[r][c]=`img/icon/${tempUnit.color}/icon${tempUnit.order}.png`;
         }
       }
     }
