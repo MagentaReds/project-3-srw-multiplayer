@@ -171,6 +171,7 @@ function importPilots(resolve) {
 
       var tempPilot = {
         name:pilot.name, 
+        nickname:pilot.nickname,
         stats: pilot.stats,
         terrain: pilot.terrain,
         aceBonus: pilot.aceBonus,
