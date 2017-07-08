@@ -44,6 +44,11 @@ class Player {
     this.defeated=true;
     return true;
   }
+
+  surrender() {    
+    this.defeated=true;
+  }
+
   isReady() {
 
   }
