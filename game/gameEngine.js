@@ -97,6 +97,28 @@ class Game  {
     return this.players[this.currentPlayer];
   }
 
+  playerLeft(playerId) {
+    for(let i=0; i<this.players.length; ++i) {
+      if(playerId===this.players[i].id) {
+        this.players[i].surrender();
+
+        for(let k=0; k<this.players[i].units.length; ++k) {
+          this.players[i].units.isAlive=false;
+          this.map.setUnit(this.players[i].units.r, this.players[i].units.c, null);
+        }
+
+        if(this.currentPlayer===i) {
+          this.addFlag(Flags.turnOver);
+          this.checkFlags();
+        } else if(this.defender.owner === playerId && this.waitingForDef) {
+          this.removeFlag(Flags.waitingForDef);
+          this.checkFlags();
+        }
+        return;
+      }
+    }
+  }
+
   //adds a flag to the flags array
   addFlag(flag) {
     if(!this.flags.includes(flag))
