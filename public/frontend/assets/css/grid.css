@@ -164,6 +164,10 @@ body {
 	width: 150px;
 }
 
+#pilotStatus {
+	flex: 1 0 auto;
+}
+
 #pilotWill {
 	flex: 1 0 auto;
 	width: 150px;

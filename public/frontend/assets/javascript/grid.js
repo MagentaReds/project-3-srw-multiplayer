@@ -101,7 +101,7 @@ $(".joinRoom").on("click", function(e){
 			gameRoom=room;
 			roomSlot=data.slot;
 		}
-		writeMessage(data);
+		writeMessage(data.msg);
 	});
 });
 
@@ -115,7 +115,7 @@ $("#leaveRoom").on("click", function(e){
 			gameRoom=null;
 			roomSlot=null;
 		}
-		writeMessage(data);
+		writeMessage(data.msg);
 	})
 });
 
@@ -126,7 +126,7 @@ $("#ready").on("click", function(e){
 
 	socket.emit("toggle ready", function(data){
 		ready=data.ready;
-		writeMessage(data);
+		writeMessage(data.msg);
 	});
 });
 
@@ -237,7 +237,7 @@ function displayAvailableMoveTiles(locate) {
 					});
 				}, 50);
 			}
-			writeMessage(data);
+			writeMessage(data.msg);
 		});
 	});
 }
@@ -280,7 +280,7 @@ function moveToTile() {
 					blinkActiveTile([data.r, data.c]);
 				});
 			}
-			writeMessage(data);
+			writeMessage(data.msg);
 			console.log(data.actions);
 			$("#cancel").hide();
 			enableActions(data.actions);
@@ -550,6 +550,7 @@ function fillStatusModal(data)  {
 	$("#spNum").empty();
 	$("#pilotPic").empty();
 	$("#pilotName").empty();
+	$("#pilotStatus").empty();
 	$("#pilotWill").empty();
 	$("#weaponColumns").empty();
 	$("#weaponData").empty();
@@ -577,6 +578,7 @@ function fillStatusModal(data)  {
     });
   } );
 	$("#pilotName").append(data.pilotName);
+	$("#pilotStatus").append(data.status.toString());
 	$("#pilotWill").append(`Will: ${data.will}`);
 	$("#weaponColumns").append("Weapon | Ammo | En | Dmg | Rng | Hit | Properties");
 	$("#mechPic").append(`<img src=${data.mechImg}>`);
