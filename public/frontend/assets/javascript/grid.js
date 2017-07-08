@@ -137,7 +137,7 @@ function buildGrid (map) {
 		for (var c = 0; c < map[0].length; c++) {
 			$("#grid").append(`<li class="grid-square" data-r = "${r}" data-c = "${c}"><div class="grid-style" data-r = "${r}" data-c = "${c}"></div></li>`);
 			if (map[r][c]) {
-				$(`li[data-r=${r}][data-c=${c}]`).append(`<img src=assets/media/${map[r][c]} style="margin:-15px 0px 3px -3px; height:60px;">`);
+				$(`li[data-r=${r}][data-c=${c}]`).append(`<img src=${map[r][c]}>`);
 			}
 		}
 	}
@@ -452,45 +452,58 @@ $(".standby").on("click", function(){
 $(document).on("click", "div.statusDiv", function(event){
 	socket.emit("get status", {r: globalR, c:globalC}, function(data){
 		console.log(data);
+		fillStatusModal(data.status);
 	});
+});
+
+function fillStatusModal(data)  {
 	console.log("GET DATA PACKET FROM BACK END");
 	$("#mechName").empty();
 	$("#mechPic").empty();
 	$("#healthNum").empty();
 	$("#energyNum").empty();
+	$("#spNum").empty();
 	$("#pilotPic").empty();
 	$("#pilotName").empty();
 	$("#pilotWill").empty();
 	$("#weaponColumns").empty();
 	$("#weaponData").empty();
 	$("#statusModal").dialog("open");
-	$("#mechName").append("Mech Name");
-	var health = parseInt((1500 / 2500)*100);
-	var energy = parseInt((100 / 216)*100);
-	$("#healthNum").append("HP: 1500 / 2500");
+	$("#mechName").append(data.mechName);
+	var health = parseInt((data.hp / data.hpMax)*100);
+	var energy = parseInt((data.en / data.enMax)*100);
+	var sp = parseInt((data.sp / data.spMax)*100);
+	$("#healthNum").append(`HP: ${data.hp} / ${data.hpMax}`);
 	$( function() {
     $( "#healthBar" ).progressbar({
       value: health
     });
   } );
-	$("#energyNum").append("EN: 100 / 216");
+	$("#energyNum").append(`HP: ${data.en} / ${data.enMax}`);
 	$( function() {
     $( "#energyBar" ).progressbar({
       value: energy
     });
   } );
-	$("#pilotName").append("Pilot Name");
-	$("#pilotWill").append("Will 100");
-	$("#weaponColumns").append("Weapon | Ammo | Dmg | Rng | Hit");
-	$("#mechPic").append(`<img src=assets/media/wildwurger-l.png style="margin:-15px 0px 3px -3px; height:115px;">`);
-	$("#pilotPic").append(`<img src=assets/media/alfimi.png style="margin:-50px 0px 0px -50px; height:150px;">`);
+	$("#spNum").append(`SP: ${data.sp} / ${data.spMax}`);
+	$( function() {
+    $( "#spBar" ).progressbar({
+      value: sp
+    });
+  } );
+	$("#pilotName").append(data.pilotName);
+	$("#pilotWill").append(`Will: ${data.will}`);
+	$("#weaponColumns").append("Weapon | Ammo | En | Dmg | Rng | Hit | Properties");
+	$("#mechPic").append(`<img src=${data.mechImg}>`);
+	$("#pilotPic").append(`<img src=${data.pilotImg} height=80 width=80>`);
 	for (var x = 0; x < 9; x++) {
-		if (availableWeapons.weapons[x] == null)
+		if (data.weapons[x] == null)
 			$("#weaponData").append(`[ empty weapon slot #${x+1} ]<br>`);
 		else
-			$("#weaponData").append(`${availableWeapons.weapons[x].name} | ${availableWeapons.weapons[x].ammo} | ${availableWeapons.weapons[x].dmg} | ${availableWeapons.weapons[x].range[0]}~${availableWeapons.weapons[x].range[1]} | +${availableWeapons.weapons[x].hit}<br>`);
+			$("#weaponData").append(`${data.weapons[x].name} | ${data.weapons[x].curAmmo}/${data.weapons[x].maxAmmo} | ${data.weapons[x].en} | ${data.weapons[x].damage} | ${data.weapons[x].range[0]}~${data.weapons[x].range[1]} | +${data.weapons[x].hit} | ${data.weapons[x].props.toString()}<br>`);
 	}
-});
+}
+
 
 function defendOptions (data) {
 	$("#defendModal").dialog("open");
