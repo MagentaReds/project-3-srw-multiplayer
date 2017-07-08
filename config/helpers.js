@@ -93,7 +93,7 @@ var helpers = {
       var units=new Array(6);
       dbUser.findById(userId, function(err, res){
         if(err) return reject();
-        console.log(res);
+        //console.log(res);
         dbTeam.findOne({number: res.team}, function(err, res2){
           //console.log(res2);
           var promi = [];
