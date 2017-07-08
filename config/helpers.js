@@ -4,6 +4,7 @@ var dbUser = require("../models/user.js");
 var dbTeam = require("../models/team.js");
 var dbPilot = require("../models/pilot.js");
 var dbMech = require("../models/mech.js");
+var dbWeapon = require("../models/weapon.js");
 
 var Promise = require("bluebird");
 
@@ -103,10 +104,9 @@ var helpers = {
           Promise.all(promi).then(function(pilotVals) {
             var promi2=[];
             for(let i=0; i<6; ++i)
-              promi2.push(dbMech.findOne({name:res2.units[i].mechName}));
+              promi2.push(dbMech.findOne({name:res2.units[i].mechName}).populate("weapons iWeapons").exec());
             Promise.all(promi2).then(function(mechVals){
               for(let i=0; i<6; ++i){
-                //console.log(pilotVals[i].name, mechVals[i].name);
                 units[i]=new Unit(userId, pilotVals[i], mechVals[i]);
               }
               client.id=res._id;
