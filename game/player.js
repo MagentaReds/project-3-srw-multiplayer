@@ -7,7 +7,7 @@
 // and referenced/edited by the Game object
 
 class Player {
-  constructor(client) {
+  constructor(client, num) {
     this.id=client.id;
     this.name=client.name;
     //will need to make a unit.clone utility to kepe things nice a seperate
@@ -17,12 +17,30 @@ class Player {
 
     this.defeated=false;
     this.hasSurrendered =false;
+
+    this.color;
+    if(num%2==0) {
+      this.color="blue";
+      this.setUnitsColor("blue")
+    }
+    else {
+      this.setUnitsColor("red")
+      this.color="red";
+    }
   }
 
   //resetting units due not deep copy
   resetUnits() {
     for(let i=0; i<this.units.length; ++i) {
       this.units[i].reset();
+    }
+  }
+
+  //also set's id, is a temp measure
+  setUnitsColor(color) {
+    for(let i=0; i<this.units.length; ++i) {
+      this.units[i].color=color;
+      this.units[i].id=i;
     }
   }
 
