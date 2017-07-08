@@ -594,6 +594,35 @@ class Game  {
 
   }
 
+  getAllies(playerId, r, c) {
+    var selUnit = this.map.getUnit(r,c);
+
+    var failRes = {success: false, msg:"Target Square is wrong"};
+
+    if(!selUnit)
+      return failres;
+
+    if(this.pRef.id===playerId){
+      if(!selUnit) {
+        return failRes;
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
+        return failRes;
+      } else if(this.inFlags(Flags.newRound)) {
+        return {success: true, targets: this.players[this.currentPlayer].getUnitLocations()}
+      } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        return failRes;
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
+        return failRes;
+      } else {
+        return failRes;
+      }
+    } else if(!selUnit) {
+      return failRes;
+    } else {
+      return failRes;
+    }
+  }
+
   //GameInterface to Game method: returns a response based on the games state and which socket called it
   //tries to actually attack the unit at toR, toC with the weapon, erturns true or false if the attack fails or not
   doAttack(playerId, r, c, toR, toC, weaponId) {

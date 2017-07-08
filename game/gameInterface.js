@@ -221,6 +221,7 @@ class GameInterface {
       socket.on("active unit", (cb)=>{this.onActiveUnit(socket, cb)});
       socket.on("get weapons", (data,cb)=>{this.onGetWeapons(socket, data, cb)});
       socket.on("do surrender", (cb)=>{this.onDoSurrender(socket, cb)});
+      socket.on("get allies", (data, cb)=>{this.onGetAllies(socket, data, cb)});
     });
   }
 
@@ -474,6 +475,17 @@ class GameInterface {
     var room=this.rooms[rNum];
     if(room) {
       var response = this.rooms[rNum].game.surrender(socket.me.id);
+
+      cb(response);
+    }
+  }
+
+  onGetAllies(socket, data, cb) {
+    console.log(`Get Allies requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.getAllies(socket.me.id, data.r, data.c);
 
       cb(response);
     }

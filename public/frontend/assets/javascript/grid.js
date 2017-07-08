@@ -6,7 +6,9 @@ var ready=false;
 // some global game variables below to help alleve server of some duties
 var attackTiles = [];
 var moveTiles = [];
+var allyTiles = [];
 var currentWeaponId;
+var currentSpiritId;
 var globalR;
 var globalC;
 
@@ -43,6 +45,7 @@ socket.on("update map", function(data){
 	buildGrid(data.map);
 	writeMessage(data.msg);
 	buildWeaponUi();
+	buildSpiritUi();
 	$("#surrender").hide();
 	$("#status").hide();
 	$("#endSurrender").hide();
@@ -64,6 +67,7 @@ socket.on("game start", function(data1){
 	$("#messageDiv").text(data1.msg);
 	$(".move").bind("click", moveOptions);
 	buildWeaponUi();
+	buildSpiritUi();
 	socket.emit("active unit", function(data){
 		displayActiveTile([data.r, data.c]);
 		blinkActiveTile([data.r, data.c]);
@@ -329,6 +333,13 @@ function cancelAttack (e) {
 	$("#cancel").unbind("click");
 }
 
+function cancelSpirit (e) {
+	hideAttackTiles(allyTiles);
+	allyTiles = [];
+	$("#cancel").hide();
+	$("#cancel").unbind("click");
+}
+
 function displayAttackTiles(locate) {
 	setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
@@ -363,6 +374,15 @@ function displayAttackTiles(locate) {
 	// });
 }
 
+function displayAllyTiles(locate) {
+	setTimeout(function(){
+		for (var y = 0; y < locate.length; y++) {
+			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
+			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", castSpirit);
+		}
+	}, 5);
+}
+
 function hideAttackTiles(locate) {
 	for (var y = 0; y < locate.length; y++) {
 		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").removeClass('blink');
@@ -389,6 +409,30 @@ function attackEnemy () {
 				console.log("can't use that weapon");
 				console.log(data);
 				cancelAttack();
+			}
+		});
+	});
+}
+
+function castSpirit () {
+	console.log("Request Spirit Action sent to server");
+	var dataToR = parseInt($(this).attr("data-r"));
+	var dataToC = parseInt($(this).attr("data-c"));
+	console.log(currentSpiritId);
+	console.log([dataToR, dataToC]);
+	socket.emit("active unit", function(data){
+		socket.emit("do spirit", {r:data.r, c:data.c, toR: dataToR, toC: dataToC, spirit: currentSpiritId}, function(data){
+			if (data.success) {
+				console.log(data);
+				currentSpiritId = null;
+				$("#cancel").hide();
+				$("#cancel").unbind("click");
+				cancelSpirit();
+			}
+			else if (!data.success) {
+				console.log("can't cast that spirit");
+				console.log(data);
+				cancelSpirit();
 			}
 		});
 	});
@@ -422,6 +466,27 @@ function buildWeaponUi () {
 	});
 }
 
+function buildSpiritUi () {
+	// function is called at beginning of game
+	// will also need to be called as soon as turn is over
+	socket.emit("active unit", function(data){
+		socket.emit("get spirit", {r:data.r, c:data.c}, function(res){
+			console.log(res);
+			$(".spirits").empty();
+			for (var x = 0; x < res.spirits.length; x++) {
+				$(".spirits").append(`<li>
+																<div class = "spiritGrant" data="${x}">
+																	<span class="ui-icon ui-icon-radio-on">
+																	</span>
+																	${res.spirits[x]}
+																</div>
+															</li>`);
+			}
+			$("#menu").menu("refresh");
+		});
+	});
+}
+
 // clicking on weapon
 $(document).on("click", "div.weapon", function(event){
 	var wepId = parseInt($(this).attr("data"));
@@ -440,6 +505,25 @@ $(document).on("click", "div.weapon", function(event){
 	// availableAttackTiles =[response];
 	// displayAttackTiles(availableAttackTiles);
 	$("#cancel").show().bind("click", cancelAttack);
+});
+
+$(document).on("click", "div.spiritGrant", function(event){
+	var scId = parseInt($(this).attr("data"));
+	console.log("SC ID: " + scId);
+	currentSpiritId = scId;
+	$("#menu").hide();
+	$("#menu2").hide();
+	socket.emit("active unit", function(data){
+		socket.emit("get allies", {id: id, r: data.r, c: data.c}, function(response){
+			displayAllyTiles(response.targets);
+			allyTiles = response.targets;
+		});
+	});
+	// need request from server to see what the availableAttackTiles are;
+	// var availableAttackTiles = [];
+	// availableAttackTiles =[response];
+	// displayAttackTiles(availableAttackTiles);
+	$("#cancel").show().bind("click", cancelSpirit);
 });
 
 $(".standby").on("click", function(){

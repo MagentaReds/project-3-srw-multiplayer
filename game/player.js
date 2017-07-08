@@ -36,6 +36,15 @@ class Player {
     }
   }
 
+  getUnitLocations() {
+    var arr=[];
+    for(let i=0; i<this.units.length; ++i) {
+      if(this.units[i].isAlive)
+        arr.push([this.units[i].r,this.units[i].c]);
+    }
+    return arr;
+  }
+
   //also set's id, is a temp measure
   setUnitsColor(color) {
     for(let i=0; i<this.units.length; ++i) {

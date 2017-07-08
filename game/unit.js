@@ -223,9 +223,10 @@ class Unit {
 
   getSpiritList() {
     var arr=[];
-    arr.push(`${this.sp}/${this.spMax}:SP`);
     for(let i=0; i<this.sc.length; ++i)
-      arr.push(`${i}: ${this.sc[i][0]} (${this.sc[i][1]})`);
+      arr.push(`${this.sc[i][0]} (${this.sc[i][1]})`);
+
+    arr.push(`${this.sp}/${this.spMax}:SP`);
 
     return arr;
   }
