@@ -4,7 +4,14 @@ var Schema = mongoose.Schema;
 var pilotFlags = require("../game/statesAndFlags.js").pilot;
 
 var PilotSchema = new Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true
+  },
+  nickname: {
+    type: String,
+    required: true
+  },
   stats: {
     mel: [Number], rng: [Number], hit: [Number],
     evd: [Number], def: [Number], man: [Number], sp: [Number]
