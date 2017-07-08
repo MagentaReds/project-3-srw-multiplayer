@@ -60,7 +60,7 @@ socket.on("game start", function(data1){
 	console.log("Game is starting");
 	$("#roomDiv").hide();
 	$("#gameField").toggleClass("hidden");
-	$("#roomMessageDiv").text("Game is starting!");
+	$("#roomMessageDiv").append($("<p>").text("Game is starting!"));
 	$("#messageDiv").text(data1.msg);
 	$(".move").bind("click", moveOptions);
 	buildWeaponUi();
@@ -128,6 +128,7 @@ $("#ready").on("click", function(e){
 
 function writeMessage (msg) {
 	$("#messageDiv").text(msg);
+	$("#roomMessageDiv").append($("<p>").text(msg));
 }
 
 // code that makes 900 grid-tiles with each row and column's data index stored
@@ -612,11 +613,24 @@ function enableActions(actions) {
 
 socket.on("room message", function(data){
 	console.log(data.msg);
+	writeMessage(data.msg);
 });
 
 socket.on("chat message", function(data){
 	console.log(data.msg);
+	console.log(data.msg);
+	var p = $("<p>");
+	p.text(data.msg);
+	$("#chatDisplay").append(p);
+	$("#chatDisplay").scrollTop($("#chatDisplay")[0].scrollHeight);
 });
+
+$(document).on("submit", "#chatForm", function(e){
+    e.preventDefault();
+    var msg = $("#chatInput").val().trim();
+    socket.emit("send chat", msg);
+    $("#chatInput").val("");
+  });
 
 // code for checking and displaying which tile was clicked on
 // also the UI for displaying options for clicked grid square should pop up here

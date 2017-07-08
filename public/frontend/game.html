@@ -129,8 +129,9 @@
   </div>
 
   <!-- JQuery UI Menus below -->
-  <div id="mapContainer">
+  
   <div id="gameField" class="hidden">
+    <div id="mapContainer">
     <!-- grid filled in by js file -->
       <ol id="grid">
       </ol>
@@ -245,6 +246,17 @@
       </div>
     </div>
   </div>
+    <div id="sideBar">
+      <div id="messageDiv"></div>
+      <br/>
+      <div id="roomMessageDiv"></div>
+      <div id="chatDiv">
+        <div id="chatDisplay"></div>
+        <form id="chatForm">
+          <input id="chatInput" type="text" placeholder="Chat"/><button type="submit" id="chatSubmit">Send</button>
+        </form>
+      </div>
+    </div>
   </div>
 </body>
 <script src="assets/javascript/grid.js"></script>

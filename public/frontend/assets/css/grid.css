@@ -208,3 +208,26 @@ body {
 }
 
 
+#sidebar {
+	color: white;
+	width: 300px;
+	float: right;
+}
+#messageDiv {
+	color: white;
+	
+}
+
+#roomMessageDiv {
+	color: white;
+	width: 300px;
+	height: 300px;
+	overflow-y: scroll;
+}
+
+#chatDisplay {
+	color: white;
+	width: 300px;
+	height: 300px;
+	overflow-y: scroll;
+}
