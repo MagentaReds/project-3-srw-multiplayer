@@ -394,8 +394,8 @@ var pilots = [
     ]
   },
   {
-    name: "Villeta Vadmin",
-    nickname: "Villeta",
+    name: "Viletta Vadmin",
+    nickname: "Viletta",
     stats: {
       mel: [.6742, 134], rng: [.8652, 139], hit: [2, 179], 
       evd: [2.2022, 179], def: [.6067, 101], man: [.8315, 142], sp:[1.6629, 48]
