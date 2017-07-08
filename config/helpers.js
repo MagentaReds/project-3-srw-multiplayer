@@ -93,18 +93,29 @@ var helpers = {
       var units=new Array(6);
       dbUser.findById(userId, function(err, res){
         if(err) return reject();
+        console.log(res);
         dbTeam.findOne({number: res.team}, function(err, res2){
+          //console.log(res2);
+          var promi = [];
           for(let i=0; i<6; ++i){
-            dbPilot.findOne({name: res2.units[i].pilotName}, function(err, res3){
-              dbMech.findOne({name: res2.units[i].mechName}, function(err, res4){
-                units[i] = new Unit(userId, res3, res4);
-              });
-            });
+            promi.push(dbPilot.findOne({name: res2.units[i].pilotName}));    
           }
-          client.id=res._id;
-          client.name=res.name;
-          client.units=units;
-          resolve(client);
+          Promise.all(promi).then(function(pilotVals) {
+            var promi2=[];
+            for(let i=0; i<6; ++i)
+              promi2.push(dbMech.findOne({name:res2.units[i].mechName}));
+            Promise.all(promi2).then(function(mechVals){
+              for(let i=0; i<6; ++i){
+                //console.log(pilotVals[i].name, mechVals[i].name);
+                units[i]=new Unit(userId, pilotVals[i], mechVals[i]);
+              }
+              client.id=res._id;
+              client.name=res.username;
+              client.units=units;
+              resolve(client);
+            });
+          });
+          
         })
       })
     });
