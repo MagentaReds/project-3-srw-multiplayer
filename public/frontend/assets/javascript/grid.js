@@ -30,6 +30,8 @@ socket.on("update map", function(data){
 	$("#endSurrender").hide();
 	$("#menu").hide();
 	$("#menu2").hide();
+	$("#hitAwayAndHasAttackedHasMoved").hide();
+	$("#hitAwayAndHasAttacked").hide();
 	socket.emit("active unit", function(data){
 		displayActiveTile([data.r, data.c]);
 		blinkActiveTile([data.r, data.c]);
@@ -135,6 +137,8 @@ $("#cancel").hide();
 $("#status").hide();
 $("#endSurrender").hide();
 $("#surrender").hide();
+$("#hitAwayAndHasAttackedHasMoved").hide();
+$("#hitAwayAndHasAttacked").hide();
 // toggleclass blink for all li.grid-square, otherwise when we wont to show active unit tile, all tiles will start blinking
 
 // example location of where an active unit could be
@@ -285,6 +289,7 @@ function cancelMoveBeforeDoingMove (e) {
 
 $(".cancelMove").on("click", function() {
 	socket.emit("active unit", function(data){
+		console.log([data.r,data.c]);
 		socket.emit("do cancel", {r:data.r, c:data.c}, function (response){
 			console.log(response);
 			if(response.success) {
@@ -360,6 +365,7 @@ function attackEnemy () {
 				currentWeaponId = null;
 				$("#cancel").hide();
 				$("#cancel").unbind("click");
+				cancelAttack();
 			}
 			else if (!data.success) {
 				console.log("can't use that weapon");
@@ -524,12 +530,34 @@ function enableActions(actions) {
 			$("#endSurrender").hide();
 			$("#status").hide();
 			$("#surrender").hide();
+			$("#hitAwayAndHasAttackedHasMoved").hide();
+			$("#hitAwayAndHasAttacked").hide();
 		}
 		if (actions === 1) { // active unit has moved and can now attack, standby or CANCEL his movement
 			$("#endSurrender").hide();
 			$("#status").hide();
 			$("#menu").hide();
 			$("#menu2").show();
+			$("#surrender").hide();
+			$("#hitAwayAndHasAttackedHasMoved").hide();
+			$("#hitAwayAndHasAttacked").hide();
+		}
+		if (actions === 2) { // active unit has hit away and has attacked, but NOT moved
+			$("#hitAwayAndHasAttacked").show();
+			$("#hitAwayAndHasAttackedHasMoved").hide();
+			$("#menu").hide();
+			$("#menu2").hide();
+			$("#endSurrender").hide();
+			$("#status").hide();
+			$("#surrender").hide();
+		}
+		if (actions === 3) { // active unit has hit away and has attack and has moved
+			$("#hitAwayAndHasAttackedHasMoved").show();
+			$("#hitAwayAndHasAttacked").hide();
+			$("#menu").hide();
+			$("#menu2").hide();
+			$("#endSurrender").hide();
+			$("#status").hide();
 			$("#surrender").hide();
 		}
 		if (actions === 4) { // get status if active player or not
@@ -538,6 +566,8 @@ function enableActions(actions) {
 			$("#menu2").hide();
 			$("#endSurrender").hide();
 			$("#surrender").hide();
+			$("#hitAwayAndHasAttackedHasMoved").hide();
+			$("#hitAwayAndHasAttacked").hide();
 		}
 		if (actions === 5) { // if you click on an empty square AS an active player, can end turn or surrender
 			$("#endSurrender").show();
@@ -545,6 +575,8 @@ function enableActions(actions) {
 			$("#menu2").hide();
 			$("#status").hide();
 			$("#surrender").hide();
+			$("#hitAwayAndHasAttackedHasMoved").hide();
+			$("#hitAwayAndHasAttacked").hide();
 		}
 		if (actions === 6) { // if you click on an empty square NOT as active player, you can only Surrender
 			$("#surrender").show();
@@ -552,6 +584,8 @@ function enableActions(actions) {
 			$("#endSurrender").hide();
 			$("#menu").hide();
 			$("#menu2").hide();
+			$("#hitAwayAndHasAttackedHasMoved").hide();
+			$("#hitAwayAndHasAttacked").hide();
 		}
 }
 

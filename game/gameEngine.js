@@ -107,7 +107,7 @@ class Game  {
   removeFlag(flag) {
     var index = this.flags.indexOf(flag);
     if(index!==-1)
-      this.flags.splice(index, 0);
+      this.flags.splice(index, 1);
   }
 
   //removes all flags from the flags array
@@ -276,8 +276,6 @@ class Game  {
           this.uRef.setRC(toR, toC);
           this.uRef.hasMoved=true;
           this.emitMap();
-          this.addFlag(Flags.turnOver);
-          this.checkFlags();
           return sucRes2;
         } else{
           return failRes;
@@ -342,6 +340,7 @@ class Game  {
   }
 
   doCancel(playerId, r, c) {
+    console.log(this.flags);
     var sucRes = {success: true, actions:[], msg:"You have cancel!"};
     var sucRes2 = {success: true, actions:[], msg:"Nothing to cancel"};
     var failRes = {success: false, actions:[], msg:"Cannot cancel this square"};

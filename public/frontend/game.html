@@ -37,6 +37,12 @@
     $( "#surrender" ).menu();
   } );
   $( function() {
+    $( "#hitAwayAndHasAttacked" ).menu();
+  } );
+  $( function() {
+    $( "#hitAwayAndHasAttackedHasMoved" ).menu();
+  } );
+  $( function() {
     $( "#statusModal" ).dialog({
       autoOpen: false,
       show: {
@@ -180,6 +186,24 @@
     <ul id="surrender">
       <li>
         <div class = "surrender"><span class="ui-icon ui-icon-alert"></span>Surrender</div>
+      </li>
+    </ul>
+    <!-- actions === 2, active unit has hit away and has attacked but NOT moved -->
+    <ul id="hitAwayAndHasAttacked">
+      <li id="moveLi">
+        <div class="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
+      </li>
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+    </ul>
+    <!-- actions === 3, active unit has hit away and has attacked AND has moved -->
+    <ul id="hitAwayAndHasAttackedHasMoved">
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+      <li>
+        <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
       </li>
     </ul>
     <!-- Status Modal Below -->
