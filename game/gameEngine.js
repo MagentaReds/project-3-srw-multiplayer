@@ -129,7 +129,7 @@ class Game  {
   removeFlag(flag) {
     var index = this.flags.indexOf(flag);
     if(index!==-1)
-      this.flags.splice(index, 0);
+      this.flags.splice(index, 1);
   }
 
   //removes all flags from the flags array
@@ -272,6 +272,10 @@ class Game  {
 
     var selUnit = this.map.getUnit(r,c);
 
+    if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
+      return failRes2;
+    }
+
     if(this.pRef.id===playerId){
       if(!selUnit) {
         return failRes;
@@ -298,8 +302,6 @@ class Game  {
           this.uRef.setRC(toR, toC);
           this.uRef.hasMoved=true;
           this.emitMap();
-          this.addFlag(Flags.turnOver);
-          this.checkFlags();
           return sucRes2;
         } else{
           return failRes;
@@ -364,6 +366,7 @@ class Game  {
   }
 
   doCancel(playerId, r, c) {
+    console.log(this.flags);
     var sucRes = {success: true, actions:[], msg:"You have cancel!"};
     var sucRes2 = {success: true, actions:[], msg:"Nothing to cancel"};
     var failRes = {success: false, actions:[], msg:"Cannot cancel this square"};
@@ -430,13 +433,17 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
-        return failRes2;
+        this.addFlag(Flags.turnOver);
+        this.checkFlags();
+        return sucRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         this.addFlag(Flags.turnOver);
         this.checkFlags();
         return sucRes;
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
-        return failRes2;
+        this.addFlag(Flags.turnOver);
+        this.checkFlags();
+        return sucRes;
       } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         this.addFlag(Flags.turnOver);
         this.checkFlags();
@@ -563,7 +570,7 @@ class Game  {
     else {
       return {success: true, weapons: selUnit.getWeapons()}
     }
-    
+
   }
 
   getStatus(playerId, r, c) {
@@ -594,6 +601,10 @@ class Game  {
 
     var selUnit = this.map.getUnit(r,c);
     var tarUnit = this.map.getUnit(toR,toC);
+
+    if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
+      return failRes2;
+    }
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -641,7 +652,6 @@ class Game  {
 
     var sucRes = {success: true, actions:[]};
     var failRes = {success: false, actions:[]};
-
 
     if(this.defender.owner===playerId){
       if(action==="Attack"){
@@ -736,7 +746,7 @@ class Game  {
     var damage = this.getDamage(this.uRef, this.defender, this.weapon);
     var crit = this.getCritPercent(this.uRef, this.defender, this.weapon);
 
-    if(counterType === "Evade" && !atkRef.hasStrike())
+    if(counterType === "Evade" && !this.uRef.hasStrike())
       hit = Math.floor(hit/2);
     else if(counterType === "Defend")
       damage = Math.floor(damage/2);

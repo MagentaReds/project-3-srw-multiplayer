@@ -34,6 +34,15 @@
     $( "#endSurrender" ).menu();
   } );
   $( function() {
+    $( "#surrender" ).menu();
+  } );
+  $( function() {
+    $( "#hitAwayAndHasAttacked" ).menu();
+  } );
+  $( function() {
+    $( "#hitAwayAndHasAttackedHasMoved" ).menu();
+  } );
+  $( function() {
     $( "#statusModal" ).dialog({
       autoOpen: false,
       show: {
@@ -126,7 +135,7 @@
     <!-- main actions menu i.e. actions === 0 -->
     <ul id="menu">
       <li id="moveLi">
-        <div id="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
+        <div class="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
       </li>
       <li id="attackLi"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
         <ul class="weapons">
@@ -134,6 +143,9 @@
       </li>
       <li id="spiritLi" class="ui-state-disabled">
         <div id="spirit"><span class="ui-icon ui-icon-star"></span>Spirit Commands</div>
+      </li>
+      <li id="statusLi">
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
       </li>
     </ul>
     <!-- cancel button, gets used to cancel move and attack BEFORE a movement or attack is made -->
@@ -145,15 +157,15 @@
     <!-- status menu i.e. actions === 4, will be used by both active and non-active players -->
     <ul id="status">
       <li id="statusLi">
-        <div id="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
       </li>
     </ul>
     <!-- this menu pops up if you are active player and you click on and empty square i.e. actions === 5 -->
     <ul id="endSurrender">
       <li>
-        <div class="endTurn"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
       </li>
-      <li id="Surrender">
+      <li>
         <div><span class="ui-icon ui-icon-alert"></span>Surrender</div>
       </li>
     </ul>
@@ -164,10 +176,34 @@
         </ul>
       </li>
       <li>
-        <div class="endTurn"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
       </li>
       <li>
-        <div id="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+        <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+      </li>
+    </ul>
+    <!-- actions === 6, if you are not active player and click on empty square (can only surrender here)-->
+    <ul id="surrender">
+      <li>
+        <div class = "surrender"><span class="ui-icon ui-icon-alert"></span>Surrender</div>
+      </li>
+    </ul>
+    <!-- actions === 2, active unit has hit away and has attacked but NOT moved -->
+    <ul id="hitAwayAndHasAttacked">
+      <li id="moveLi">
+        <div class="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
+      </li>
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+    </ul>
+    <!-- actions === 3, active unit has hit away and has attacked AND has moved -->
+    <ul id="hitAwayAndHasAttackedHasMoved">
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+      <li>
+        <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
       </li>
     </ul>
     <!-- Status Modal Below -->
@@ -194,8 +230,9 @@
     <div id="defendModal" title="Select An Option:">
       <div id="defendStyle">
         <button id="defendButton">Defend</button>
-        <button id="attackButton">Attack</button>
         <button id="evadeButton">Evade</button>
+        <button id="attackButton">Attack</button>
+        <div id ="defenderWeapons"></div>
       </div>
     </div>
   </div>
