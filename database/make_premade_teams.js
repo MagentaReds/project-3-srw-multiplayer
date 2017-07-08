@@ -61,7 +61,7 @@ function makeTeamsAndUnits() {
         },
         {
           pilotName: "Excellen Browning",
-          mechName: "Weisswritter"
+          mechName: "Weissritter"
         },
         {
           pilotName: "Irmgult Kazahara",
@@ -97,11 +97,11 @@ function makeTeamsAndUnits() {
         },
         {
           pilotName: "Latooni Subota",
-          mechName: "Fairlion S"
+          mechName: "Fairlion-S"
         },
         {
           pilotName: "Shine Hausen",
-          mechName: "Fairlion G"
+          mechName: "Fairlion-G"
         },
         {
           pilotName: "Seolla Schweizer",
@@ -113,7 +113,7 @@ function makeTeamsAndUnits() {
         },
         {
           pilotName: "Ouka Nagisa",
-          mechName: "Rapiecage"
+          mechName: "Valsione"
         }
       ]
     };
@@ -136,7 +136,7 @@ function makeTeamsAndUnits() {
         },
         {
           pilotName: "Kai Kitamura",
-          mechName: "Gespenst MKII-S"
+          mechName: "Gespenst MkII-S"
         },
         {
           pilotName: "Sanger Zonvolt",
@@ -179,7 +179,7 @@ function makeTeamsAndUnits() {
         },
         {
           pilotName: "Excellen Browning",
-          mechName: "Rein Weisswritter"
+          mechName: "Rein Weissritter"
         },
         {
           pilotName: "Gilliam Yager",
@@ -225,7 +225,7 @@ function makeTeamsAndUnits() {
           mechName: "Giganscudo Duro"
         },
         {
-          pilotName: "Carla Borgnine",
+          pilotName: "Ricarla Borgnine",
           mechName: "Randgrith"
         },
         {
