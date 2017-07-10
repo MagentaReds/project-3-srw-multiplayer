@@ -145,6 +145,11 @@ $(function() {
 		defendOptions(data);
 	});
 
+	socket.on("update players", function(data){
+		console.log(data);
+		updatePlayerDisplay(data);
+	});
+
 	//Document event listeners
 	//==========================================================================
 
@@ -240,6 +245,33 @@ $(function() {
 					writeMessage("You cannot attack with that weapon.");
 				}
 			});
+	});
+
+
+	$("#confirmEvade").on("click", function(){
+		socket.emit("do counter", {action: "Evade", weapon: null}, function(data){
+			if (data.success) {
+				console.log("Success, you choose to evade!");
+				$("#counterMenu").hide();
+			}
+			else if (!data.succes) {
+				console.log("You cannot evade");
+				writeMessage("You cannot evade.");
+			}
+		});
+	});
+
+	$("#confirmDefend").on("click", function(){
+		socket.emit("do counter", {action: "Defend", weapon: null}, function(data){
+			if (data.success) {
+				console.log("Success, you choose to defend!");
+				$("#counterMenu").hide();
+			}
+			else if (!data.succes) {
+				console.log("You cannot defend");
+				writeMessage("You cannot defend.");
+			}
+		});
 	});
 
 	// code for checking and displaying which tile was clicked on
@@ -524,7 +556,7 @@ $(function() {
 		$("#menu2").hide();
 		$("#hitAwayAndHasAttacked").hide();
 		$("#status").hide();
-		$("#cancel").show().bind("click", cancelMoveBeforeDoingMove);
+		$("#cancel").show().one("click", cancelMoveBeforeDoingMove);
 	}
 
 	function cancelMoveBeforeDoingMove (e) {
@@ -685,23 +717,17 @@ $(function() {
 		var energy = parseInt((data.en / data.enMax)*100);
 		var sp = parseInt((data.sp / data.spMax)*100);
 		$("#healthNum").append(`HP: ${data.hp} / ${data.hpMax}`);
-		$( function() {
-			$( "#healthBar" ).progressbar({
+		$( "#healthBar" ).progressbar({
 				value: health
 			});
-		} );
 		$("#energyNum").append(`EN: ${data.en} / ${data.enMax}`);
-		$( function() {
-			$( "#energyBar" ).progressbar({
+		$( "#energyBar" ).progressbar({
 				value: energy
 			});
-		} );
 		$("#spNum").append(`SP: ${data.sp} / ${data.spMax}`);
-		$( function() {
-			$( "#spBar" ).progressbar({
+		$( "#spBar" ).progressbar({
 				value: sp
 			});
-		} );
 		$("#pilotName").append(data.pilotName);
 		$("#pilotStatus").append(data.status.toString());
 		$("#pilotWill").append(`Will: ${data.will}`);
@@ -737,27 +763,6 @@ $(function() {
 		var menu = $("#counterMenu");
 		menu.menu("refresh");
 		menu.show();
-
-		// $("#defendButton").on("click", function(){
-		// 	socket.emit("do counter", {action: "Defend", weapon: null}, function(data){
-		// 		console.log(data);
-		// 	});
-		// 	$("#defendModal").dialog("close");
-		// });
-		// $("#attackButton").on("click", function(){
-		// 	$("#defenderWeapons").empty();
-		// 	$("#defenderWeapons").append("<p>Choose:</p>");
-		// 	console.log(data);
-		// 	for (var i = 0; i < data.weapons.length; i++) {
-		// 		$("#defenderWeapons").append(`<button class="defenderWeaponButton" data=${i}>${data.weapons[i].name}</button>`);
-		// 	}
-		// });
-		// $("#evadeButton").on("click", function(){
-		// 	socket.emit("do counter", {action: "Evade", weapon: null}, function(data){
-		// 		console.log(data);
-		// 	});
-		// 	$("#defendModal").dialog("close");
-		// });
 	}
 
 	function jqueryMenuSetup() {
@@ -805,6 +810,40 @@ $(function() {
 		$("#hitAwayAndHasAttackedHasMoved").hide();
 		$("#hitAwayAndHasAttacked").hide();
 		// toggleclass blink for all li.grid-square, otherwise when we wont to show active unit tile, all tiles will start blinking
+	}
+
+	function updatePlayerDisplay(data) {
+		var div;
+		var unit;
+		var unitDiv;
+		for(var i=0; i<data.players.length; ++i){
+			div=$("<div>");
+			if(data.players[i].defated)
+				div.addClass("defeated");
+			// if(data.players[i].active)
+			// 	div.addClass("active");
+			div.append(`${i+1}: ${data.players[i].name}`);
+			div.append(` Defeated: ${data.players[i].defeated}`);
+			div.append($("<hr>"));
+			for(var k=0; k<data.players[i].units.length; ++k){
+				unit=data.players[i].units[k];
+				unitDiv=$("<div>");
+				if(!unit.alive)
+					unitDiv.addClass("dead");
+				if(unit.active)
+					unitDiv.addClass("active");
+				unitDiv.append($("<img>").attr("src", unit.pilotImg));
+				unitDiv.append($("<p>").text(`${unit.name} (${unit.mechName})`));
+				unitDiv.append($("<p>").text(`HP: ${unit.hp}/${unit.hpMax}`));
+				unitDiv.append($("<p>").text(`EN: ${unit.en}/${unit.enMax}`));
+				unitDiv.append($("<p>").text(`SP: ${unit.sp}/${unit.spMax}`));
+				unitDiv.append($("<p>").text(`Status: ${unit.status.toString()}`));
+				unitDiv.append($("<hr>"));
+				div.append(unitDiv);
+			}
+			$(`#player${i+1}`).empty().append(div);
+		}
+
 	}
 
 });
