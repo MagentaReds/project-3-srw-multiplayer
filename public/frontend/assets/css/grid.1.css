@@ -4,7 +4,7 @@ body {
 
 .clearfix:after {
   content: "";
-  display: table;
+  display: block;
   clear: both;
 }
 
@@ -18,18 +18,53 @@ body {
   color: white;
 }
 
+#gameField {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.playerBar {
+	flex: 0 1 auto;
+	display: flex;
+	flex-direction: column;
+	color: white;
+	transform: scale(.75);
+}
+
+.playerBox {
+	flex: 0 1 auto;
+
+}
+
+.dead {
+	opacity: .5;
+	border: 3px solid grey;
+}
+
+.defeated {
+	opacity: .5;
+	border: 3px solid grey;
+}
+
+.active {
+	border: 3px solid #64dd17;
+}
+
 #mapContainer {
-	width: 800px;
-	height: 600px;
+	flex: 0 1 auto;
+	margin: auto;
+	max-width: 800px;
+	max-height: 600px;
 	overflow: auto;
-	float: left;
+	position: relative;
 }
 
 #grid {
 	margin: 0;
 	padding: 0;
 	width: 1560px;
-	transform: scale(.5);
+	transform: scale(.8);
 	
 }
 
@@ -59,17 +94,31 @@ body {
 	position: absolute;
 }
 
-#status {
-	top: 37px;
+#sidebar {
+	margin: auto;
+	flex: 0 1 auto;
+	color: white;
+	/*width: 400px;*/
+}
+#messageDiv {
+	color: white;
+	
 }
 
-#endSurrender {
-	top: 37px;
+#roomMessageDiv {
+	color: white;
+	width: inherit;
+	height: 300px;
+	overflow-y: scroll;
 }
 
-/*#surrender {
-	top: 37px;
-}*/
+#chatDisplay {
+	color: white;
+	width: inherit;
+	height: 300px;
+	overflow-y: scroll;
+}
+
 
 /*STATUS STYLE*/
 
@@ -213,8 +262,8 @@ body {
 .ui-menu {
 	width: 150px;
 	position: fixed;
-	top: 10px;
-	left: 10px;
+	top: 20%;
+	left: 20%;
 }
 
 .ui-menu-counter {
@@ -231,29 +280,4 @@ body {
   50% {
     opacity: 0.0;
   }
-}
-
-
-#sidebar {
-	color: white;
-	width: 400px;
-	float: right;
-}
-#messageDiv {
-	color: white;
-	
-}
-
-#roomMessageDiv {
-	color: white;
-	width: inherit;
-	height: 300px;
-	overflow-y: scroll;
-}
-
-#chatDisplay {
-	color: white;
-	width: inherit;
-	height: 300px;
-	overflow-y: scroll;
 }
