@@ -55,11 +55,18 @@ class Player {
 
   //need to expand to account for when unit is dead, but testing will ignore for now
   getNextUnit() {
-    this.currentUnit++;
-    if(this.currentUnit>=this.units.length)
-      this.currentUnit=0;
-
-    return this.units[this.currentUnit];
+    if(!this.isDefeated()) {
+      this.currentUnit++;
+      if(this.currentUnit>=this.units.length)
+          this.currentUnit=0;
+      while(!this.units[this.currentUnit].isAlive) {
+        this.currentUnit++;
+        if(this.currentUnit>=this.units.length)
+          this.currentUnit=0;
+      }
+      return this.units[this.currentUnit];
+    } else
+      return null;
   }
 
   //returns true if all units are dead
