@@ -85,6 +85,7 @@ class Game  {
 
     console.log(`It is ${this.pRef.name} Unit's ${this.uRef.name} Turn`);
     this.emitMap();
+    this.emitUpdatePlayers();
   }
 
   //Returns the player to go next;
@@ -298,6 +299,7 @@ class Game  {
           this.uRef.setRC(toR, toC);
           this.uRef.hasMoved=true;
           this.emitMap();
+          this.emitUpdatePlayers();
           return sucRes;
         } else{
           return failRes;
@@ -311,6 +313,7 @@ class Game  {
           this.uRef.setRC(toR, toC);
           this.uRef.hasMoved=true;
           this.emitMap();
+          this.emitUpdatePlayers();
           return sucRes2;
         } else{
           return failRes;
@@ -356,8 +359,10 @@ class Game  {
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
         var didCast = selUnit.castSC(spiritId, tarUnit);
-        if(didCast)
+        if(didCast) {
+          this.emitUpdatePlayers();
           return sucRes;
+        }
         else
           return failRes2;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
@@ -402,6 +407,7 @@ class Game  {
         this.posR=this.oldR;
         this.posC=this.oldC;
         this.emitMap();
+        this.emitUpdatePlayers();
         this.emptyFlags();
         this.addFlag(Flags.newRound);
         return sucRes;
@@ -414,6 +420,7 @@ class Game  {
         this.posR=this.oldR;
         this.posC=this.oldC;
         this.emitMap();
+        this.emitUpdatePlayers();
         this.removeFlag(Flags.hasMoved);
         return sucRes;
       }
@@ -758,6 +765,7 @@ class Game  {
     if(action==="Attack")
       this.defWep=wepId;
     this.computeAttack(this.uRef ,this.weapon, this.defender, this.defWep, action);
+    this.emitUpdatePlayers();
     this.removeFlag(Flags.waitingForDef);
     this.checkFlags();
   }
@@ -1061,6 +1069,35 @@ class Game  {
   emitMap() {
     this.inter.emitMap(this.map.getAsciiMap());
     this.inter.emitRealMap(this.map.getRealMap());
+  }
+
+  emitUpdatePlayers() {
+    var data = {msg:'Updating Player Data', players:[]};
+    var temp;
+    var plyr;
+
+    for(let i=0; i<this.players.length; ++i) {
+      temp={};
+      plyr=this.players[i];
+      temp.name=plyr.name;
+      temp.defeated = plyr.isDefeated();
+      if(plyr.id===this.players[this.currentPlayer].id)
+        temp.active = true;
+      else
+        temp.active = false;
+
+      temp.units = [];
+      for(let k=0; k<plyr.units.length; ++k) {
+        temp.units.push(plyr.units[k].getStatusSmall());
+        if(this.uRef===plyr.units[k]) {
+          temp.units[k].active=true;
+        } else
+          temp.units[k].active=false;
+      }
+      data.players.push(temp);
+    }
+
+    this.inter.emitPlayersUpdate(data);
   }
 
   spawnUnitHelper(unit, r, c) {
