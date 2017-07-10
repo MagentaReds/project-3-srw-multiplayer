@@ -132,7 +132,12 @@ $("#ready").on("click", function(e){
 
 function writeMessage (msg) {
 	$("#messageDiv").text(msg);
-	$("#roomMessageDiv").append($("<p>").text(msg));
+
+	var roomMsg = document.getElementById('roomMessageDiv');
+	var shouldScroll = roomMsg.scrollTop + roomMsg.clientHeight === roomMsg.scrollHeight;
+	$(roomMsg).append($("<p>").text(msg));
+	if(shouldScroll)
+		roomMsg.scrollTop = roomMsg.scrollHeight;
 }
 
 // code that makes 900 grid-tiles with each row and column's data index stored
@@ -140,11 +145,12 @@ function buildGrid (map) {
 	$("#grid").empty();
 	for (var r = 0; r < map.length; r++) {
 		for (var c = 0; c < map[0].length; c++) {
-			$("#grid").append(`<li class="grid-square" data-r = "${r}" data-c = "${c}"><div class="grid-style" data-r = "${r}" data-c = "${c}"></div></li>`);
+			$("#grid").append(`<div class="grid-square" data-r = "${r}" data-c = "${c}"><div class="grid-style" data-r = "${r}" data-c = "${c}"></div></div>`);
 			if (map[r][c]) {
-				$(`li[data-r=${r}][data-c=${c}]`).append(`<img src=${map[r][c]}>`);
+				$(`#grid .grid-square[data-r=${r}][data-c=${c}]`).append(`<img src=${map[r][c]}>`);
 			}
 		}
+		$("#grid").append("<br>");
 	}
 }
 
@@ -204,12 +210,12 @@ var availableAttackTiles = [
 
 function displayActiveTile(locate) {
 	// locates active tile where unit will be and colors in tile with green
-	$(`div[data-r=${locate[0]}][data-c=${locate[1]}]`).css('background', "#64dd17").css('opacity', "0.5");
+	$(`div.grid-style[data-r=${locate[0]}][data-c=${locate[1]}]`).css('background', "#64dd17").css('opacity', "0.5");
 }
 function blinkActiveTile(locate) {
 	// locates active tile where unit will be and blinks tile
 	// seperate function because we will want to keep coloring in active tile while not toggling the blink
-	$(`div[data-r=${locate[0]}][data-c=${locate[1]}]`).addClass('blink');
+	$(`div.grid-style[data-r=${locate[0]}][data-c=${locate[1]}]`).addClass('blink');
 }
 // call these functions on load
 // from server we will get an array where the active unit on current turn is located
@@ -226,8 +232,8 @@ function displayAvailableMoveTiles(locate) {
 				moveTiles = data.array;
 				setTimeout(function(){
 					for (var y = 0; y < data.array.length; y++) {
-						$(`div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").addClass('blink');
-						$(`li.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).bind("click", moveToTile);
+						$(`div.grid-square div.grid-style[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).css('background', "#2196f3").css('opacity', "0.5").addClass('blink');
+						$(`div.grid-square[data-r=${data.array[y][0]}][data-c=${data.array[y][1]}]`).bind("click", moveToTile);
 					}
 				}, 5);
 				setTimeout(function(){
@@ -246,8 +252,8 @@ function hideAvailableMoveTiles(locate) {
 	// function that is called by the cancel button to hide and unbind click event available move tiles
 				setTimeout(function(){
 					for (var y = 0; y < locate.length; y++) {
-						$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").removeClass('blink');
-						$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
+						$(`div.grid-square div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").removeClass('blink');
+						$(`div.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
 					}
 				}, 5);
 				// set time out function here so code above doesn't hide active unit green square
@@ -343,8 +349,8 @@ function cancelSpirit (e) {
 function displayAttackTiles(locate) {
 	setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
-			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
-			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", attackEnemy);
+			$(`div.grid-square div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
+			$(`div.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", attackEnemy);
 		}
 	}, 5);
 	// var data = {};
@@ -377,16 +383,16 @@ function displayAttackTiles(locate) {
 function displayAllyTiles(locate) {
 	setTimeout(function(){
 		for (var y = 0; y < locate.length; y++) {
-			$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
-			$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", castSpirit);
+			$(`div.grid-square div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
+			$(`div.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", castSpirit);
 		}
 	}, 5);
 }
 
 function hideAttackTiles(locate) {
 	for (var y = 0; y < locate.length; y++) {
-		$(`div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").removeClass('blink');
-		$(`li.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
+		$(`div.grid-square div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "transparent").css('opacity', "1").removeClass('blink');
+		$(`div.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).unbind("click");
 	}
 }
 
@@ -707,8 +713,11 @@ socket.on("chat message", function(data){
 	console.log(data.msg);
 	var p = $("<p>");
 	p.text(data.msg);
-	$("#chatDisplay").append(p);
-	$("#chatDisplay").scrollTop($("#chatDisplay")[0].scrollHeight);
+	var chat = document.getElementById('chatDisplay');
+	var shouldScroll = chat.scrollTop + chat.clientHeight === chat.scrollHeight;
+	$(chat).append(p);
+	if(shouldScroll)
+		chat.scrollTop = chat.scrollHeight;
 });
 
 $(document).on("submit", "#chatForm", function(e){
@@ -720,7 +729,7 @@ $(document).on("submit", "#chatForm", function(e){
 
 // code for checking and displaying which tile was clicked on
 // also the UI for displaying options for clicked grid square should pop up here
-$(document).on("click", "li.grid-square", function(event) {
+$(document).on("click", "div.grid-square", function(event) {
 	var dataR = parseInt($(this).attr("data-r"));
 	var dataC = parseInt($(this).attr("data-c"));
 	globalR = dataR;
@@ -730,11 +739,11 @@ $(document).on("click", "li.grid-square", function(event) {
 		enableActions(response.actions)
 	});
 
-	$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
-	$(document).one("click", "li", function(event) {
+	$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
+	$(document).one("click", "div.grid-square", function(event) {
 		// if next clicked tile is outside the one that was previously clicked on
 		if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-				$(`div[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
+				$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
 			// call this function so it's background doesn't become transparent
 			socket.emit("active unit", function(data){
 				displayActiveTile([data.r, data.c]);

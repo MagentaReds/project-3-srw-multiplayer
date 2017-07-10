@@ -1,0 +1,252 @@
+body {
+    background-image: url("./../media/space.jpg");
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.hidden {
+  display: none;
+}
+
+#roomDiv {
+  display: flex;
+  flex: 1;
+  color: white;
+}
+
+#mapContainer {
+	width: 800px;
+	height: 600px;
+	overflow: auto;
+	float: left;
+}
+
+#grid {
+	margin: 0;
+	padding: 0;
+	width: 1560px;
+	transform: scale(.5);
+	
+}
+
+#grid div {
+	border-style:dashed;
+	border-width: 1px;
+	color: grey;
+	margin: 0px;
+	padding: 0px;
+	float: left;
+	width: 50px;
+	height: 50px;
+	font-size: 4em;
+	text-align: center;
+}
+
+#grid div img {
+	height: 50px;
+	padding-bottom: 5px;	
+}
+
+.grid-square {
+	position: relative
+}
+.grid-style {
+	padding: 0px;
+	position: absolute;
+}
+
+#status {
+	top: 37px;
+}
+
+#endSurrender {
+	top: 37px;
+}
+
+/*#surrender {
+	top: 37px;
+}*/
+
+/*STATUS STYLE*/
+
+#statusModal {
+	display: flex;
+	flex-direction: column;
+}
+
+#mechData {
+	display: flex;
+	flex-direction: row;
+	flex: 2 0 auto;
+}
+
+#mechPic {
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	margin-left: 1px;
+	min-width: 100px;
+	min-height: 100px;
+	max-height: 150px;
+	max-width: 150px;
+	flex: 5 0 auto;
+}
+
+#dataBars {
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	margin-top: 1px;
+	display: flex;
+	flex-direction: column;
+	flex: 6 0 auto;
+
+}
+
+#mechName {
+	flex: 1 0 auto;
+	width: 150px;
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	padding-top: 5px;
+	align-self: center;
+}
+
+#healthBar .ui-progressbar-value {
+  background-color: #64dd17;
+}
+
+#energyBar .ui-progressbar-value {
+	 background-color: #ffc400;
+}
+
+#spBar .ui-progressbar-value {
+	 background-color: lightblue;
+}
+
+#healthBar {
+	flex: 1 0 auto;
+	height: 15px;
+	width: 145px;
+	align-self: center;
+}
+
+#energyBar {
+	flex: 1 0 auto;
+	height: 15px;
+	width: 145px;
+	align-self: center;
+}
+
+#spBar {
+	flex: 1 0 auto;
+	height: 15px;
+	width: 145px;
+	align-self: center;
+}
+
+#pilotData {
+	flex: 1 0 auto;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin: 1px;
+	border-style:solid;
+	border-width: 1px;
+}
+
+#pilotPic {
+	flex: 1 0 auto;
+	min-height: 80px;
+	min-width: 80px;
+}
+
+#pilotStats {
+	flex: 5 0 auto;
+	display: flex;
+	flex-direction: column;
+}
+
+#pilotName {
+	flex: 1 0 auto;
+	width: 150px;
+}
+
+#pilotStatus {
+	flex: 1 0 auto;
+}
+
+#pilotWill {
+	flex: 1 0 auto;
+	width: 150px;
+}
+
+#weaponFlex {
+	text-align: center;
+}
+
+#weaponColumns {
+	flex: 1 0 auto;
+	width: 450px;
+	align-self: center;
+	text-align: center;
+}
+
+#weaponData {
+	flex: 10 0 auto;
+	width: 450px;
+	font-size: 90%;
+	text-align: center;
+}
+
+#defendStyle {
+	width: 50px;
+	position: absolute;
+	left: 115px;
+}
+
+.ui-menu {
+	width: 150px;
+	position: fixed;
+	top: 10px;
+	left: 10px;
+}
+
+.blink {
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0.0;
+  }
+}
+
+
+#sidebar {
+	color: white;
+	width: 400px;
+	float: right;
+}
+#messageDiv {
+	color: white;
+	
+}
+
+#roomMessageDiv {
+	color: white;
+	width: inherit;
+	height: 300px;
+	overflow-y: scroll;
+}
+
+#chatDisplay {
+	color: white;
+	width: inherit;
+	height: 300px;
+	overflow-y: scroll;
+}
