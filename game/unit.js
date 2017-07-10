@@ -259,6 +259,23 @@ class Unit {
     return obj;
   }
 
+  getStatusSmall() {
+    var obj = {};
+    obj.name=this.name;
+    obj.mechName = this.mechName;
+    obj.hp = this.hp;
+    obj.hpMax = this.hpMax;
+    obj.en = this.en;
+    obj.enMax= this.en;
+    obj.sp = this.sp;
+    obj.spMax = this.spMax;
+    obj.status = this.status;
+    obj.pilotImg = `/img/pilot/${this.name}.png`;
+    obj.will = this.will;
+    obj.alive = this.isAlive;
+    return obj;
+  }
+
   hasHitAndAway() {
     return this.skills.has(Skill.hitAway);
   }
