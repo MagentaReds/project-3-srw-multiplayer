@@ -134,7 +134,7 @@ class Unit {
   }
 
   getMove(ter='Spc') {
-    if(this.stats.includes(Status.net))
+    if(this.status.includes(Status.net))
       return 0;
 
     var add=0;
@@ -437,21 +437,6 @@ class Unit {
       res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.maxHp);
 
     return res;
-  }
-
-
-  //returns maximum movement in squares
-  //assume we are flying/in space for now, will make generic later
-  getMove(air=true) {
-    var result=this.move;
-    if(this.hasFlag(Flags.accel))
-      result+=2;
-
-    if(air)
-      if(this.en<result)
-        return this.en;
-
-    return result;
   }
 
   setRC(r,c) {
