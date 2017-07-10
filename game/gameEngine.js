@@ -237,7 +237,7 @@ class Game  {
   //GameInterface to Game method: returns a response based on the games state and which socket called it
   //returns a response that contains the list of possible squares a unit may move to
   getMove(playerId, r, c) {
-    var sucRes = {success: true, tiles: this.map.getPossibleMovement(r, c, this.uRef.move), actions:["Cancel"]};
+    var sucRes = {success: true, tiles: this.map.getPossibleMovement(r, c, this.uRef.getMove()), actions:["Cancel"]};
     var failRes = {success: false, tiles: [], actions:[]};
     var failRes2 = {success: false, tiles: [], actions:["Cancel"]};
     var selUnit = this.map.getUnit(r,c);
@@ -266,7 +266,7 @@ class Game  {
   //GameInterface to Game method:
   //returns a list move squares that a unit at r,c can move to, no checking game state
   requestMoveTiles(playerId, r, c){
-    return this.map.getPossibleMovement(r, c, this.uRef.move);
+    return this.map.getPossibleMovement(r, c, this.uRef.getMove());
   }
 
   //GameInterface to Game method: returns a response based on the games state and which socket called it
@@ -277,7 +277,7 @@ class Game  {
     var failRes = {success: false, actions:[], msg: `Cannot move this square`};
     var failRes2 = {success: false, actions:1, msg: `${this.uRef.name} has already moved this turn`}; // ["Attack", "Standby","Cancel"]
 
-    var posMov = this.map.getPossibleMovement(r, c, this.uRef.move);
+    var posMov = this.map.getPossibleMovement(r, c, this.uRef.getMove());
 
     var selUnit = this.map.getUnit(r,c);
 
