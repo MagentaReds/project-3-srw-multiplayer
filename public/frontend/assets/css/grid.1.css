@@ -217,6 +217,13 @@ body {
 	left: 10px;
 }
 
+.ui-menu-counter {
+	width: 150px;
+	position: fixed;
+	top: 40%;
+	left: 40%;
+}
+
 .blink {
   animation: blinker 1s linear infinite;
 }

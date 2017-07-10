@@ -17,60 +17,6 @@
   <!-- socket.io -->
   <script src="./js/socket.io.js"></script>
 
-  <script>
-  $( function() {
-    $( "#menu" ).menu();
-  } );
-  $( function() {
-    $( "#menu2" ).menu();
-  } );
-  $( function() {
-    $( "#cancel" ).menu();
-  } );
-  $( function() {
-    $( "#status" ).menu();
-  } );
-  $( function() {
-    $( "#endSurrender" ).menu();
-  } );
-  $( function() {
-    $( "#surrender" ).menu();
-  } );
-  $( function() {
-    $( "#hitAwayAndHasAttacked" ).menu();
-  } );
-  $( function() {
-    $( "#hitAwayAndHasAttackedHasMoved" ).menu();
-  } );
-  $( function() {
-    $( "#statusModal" ).dialog({
-      autoOpen: false,
-      show: {
-        effect: "blind",
-        duration: 500
-      },
-      hide: {
-        effect: "explode",
-        duration: 1000
-      },
-      width: 500
-    });
-  });
-  $( function() {
-    $( "#defendModal" ).dialog({
-      autoOpen: false,
-      show: {
-        effect: "blind",
-        duration: 500
-      },
-      hide: {
-        effect: "explode",
-        duration: 1000
-      }
-    });
-  });
-  </script>
-
 </head>
 <body>
   <div id="roomDiv">
@@ -209,6 +155,21 @@
       </li>
       <li>
         <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+      </li>
+    </ul>
+
+    <ul id="counterMenu" class="ui-menu-counter">
+      <li id="counterAttack"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
+        <ul class="weapons">
+        </ul>
+      </li>
+      <li id="counterEvade">
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>Evade</div>
+          <ul><div id="confirmEvade">Confirm?</div></ul>
+      </li>
+      <li id="counterDefend">
+        <div id="spirit"><span class="ui-icon ui-icon-star"></span>Defend</div>
+          <ul><div id="confirmDefend">Confirm?</div></ul>
       </li>
     </ul>
     <!-- Status Modal Below -->
