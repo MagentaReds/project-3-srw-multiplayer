@@ -1366,7 +1366,7 @@ var battleships_built_in = {
       skill: "",
     }
   ],
-  Hiryu: [
+  Hiryu_Custom: [
     {
       name: "Chaff Grenade",
       upgradeRate: "",
