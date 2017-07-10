@@ -108,6 +108,12 @@ class GameRoom {
     this.nsp.to(socketMeRef.socketId).emit("get counter", data);
   }
 
+  //Emits a 'update players' event to the all sockets/clients in this room
+  emitPlayersUpdate(data) {
+    console.log(`Sending Player Data to Room ${this.roomNum}`);
+    this.nsp.to(this.name).emit("update players", data);
+  }
+
   gameOver(playerRef) {
     console.log(`The game in Room ${this.roomNum} is over, shutting down room`);
     if(playerRef) {
