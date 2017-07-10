@@ -80,7 +80,7 @@ var battleships = {
     iWeapons: ["AA Autocannon", "Chaff Grenade", "Torpedo", "Homing Missile", "Sub Cannon", "Impact Cannon", "Titanic Drill"],
     weapons: []
   },
-  Hiyru_Custom: {
+  Hiryu_Custom: {
     name: "Hiryu Custom",
     stats: [14000, 210, 65, 1300],
     upgrade: [4,6,10,9],
