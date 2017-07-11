@@ -550,9 +550,9 @@ class Game  {
       return {success: false, actions:[]};
     }
 
-    var sucRes = {success: true, stats: this.getAttackStats(selUnit, tarUnit, null), actions:["Stats"]};
-    var failRes = {success: false, actions:[]};
-    var failRes2 = {success: false, actions:["Cancel"]};
+    var sucRes = {success: true, target: `${tarUnit.name} (${tarUnit.mechName})`, weapon: wepRef.name, stats: this.getAttackStats(selUnit, tarUnit, weaponId), msg:"You can attack with that weapon"};
+    var failRes = {success: false, actions:[], msg: "You cannot attack with that weapon"};
+    var failRes2 = {success: false, actions:["Cancel"], msg: "You cannot attack with that weapon"};
 
 
     if(this.pRef.id===playerId){
@@ -561,9 +561,15 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
-        return sucRes;
+        if(this.canAttack(r,c,toR,toC,weaponId)) {
+          return sucRes;
+        } else
+          return failRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
-        return sucRes;
+        if(this.canAttack(r,c,toR,toC,weaponId)) {
+          return sucRes;
+        } else
+          return failRes;
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return failRes2;
       } else {
@@ -635,8 +641,10 @@ class Game  {
   doAttack(playerId, r, c, toR, toC, weaponId) {
     var wepRef = this.uRef.weapons[weaponId];
     var range, targets;
+     
     if(wepRef) {
-      range = this.map.getPossibleTargets(r,c,wepRef.range[0], wepRef.range[1]);
+      let wepRange = this.uRef.getRange(weaponId);
+      range = this.map.getPossibleTargets(r,c,wepRange[0], wepRange[1]);
       targets = this.map.getTargets(playerId, range);
     }
 
@@ -754,7 +762,7 @@ class Game  {
     //set attacking weapon
     this.weapon=wepId;
     //emit message to defending unit's player about what they want to do.
-    this.getDefenseAction(def, atk);
+    this.getDefenseAction(def, atk, wepId);
   }
 
   //is called when the defender chooses a defense action
@@ -855,10 +863,11 @@ class Game  {
   //actioncs ["Attack", "Evade", "Defend"]
   //later on will get  also get options if there are Off.Supp and Off.Def Units around, get teir data too
   //Will also send all availb eweapons that they can Attack with.
-  getDefenseAction(def, atk) {
+  getDefenseAction(def, atk, wepId) {
     var attackStats = this.getAttackStats(def, atk);
+    
 
-    var data = {actions: ["Attack", "Evade", "Defend"], weapons:def.weapons, stats:attackStats};
+    var data = {actions: ["Attack", "Evade", "Defend"], weapons:def.weapons, stats:attackStats, attacker: `${atk.name} (${atk.mechName})`, attackWeapon: `${atk.weapons[wepId].name}`, hitPercent: this.getHitPercent(atk, def, wepId)};
     this.inter.emitGetCounter(def.owner, data);
   }
 
@@ -867,7 +876,7 @@ class Game  {
   //second in the tuple is the actualy hit percetange of that weapon against the enemy unit
   getAttackStats(atkRef, defRef, weaponId=null) {
     if(weaponId!==null) {
-      if(!atkRef.weapons[weaponId].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, weaponId))
+      if(atkRef.weapons[weaponId].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, weaponId))
         return [false, 0];
       else
         return [true, this.getHitPercent(atkRef, defRef, weaponId)];

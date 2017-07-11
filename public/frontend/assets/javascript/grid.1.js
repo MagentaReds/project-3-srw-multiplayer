@@ -13,6 +13,8 @@ $(function() {
 	var currentSpiritId;
 	var globalR=0;
 	var globalC=0;
+	var globalToR=0;
+	var globalToC=0;
 
 	var rooms=new Array(5);
 	rooms[0]=new Array(2);
@@ -278,6 +280,9 @@ $(function() {
 		});
 	});
 
+	$(document).on("click", ".confirmAttack", confirmAttack);
+	$(document).on("click", ".cancelAttack", cancelAttack);
+
 	// code for checking and displaying which tile was clicked on
 	// also the UI for displaying options for clicked grid square should pop up here
 	$(document).on("click", "div.grid-square", function(event) {
@@ -366,8 +371,10 @@ $(function() {
 		var scrollTop = document.getElementById('mapContainer').scrollTop;
 		var scrollLeft = document.getElementById('mapContainer').scrollLeft;
 		var pos = $(`div.grid-square[data-r=${globalR}][data-c=${globalC}]`).position();
-		console.log(pos.top, pos.left);
+		//console.log(pos.top, pos.left);
+		//move menu to our grid's posiiton, adjusted by the scroll bar top/left position.
 		$(".ui-menu-our").css("top", pos.top+50+scrollTop).css("left", pos.left+scrollLeft);
+
 		if (actions === -1) { // hide all menus
 			$("#menu").hide();
 			$("#menu2").hide();
@@ -594,6 +601,7 @@ $(function() {
 	function cancelAttack (e) {
 		hideAttackTiles(attackTiles);
 		attackTiles = [];
+		$("#attackConfirmModal").dialog("close");
 		$("#cancel").hide();
 		$("#cancel").unbind("click");
 		$(document).off("keydown");
@@ -601,6 +609,7 @@ $(function() {
 
 	function cancelAttackEsc (e) {
 		if(e.which===27) {
+			$("#attackConfirmModal").dialog("close");
 			hideAttackTiles(attackTiles);
 			attackTiles = [];
 			$(document).off("keydown");
@@ -654,6 +663,33 @@ $(function() {
 		console.log("Request Attack Action sent to server");
 		var dataToR = parseInt($(this).attr("data-r"));
 		var dataToC = parseInt($(this).attr("data-c"));
+		console.log(currentWeaponId);
+		console.log([dataToR, dataToC]);
+		socket.emit("active unit", function(data){
+			socket.emit("get stats", {r:data.r, c:data.c, toR: dataToR, toC: dataToC, weapon: currentWeaponId}, function(data){
+				if (data.success) {
+					globalToR=dataToR;
+					globalToC=dataToC;
+					console.log(data);
+					var modal = $("#attackConfirmModal");
+					modal.find(".target").text(data.target);
+					modal.find(".weapon").text(data.weapon);
+					modal.find(".percent").text(data.stats[1]);
+					modal.dialog("open");
+				}
+				else if (!data.success) {
+					console.log("can't use that weapon");
+					console.log(data);
+					cancelAttack();
+				}
+			});
+		});
+	}
+
+	function confirmAttack(e) {
+		console.log("Request Attack Action sent to server");
+		var dataToR = globalToR;
+		var dataToC = globalToC;
 		console.log(currentWeaponId);
 		console.log([dataToR, dataToC]);
 		socket.emit("active unit", function(data){
@@ -806,6 +842,9 @@ $(function() {
 		}
 
 		var menu = $("#counterMenu");
+		menu.find(".attacker").text(data.attacker);
+		menu.find(".weapon").text(data.attackWeapon);
+		menu.find(".hitPercent").text(data.hitPercent);
 		menu.menu("refresh");
 		menu.show();
 	}
@@ -833,6 +872,17 @@ $(function() {
       width: 500
     });
     $( "#defendModal" ).dialog({
+      autoOpen: false,
+      show: {
+        effect: "blind",
+        duration: 500
+      },
+      hide: {
+        effect: "explode",
+        duration: 1000
+      }
+    });
+		$( "#attackConfirmModal" ).dialog({
       autoOpen: false,
       show: {
         effect: "blind",

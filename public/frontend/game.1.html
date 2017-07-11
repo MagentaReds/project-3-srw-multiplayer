@@ -176,7 +176,13 @@
       </ul>
       <!-- defense actions menu, pops up when being attacked -->
       <ul id="counterMenu" class="ui-menu-counter">
-        <div>Choose a defense option:</div>
+        <div>
+          <span class="attacker"></span> is attacking with <span class="weapon"></span>
+          <br>
+          Hit percent: <span class="hitPercent"></span>%
+          <br>
+          Choose a defense option:
+        </div>
         <hr/>
         <li id="counterAttack"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
           <ul class="weapons">
@@ -244,6 +250,17 @@
       <div id="weaponColumns"></div>
       <div id="weaponData"></div>
     </div>
+  </div>
+
+  <!-- Attack Confirm Modal Below -->
+  <div id="attackConfirmModal" title="Attack Confirm">
+    <div>
+      Attacking <span class="target"></span> with <span class="weapon"></span>
+      <br>
+      Hit Percent: <span class="percent"></span>%
+    </div>
+    <button class="confirmAttack">Confirm</button>
+    <button class="cancelAttack">Cancel</button>
   </div>
 </body>
 <script src="assets/javascript/grid.1.js"></script>
