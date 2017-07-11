@@ -1118,12 +1118,12 @@ class Game  {
   //right now hard coded for just 2 playes an one unit each
   spawnUnits(){
     console.log(this.players.length);
-    this.spawnUnitHelper(this.players[0].units[0], 8, 2+5);
-    this.spawnUnitHelper(this.players[0].units[1], 8, 4+5);
-    this.spawnUnitHelper(this.players[0].units[2], 7, 3+5);
-    this.spawnUnitHelper(this.players[0].units[3], 9, 3+5);
-    this.spawnUnitHelper(this.players[0].units[4], 6, 4+5);
-    this.spawnUnitHelper(this.players[0].units[5], 10, 4+5);
+    this.spawnUnitHelper(this.players[0].units[0], 8, 2+10);
+    this.spawnUnitHelper(this.players[0].units[1], 8, 4+10);
+    this.spawnUnitHelper(this.players[0].units[2], 7, 3+10);
+    this.spawnUnitHelper(this.players[0].units[3], 9, 3+10);
+    this.spawnUnitHelper(this.players[0].units[4], 6, 4+10);
+    this.spawnUnitHelper(this.players[0].units[5], 10, 4+10);
     this.players[0].units[0].order=0;
     this.players[0].units[1].order=1;
     this.players[0].units[2].order=2;
@@ -1131,12 +1131,12 @@ class Game  {
     this.players[0].units[4].order=4;
     this.players[0].units[5].order=5;
 
-    this.spawnUnitHelper(this.players[1].units[0], 8, 26-5);
-    this.spawnUnitHelper(this.players[1].units[1], 8, 24-5);
-    this.spawnUnitHelper(this.players[1].units[2], 7, 25-5);
-    this.spawnUnitHelper(this.players[1].units[3], 9, 25-5);
-    this.spawnUnitHelper(this.players[1].units[4], 6, 24-5);
-    this.spawnUnitHelper(this.players[1].units[5], 10, 24-5);
+    this.spawnUnitHelper(this.players[1].units[0], 8, 26-9);
+    this.spawnUnitHelper(this.players[1].units[1], 8, 24-9);
+    this.spawnUnitHelper(this.players[1].units[2], 7, 25-9);
+    this.spawnUnitHelper(this.players[1].units[3], 9, 25-9);
+    this.spawnUnitHelper(this.players[1].units[4], 6, 24-9);
+    this.spawnUnitHelper(this.players[1].units[5], 10, 24-9);
     this.players[1].units[0].order=0;
     this.players[1].units[1].order=1;
     this.players[1].units[2].order=2;
