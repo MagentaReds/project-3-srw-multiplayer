@@ -11,8 +11,8 @@ $(function() {
 	var allyTiles = [];
 	var currentWeaponId;
 	var currentSpiritId;
-	var globalR;
-	var globalC;
+	var globalR=0;
+	var globalC=0;
 
 	var rooms=new Array(5);
 	rooms[0]=new Array(2);
@@ -194,7 +194,9 @@ $(function() {
 		// var availableAttackTiles = [];
 		// availableAttackTiles =[response];
 		// displayAttackTiles(availableAttackTiles);
-		$("#cancel").show().bind("click", cancelAttack);
+		$("#cancel").show().one("click", cancelAttack);
+		$("#cancel").show();
+		bindEscKey(cancelAttackEsc);
 	});
 
 	$(document).on("click", "div.spiritGrant", function(event){
@@ -213,7 +215,9 @@ $(function() {
 		// var availableAttackTiles = [];
 		// availableAttackTiles =[response];
 		// displayAttackTiles(availableAttackTiles);
-		$("#cancel").show().bind("click", cancelSpirit);
+		$("#cancel").show().one("click", cancelSpirit);
+		//$("#cancel").show();
+		bindEscKey(cancelSpiritEsc);
 	});
 
 	$(".standby").on("click", function(){
@@ -359,6 +363,11 @@ $(function() {
 
 
 	function enableActions(actions=-1) {
+		var scrollTop = document.getElementById('mapContainer').scrollTop;
+		var scrollLeft = document.getElementById('mapContainer').scrollLeft;
+		var pos = $(`div.grid-square[data-r=${globalR}][data-c=${globalC}]`).position();
+		console.log(pos.top, pos.left);
+		$(".ui-menu-our").css("top", pos.top+50+scrollTop).css("left", pos.left+scrollLeft);
 		if (actions === -1) { // hide all menus
 			$("#menu").hide();
 			$("#menu2").hide();
@@ -557,6 +566,8 @@ $(function() {
 		$("#hitAwayAndHasAttacked").hide();
 		$("#status").hide();
 		$("#cancel").show().one("click", cancelMoveBeforeDoingMove);
+		//$("#cancel").show();
+		bindEscKey(cancelMoveBeforeDoingMoveEsc);
 	}
 
 	function cancelMoveBeforeDoingMove (e) {
@@ -566,6 +577,18 @@ $(function() {
 		// hide and unbind cancel button so we don't double up on its functionality later on
 		$("#cancel").hide();
 		$("#cancel").unbind("click");
+		$(document).off("keydown");
+	}
+
+	function cancelMoveBeforeDoingMoveEsc (e) {
+		if(e.which===27) {
+			// use global varaible moveTiles to pass as argument to hide move tiles so we aren't pinging back to server which tiles to hide
+			hideAvailableMoveTiles(moveTiles);
+			moveTiles = [];
+			// hide and unbind cancel button so we don't double up on its functionality later on
+			$("#cancel").hide();
+			$(document).off("keydown");
+		}
 	}
 
 	function cancelAttack (e) {
@@ -573,6 +596,16 @@ $(function() {
 		attackTiles = [];
 		$("#cancel").hide();
 		$("#cancel").unbind("click");
+		$(document).off("keydown");
+	}
+
+	function cancelAttackEsc (e) {
+		if(e.which===27) {
+			hideAttackTiles(attackTiles);
+			attackTiles = [];
+			$(document).off("keydown");
+			$("#cancel").hide();
+		}
 	}
 
 	function cancelSpirit (e) {
@@ -580,6 +613,16 @@ $(function() {
 		allyTiles = [];
 		$("#cancel").hide();
 		$("#cancel").unbind("click");
+		$(document).off("keydown");
+	}
+
+	function cancelSpiritEsc (e) {
+		if(e.which===27) {
+			hideAttackTiles(allyTiles);
+			allyTiles = [];
+			$(document).off("keydown");
+			$("#cancel").hide();
+		}
 	}
 
 	function displayAttackTiles(locate) {
@@ -620,6 +663,7 @@ $(function() {
 					currentWeaponId = null;
 					$("#cancel").hide();
 					$("#cancel").unbind("click");
+					$(document).off("keydown");
 					cancelAttack();
 				}
 				else if (!data.success) {
@@ -644,6 +688,7 @@ $(function() {
 					currentSpiritId = null;
 					$("#cancel").hide();
 					$("#cancel").unbind("click");
+					$(document).off("keydown");
 					cancelSpirit();
 				}
 				else if (!data.success) {
@@ -844,6 +889,12 @@ $(function() {
 			$(`#player${i+1}`).empty().append(div);
 		}
 
+	}
+
+	function bindEscKey(func) {
+		var doc = $(document);
+		doc.off("keydown");
+		doc.keydown(func);
 	}
 
 });

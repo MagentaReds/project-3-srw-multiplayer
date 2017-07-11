@@ -259,11 +259,18 @@ body {
 	left: 115px;
 }
 
-.ui-menu {
+.ui-menu-our {
 	width: 150px;
-	position: fixed;
+	position: absolute;
 	top: 20%;
 	left: 20%;
+}
+
+.ui-menu-cancel {
+	width: 150px;
+	position: fixed;
+	top: 5%;
+	left: 40%;
 }
 
 .ui-menu-counter {
