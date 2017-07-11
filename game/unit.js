@@ -191,6 +191,8 @@ class Unit {
         arr[1]+=2;
       else if(this.skills.get(Skill.gunfight)>=4)
         arr[1]+=1;
+
+    return arr;
   }
 
   skillLevel(skill) {
