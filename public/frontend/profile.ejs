@@ -44,25 +44,25 @@
             <div class="form-group row">
               <label for="example-email-input" class="col-2 col-form-label">Email</label>
               <div class="col-10">
-                <input class="form-control" type="email" value="" id="email" readonly>
+                <input class="form-control" type="email" value="<%= email %>" id="email" readonly>
               </div>
             </div>
             <div class="form-group row">
               <label for="example-url-input" class="col-2 col-form-label">Username</label>
               <div class="col-10">
-                <input class="form-control" type="text" value="" id="username" readonly>
+                <input class="form-control" type="text" value="<%= username %>" id="username" readonly>
               </div>
             </div>
             <div class="form-group row">
             <label for="example-select-input" class="col-2 col-form-label">Team</label>
             <div class="col-10">
               <select class="form-control" id="team" readonly>
-                <option value="1">1: SRX</option>
-                <option value="2">2: ATX</option>
-                <option value="3">3: The School</option>
-                <option value="4">4: The Aggressors</option>
-                <option value="5">5: Aliens</option>
-                <option value="6">6: Team Tank</option>
+                <option value="1" <%= team===1?"selected":'' %> >1: SRX</option>
+                <option value="2" <%= team===2?"selected":'' %> >2: ATX</option>
+                <option value="3" <%= team===3?"selected":'' %> >3: The School</option>
+                <option value="4" <%= team===4?"selected":'' %> >4: The Aggressors</option>
+                <option value="5" <%= team===5?"selected":'' %> >5: Aliens</option>
+                <option value="6" <%= team===6?"selected":'' %> >6: Team Tank</option>
               </select>
             </div>
           </div>
@@ -136,7 +136,7 @@
           </div>
         </div>
       </div>
-      </div>
+    </div>
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
