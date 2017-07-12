@@ -3,8 +3,9 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var path = require("path");
-var cookieParser = require("cookie-parser");
+//var cookieParser = require("cookie-parser");
 var session = require("express-session");
+const MongoStore = require('connect-mongo')(session);
 var dotenv = require("dotenv");
 var passport = require("passport");
 var dbUser = require("./models/user.js");
@@ -29,22 +30,49 @@ var app = express();
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(cookieParser());
-app.use(session({
-  // Create unique session identifier
-  secret: 'hushhush',
-  resave: false,
-  saveUnitiailized: false,
-  cookie: {}
-}));
+//app.use(cookieParser());
+// app.use(session({
+//   // Create unique session identifier
+//   secret: 'hushhush',
+//   resave: false,
+//   saveUnitiailized: true,
+//   cookie: {}
+// }));
 // Make public a static dir
 app.use(express.static(path.join(__dirname, "public/frontend")));
-app.use(passport.initialize());
-app.use(passport.session());
 app.set('views', path.join(__dirname, 'public/frontend'));
 // app.set('view engine', 'jade');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
+
+
+//using connect-mongo for our ession store
+// Basic usage 
+if(process.env.MONGODB_URI) {
+  app.use(session({
+    secret: 'hushhush',
+    resave: false,
+    saveUninitialized: true,
+    store: new MongoStore({ 
+      url: process.env.MONGODB_URI,
+      ttl: 14 * 24 * 60 * 60 // = 14 days. Default  
+    })
+  }));
+} else {
+  app.use(session({
+    secret: 'hushhush',
+    resave: false,
+    saveUninitialized: true,
+    store: new MongoStore({ 
+      url: 'mongodb://localhost/project3',
+      ttl: 14 * 24 * 60 * 60 // = 14 days. Default  
+     })
+  }));
+}
+
+//passport setup
+app.use(passport.initialize());
+app.use(passport.session());
 
 //adding app to http, since socket uses http to handle connections
 var http = require('http').Server(app);
@@ -89,6 +117,8 @@ passport.use(new LocalStrategy({
   passwordField: 'password',
   passReqToCallback: true
 }, function(req, username, password, done) {
+  //console.log("In autheitcate new local start thing"),
+  //console.log(req.body, username, password);
   var loggedUser = {
     email: username,
     password: password
@@ -96,9 +126,11 @@ passport.use(new LocalStrategy({
 
   dbUser.findOne({email: loggedUser.email}, function(error, data) {
     if (error) {
+      console("Error, User not logged in");
       return done(null, false, {message: "No account found, check email"});
     }
     if (!data) {
+      console("No data, User not logged in");
       return done(null, false, {message: "No account found, check email"});
     }
 
@@ -117,10 +149,12 @@ passport.use(new LocalStrategy({
 
 // The searlize and deserialize user methods will allow us to get the user data once they are logged in.
 passport.serializeUser(function(user, done) {
+  //console.log("When do we seriallize");
   done(null, user);
 });
 
 passport.deserializeUser(function(user, done) {
+  //console.log("When do we deseriallize");
   done(null, user);
 });
 
