@@ -1,11 +1,5 @@
 $(document).ready(function() {
     var counter = 0;
-    $.get("/user", function(data, status) {
-        $("#email").val(data.user.email);
-        $("#username").val(data.user.username);
-        var teamNum = data.user.team;
-        $("div.col-10 select").val(teamNum);
-    });
     $("#save").hide();
     $("#unlock").click(function() {
         var readonly = $('input').attr('readonly');
