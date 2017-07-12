@@ -6,14 +6,12 @@ var request = require("request");
 var path = require("path");
 var dbUser = require("../models/user.js");
 
-var env = {
-	AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
-	AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
-	AUTH0_CALLBACK_URL: 'http://localhost:8080/callback'
-};
 
 router.get("/", function(req, res) {
-	res.render('index', {env: env });
+	var ejsObj = {authed: req.isAuthenticated(), name: null};
+	if(req.isAuthenticated())
+		ejsObj.name = req.user.username;
+	res.render('index.ejs', ejsObj);
 });
 
 router.get("/createaccount", function(req, res) {
@@ -22,7 +20,7 @@ router.get("/createaccount", function(req, res) {
 
 router.get('/profile',function(req, res) {
 	if (req.isAuthenticated()) {
-		res.render('profile');
+		res.render('profile', {username: req.user.username, email: req.user.email, team: req.user.team});
 	} else {
 		res.redirect('/login');
 	}
@@ -44,7 +42,7 @@ router.get('/callback',
 
 router.get("/game", function(req, res){
 	if (req.isAuthenticated()) {
-		res.render('game');
+		res.sendfile('./public/frontend/game.1.html');
 	} else {
 		res.redirect('/login');
 	}
