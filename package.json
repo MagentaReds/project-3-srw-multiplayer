@@ -1,7 +1,7 @@
 {
   "name": "project-3-project-harder",
   "version": "1.0.0",
-  "description": "",
+  "description": "Fan multiplayer game based off of Super Robot Wars Original Generation 2",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,20 +9,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MagentaReds/project-3-project-harder.git"
+    "url": "git+https://github.com/MagentaReds/project-3-srw-multiplayer.git"
   },
-  "author": "Grant Daniels",
+  "author": "Grant Daniels, Jacob Wallace, Zach Zador",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MagentaReds/project-3-project-harder/issues"
+    "url": "https://github.com/MagentaReds/project-3-srw-multiplayer/issues"
   },
-  "homepage": "https://github.com/MagentaReds/project-3-project-harder#readme",
+  "homepage": "https://github.com/MagentaReds/project-3-srw-multiplayer#readme",
   "dependencies": {
-    "auth0-lock": "^10.18.0",
     "bcrypt": "^1.0.2",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "connect-ensure-login": "^0.1.1",
+    "connect-mongo": "^1.3.2",
     "cookie-parser": "^1.4.3",
     "debug": "^2.6.8",
     "dotenv": "^4.0.0",
@@ -35,7 +35,6 @@
     "mongoose": "^4.10.0",
     "morgan": "^1.8.2",
     "passport": "^0.3.2",
-    "passport-auth0": "^0.6.0",
     "passport-local": "^1.0.0",
     "socket.io": "^2.0.1"
   }
