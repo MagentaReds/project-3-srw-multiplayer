@@ -41,9 +41,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 // Make public a static dir
 app.use(express.static(path.join(__dirname, "public/frontend")));
 app.set('views', path.join(__dirname, 'public/frontend'));
-// app.set('view engine', 'jade');
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
 
 
 //using connect-mongo for our ession store
@@ -167,14 +165,14 @@ app.use(function(err, req, res, next) {
   	error: err
   });
 
-});                                                                                                                            
+});
 
 
 //Routes
 var apiRoutes = require("./routes/apiRoutes.js");
 var htmlRoutes = require("./routes/htmlRoutes.js");
 app.use(apiRoutes);
-app.use("/", htmlRoutes);
+app.use(htmlRoutes);
 
 
 // Listen on port 3000, using http instead of app due to socket.io
