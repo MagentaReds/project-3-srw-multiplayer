@@ -36,17 +36,38 @@ $(document).ready(function() {
         event.preventDefault();
         var data = {};
         data.username = $("#username").val().trim();
-        data.email = $("#email").val().trim();
+        data.email = $("#email").val().trim().toLowerCase();
         data.team = parseInt($("#team option:selected").val());
-        $.post('/updateaccount', data, function(res) {
-            // $.get("/user", function(data, status) {
-            //     $("#email").val(data.email);
-            //     $("#username").val(data.username);
-            //     var teamNum = "val" + data.team;
-            //     $("div.col-10 select").val(teamNum);
-            // });
-        });
+        data.oldPassword = $("#oldPassword").val().trim()
+        data.password = $("#password").val().trim()
+        var pass2 = $("#password2").val().trim()
+        if(!data.oldPassword){
+            fillAndShowModal("Current password required for account changes.");
+        }else if(data.oldPassword && data.password!==pass2) {
+            fillAndShowModal("New passwords do not match");
+        } else if(data.username==="") {
+            fillAndShowModal("Username cannot be blank");
+        } else if(data.email==="") {
+            fillAndShowModal("Email cannot be blank");
+        } else {
+            $.post('/updateaccount', data, function(res) {
+                if(res.success) {
+                    fillAndShowModal("Changes made to account");
+                    $("#oldPassword").val("");
+                    $("#password").val("");
+                    $("#password2").val("");
+                }
+                else
+                    fillAndShowModal(res.msg);
+            });
+        }
 
     });
+
+    function fillAndShowModal(msg) {
+		var modal = $("#resultModal");
+		modal.find(".message").text(msg);
+		modal.modal("show");
+	}
 
 });

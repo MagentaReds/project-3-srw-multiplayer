@@ -28,94 +28,124 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-      </head>
+</head>
 
-      <body>
+<body>
 
-        <!-- Page Content -->
+  <!-- Page Content -->
 
-        <a  name="services"></a>
-        <div class="content-section-a">
+  <a  name="services"></a>
+  <div class="content-section-a">
 
-          <div class="container">
-            <div class="row">
-              <div class="col-lg-5">
-                <form action="/updateaccount", method="POST">
-                  <div class="form-group row">
-                    <label for="example-email-input" class="col-2 col-form-label">Email</label>
-                    <div class="col-10">
-                      <input class="form-control" type="email" value="" id="email" readonly>
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="example-url-input" class="col-2 col-form-label">Username</label>
-                    <div class="col-10">
-                      <input class="form-control" type="text" value="" id="username" readonly>
-                    </div>
-                  </div>
-<!--                 <div class="form-group row">
-                  <label for="example-password-input" class="col-2 col-form-label">Password</label>
-                  <div class="col-10">
-                    <input class="form-control" type="password" value="hunter2" id="password" readonly>
-                  </div>
-                </div> -->
-                <div class="form-group row">
-                  <label for="example-select-input" class="col-2 col-form-label">Team</label>
-                  <div class="col-10">
-                    <select class="form-control" id="team" readonly>
-                      <option value="1">1: SRX</option>
-                      <option value="2">2: ATX</option>
-                      <option value="3">3: The School</option>
-                      <option value="4">4: The Aggressors</option>
-                      <option value="5">5: Aliens</option>
-                      <option value="6">6: Team Tank</option>
-                    </select>
-                  </div>
-                </div>
-                <button id="unlock" type="button" class="btn btn-default">Change Info</button>
-                <button id="save" type="submit" class="btn btn-success">Save</button>
-                <br>
-                 <a id='btn-login' class="btn btn-default btn-lg" onclick="location.href='./game'">Game Lobby</span></a>
-                 <br>
-                 <a id='btn-login' class="btn btn-default btn-lg" onclick="location.href='./game.1.html'">Game Lobby New Testt</span></a>
-              </form>
-            </div>
-            <!-- /.container -->
-
-
-          </div>
-          <a  name="contact"></a>
-          <div class="banner">
-
-            <div class="container">
-
-              <div class="row">
-                <div class="col-lg-6">
-                  <h2>Check out the code:</h2>
-                </div>
-                <div class="col-lg-6">
-                  <ul class="list-inline banner-social-buttons">
-                    <li>
-                      <a href="https://github.com/MagentaReds/project-3-srw-multiplayer" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
-                    </li>
-                  </ul>
-                </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-5">
+          <form action="/updateaccount", method="POST">
+            <div class="form-group row">
+              <label for="example-email-input" class="col-2 col-form-label">Email</label>
+              <div class="col-10">
+                <input class="form-control" type="email" value="" id="email" readonly>
               </div>
-
             </div>
-            <!-- /.container -->
-
+            <div class="form-group row">
+              <label for="example-url-input" class="col-2 col-form-label">Username</label>
+              <div class="col-10">
+                <input class="form-control" type="text" value="" id="username" readonly>
+              </div>
+            </div>
+            <div class="form-group row">
+            <label for="example-select-input" class="col-2 col-form-label">Team</label>
+            <div class="col-10">
+              <select class="form-control" id="team" readonly>
+                <option value="1">1: SRX</option>
+                <option value="2">2: ATX</option>
+                <option value="3">3: The School</option>
+                <option value="4">4: The Aggressors</option>
+                <option value="5">5: Aliens</option>
+                <option value="6">6: Team Tank</option>
+              </select>
+            </div>
           </div>
-          <!-- /.banner -->
+            <div class="form-group row">
+              <label for="example-password-input" class="col-2 col-form-label">Current Password</label>
+              <div class="col-10">
+                <input class="form-control" type="password" value="" id="oldPassword" readonly>
+              </div>
+            </div>
+            <div class="form-group row">
+            <label for="example-password-input" class="col-2 col-form-label">New Password</label>
+            <div class="col-10">
+              <input class="form-control" type="password" value="" id="password" readonly>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-password-input" class="col-2 col-form-label">Reenter Password</label>
+            <div class="col-10">
+              <input class="form-control" type="password" value="" id="password2" readonly>
+            </div>
+          </div>
+          <button id="unlock" type="button" class="btn btn-default">Change Info</button>
+          <button id="save" type="submit" class="btn btn-success">Save</button>
+          <br>
+            <a id='btn-login' class="btn btn-default btn-lg" onclick="location.href='./game'">Game Lobby</span></a>
+            <br>
+            <a id='btn-login' class="btn btn-default btn-lg" onclick="location.href='./game.1.html'">Game Lobby New Testt</span></a>
+        </form>
+      </div>
+      <!-- /.container -->
 
-          <!-- jQuery -->
-          <script src="js/jquery.js"></script>
 
-          <!-- Bootstrap Core JavaScript -->
-          <script src="js/bootstrap.min.js"></script>
+    </div>
+    <a  name="contact"></a>
+    <div class="banner">
 
-          <script src="js/profile.js"></script>
+      <div class="container">
 
-        </body>
+        <div class="row">
+          <div class="col-lg-6">
+            <h2>Check out the code:</h2>
+          </div>
+          <div class="col-lg-6">
+            <ul class="list-inline banner-social-buttons">
+              <li>
+                <a href="https://github.com/MagentaReds/project-3-srw-multiplayer" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-        </html>
+      </div>
+      <!-- /.container -->
+
+    </div>
+    <!-- /.banner -->
+
+    <!-- Status Modal -->
+    <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Update Account Result</h4>
+          </div>
+          <div class="modal-body">
+            <span class="message"></span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+      </div>
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <script src="js/profile.js"></script>
+
+  </body>
+
+  </html>
