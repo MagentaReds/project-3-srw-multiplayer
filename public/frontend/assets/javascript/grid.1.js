@@ -23,44 +23,12 @@ $(function() {
 	rooms[3]=new Array(2);
 	rooms[4]=new Array(2);
 
-
-		// example location of where an active unit could be
+	// example location of where an active unit could be
 	var activeUnit = [];
 	activeUnit = [5,2];
 
 	var activePlayer = 3;
 	var myId = 3;
-
-	var availableWeapons = {
-		weapons: [
-			{
-				id: 1,
-				name: "Attack 1",
-				range: [1,1],
-				dmg: 2000,
-				canUse: true,
-				hit: 30,
-				ammo: "20/20"
-			},
-			{
-				id: 4,
-				name: "Attack Fulls",
-				range: [3,7],
-				dmg: 1000,
-				canUse: false,
-				hit: 40,
-				ammo: "30/30"
-			}
-		]
-	}
-
-	var availableAttackTiles = [
-		[5,4],
-		[5,6],
-		[4,5],
-		[6,5]
-	];
-
 
 	//Ajax call to get user id from logged in user.
 	$.get("/user", function(res){
@@ -623,6 +591,10 @@ $(function() {
 		$("#cancel").hide();
 		$("#cancel").unbind("click");
 		$(document).off("keydown");
+		socket.emit("active unit", function(data){
+			displayActiveTile([data.r, data.c]);
+			blinkActiveTile([data.r, data.c]);
+		});
 	}
 
 	function cancelSpiritEsc (e) {
@@ -631,6 +603,10 @@ $(function() {
 			allyTiles = [];
 			$(document).off("keydown");
 			$("#cancel").hide();
+			socket.emit("active unit", function(data){
+				displayActiveTile([data.r, data.c]);
+				blinkActiveTile([data.r, data.c]);
+			});
 		}
 	}
 
@@ -646,7 +622,7 @@ $(function() {
 	function displayAllyTiles(locate) {
 		setTimeout(function(){
 			for (var y = 0; y < locate.length; y++) {
-				$(`div.grid-square div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
+				$(`div.grid-square div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#ffeb3b").css('opacity', "0.5").addClass('blink');
 				$(`div.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", castSpirit);
 			}
 		}, 5);
@@ -679,6 +655,7 @@ $(function() {
 				}
 				else if (!data.success) {
 					console.log("can't use that weapon");
+					writeMessage("You cannot use that weapon!");
 					console.log(data);
 					cancelAttack();
 				}
@@ -704,6 +681,7 @@ $(function() {
 				}
 				else if (!data.success) {
 					console.log("can't use that weapon");
+					writeMessage("You cannot use that weapon!");
 					console.log(data);
 					cancelAttack();
 				}
@@ -726,9 +704,15 @@ $(function() {
 					$("#cancel").unbind("click");
 					$(document).off("keydown");
 					cancelSpirit();
+					writeMessage(data.msg);
+					socket.emit("active unit", function(data){
+						displayActiveTile([data.r, data.c]);
+						blinkActiveTile([data.r, data.c]);
+					});
 				}
 				else if (!data.success) {
 					console.log("can't cast that spirit");
+					writeMessage("You cannot cast that spirit!");
 					console.log(data);
 					cancelSpirit();
 				}
