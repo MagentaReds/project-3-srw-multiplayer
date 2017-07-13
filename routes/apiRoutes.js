@@ -88,6 +88,11 @@ router.get("/createaccount", function(req, res) {
 router.post("/updateaccount", function(req, res) {
 	//console.log(req.body);
 	if(req.isAuthenticated()) {
+
+		if(req.user.email==="test1@test1.com" || req.user.email==="test2@test2.com"){
+			return res.json({success: false, msg:"Sorry, you cannot edit the Test accounts."});
+		}
+
 		dbUser.findById(req.user._id, function(err, user){
 			bcrypt.compare(req.body.oldPassword, req.user.hash, function(err, result){
 				if(err)
