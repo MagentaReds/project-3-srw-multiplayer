@@ -3,7 +3,7 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var path = require("path");
-//var cookieParser = require("cookie-parser");
+//var passportOneSessionPerUser=require('passport-one-session-per-user');
 var session = require("express-session");
 const MongoStore = require('connect-mongo')(session);
 var dotenv = require("dotenv");
@@ -30,15 +30,6 @@ var app = express();
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-//app.use(cookieParser());
-// app.use(session({
-//   // Create unique session identifier
-//   secret: 'hushhush',
-//   resave: false,
-//   saveUnitiailized: true,
-//   cookie: {}
-// }));
-// Make public a static dir
 app.use(express.static(path.join(__dirname, "public/frontend")));
 app.set('views', path.join(__dirname, 'public/frontend'));
 app.set('view engine', 'ejs');
@@ -72,6 +63,9 @@ if(process.env.MONGODB_URI) {
 app.use(passport.initialize());
 app.use(passport.session());
 
+// passport.use(new passportOneSessionPerUser());
+// app.use(passport.authenticate('passport-one-session-per-user'));
+
 //adding app to http, since socket uses http to handle connections
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -96,13 +90,16 @@ db.once("open", function() {
 
   //if populate mongodb, wait for import script to finish then make the gameIntercae
   //otherwise just make the gameInterface.
-  if(process.env.POPULATE_MONGODB){
+  if(process.env.POPULATE_MONGODB && process.env.POPULATE_MONGODB==="true"){
     //imported data from file into mongodb.
     console.log("Repopulating MONGODB");
     var importScript = require("./database/import_script.js");
     importScript().then(()=>{
       var importTeams = require("./database/make_premade_teams.js");
       importTeams().then(()=>{
+        var makeUsers = require("./database/premade_users.js");
+        return makeUsers();
+      }).then(()=>{
         gameInt= new GameInterface(http, io, false);
       });
     });
