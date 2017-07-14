@@ -249,7 +249,7 @@ class Unit {
     obj.hp = this.hp;
     obj.hpMax = this.hpMax;
     obj.en = this.en;
-    obj.enMax= this.en;
+    obj.enMax= this.enMax;
     obj.sp = this.sp;
     obj.spMax = this.spMax;
     obj.weapons = this.weapons;
@@ -364,7 +364,7 @@ class Unit {
     if(this.status.includes(Status.focus))
       res+=30;
     if(this.skills.has(Skill.prevail));
-      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.hpMax);
     if(this.skills.has(Skill.telekinesis))
       res+=Helpers.getTKHitEvd(this.skills.get(Skill.telekinesis));
     if(this.skills.has(Skill.genius))
@@ -380,7 +380,7 @@ class Unit {
     if(this.status.includes(Status.focus))
       res+=30;
     if(this.skills.has(Skill.prevail));
-      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.hpMax);
     if(this.skills.has(Skill.telekinesis))
       res+=Helpers.getTKHitEvd(this.skills.get(Skill.telekinesis));
     if(this.skills.has(Skill.genius))
@@ -398,7 +398,7 @@ class Unit {
     if(this.skills.has(Skill.genius))
       res+=20;
     if(this.skills.has(Skill.prevail));
-      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.hpMax);
   }
 
   modDmgFlat(wepCat) {
@@ -453,7 +453,7 @@ class Unit {
   modArmScale() {
     var res=1.0;
     if(this.skills.has(Skill.prevail))
-      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.hpMax);
 
     return res;
   }
@@ -745,6 +745,12 @@ class Unit {
                 || this.addStatus(Status.valor)
                 || this.addStatus(Status.gain)
                 || this.addStatus(Status.luck)) {
+          this.addStatus(Status.accel);
+          this.addStatus(Status.strike);
+          this.addStatus(Status.alert);
+          this.addStatus(Status.valor);
+          this.addStatus(Status.gain);
+          this.addStatus(Status.luck);
           this.sp-=spirit[1];
           return true;
         } else
