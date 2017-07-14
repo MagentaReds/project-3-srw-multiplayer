@@ -21,10 +21,13 @@ var helpers = {
   },
 
   getPrevailHEA: function(level, percentHp) {
+    console.log("REvail HI,EVD<ARM");
+    console.log(level,percentHp);
     if(!level)
       return 0;
 
     var table=new Array(10);
+    table[0]=[0,0,0,0,0,0,0,0,0,0];
     table[1]=[5,0,0,0,0,0,0,0,0,0];
     table[2]=[10,5,0,0,0,0,0,0,0,0];
     table[3]=[15,10,5,0,0,0,0,0,0,0];
@@ -44,6 +47,7 @@ var helpers = {
       return 0;
 
     var table=new Array(10);
+    table[0]=[0,0,0,0,0,0,0,0,0,0];
     table[1]=[8,0,0,0,0,0,0,0,0,0];
     table[2]=[16,8,0,0,0,0,0,0,0,0];
     table[3]=[24,16,8,0,0,0,0,0,0,0];
