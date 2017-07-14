@@ -347,6 +347,7 @@ body {
 	left: 40%;
 }
 
+
 .blink {
   animation: blinker 1s linear infinite;
 }

@@ -23,6 +23,11 @@ $(function() {
 	rooms[3]=new Array(2);
 	rooms[4]=new Array(2);
 
+	//queue of messages to be displayed;
+	var msgs =[];
+	var msgInterval = null;
+	var useFirstMessageModal = true;
+
 	// example location of where an active unit could be
 	var activeUnit = [];
 	activeUnit = [5,2];
@@ -407,6 +412,7 @@ $(function() {
 
 	function writeMessage (msg) {
 		$("#messageDiv").text(msg);
+		addMessage(msg);
 
 		var roomMsg = document.getElementById('roomMessageDiv');
 		var shouldScroll = roomMsg.scrollTop + roomMsg.clientHeight === roomMsg.scrollHeight;
@@ -877,6 +883,40 @@ $(function() {
         duration: 1000
       }
     });
+		$( "#messageModal_1" ).dialog({
+      autoOpen: false,
+			draggable: false,
+      show: {
+        effect: "slide",
+        duration: 200
+      },
+      hide: {
+        effect: "slide",
+        duration: 200
+      },
+			position: {
+				my: "center top",
+				at: "center top",
+				of: "body"
+			}
+    });
+		$( "#messageModal_2" ).dialog({
+      autoOpen: false,
+			draggable: false,
+      show: {
+        effect: "slide",
+        duration: 200
+      },
+      hide: {
+        effect: "slide",
+        duration: 200
+      },
+			position: {
+				my: "center top",
+				at: "center top",
+				of: "body"
+			}
+    });
 
 		// hide our JQuery UI
 		$("#menu").hide();
@@ -979,6 +1019,42 @@ $(function() {
 					$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).removeClass("clickedTile");
 			}
 		});
+	}
+
+	function startMessageInterval() {
+		if(!msgInterval) {
+			 msgInterval = 1;
+			setTimeout(function() {
+				displayNextMessage();
+				msgInterval=setInterval(displayNextMessage, 2*1000);
+			}, 200);
+		}
+	}
+
+	function addMessage(msg) {
+		msgs.push(msg);
+		startMessageInterval();
+	}
+
+	function displayNextMessage() {
+		dismissMessageModal(useFirstMessageModal ? 1 : 2);
+		useFirstMessageModal = !useFirstMessageModal;
+		if(msgs.length!==0) {
+			var msg = msgs.splice(0,1)[0];
+			fillMessageModal(useFirstMessageModal ? 1 : 2, msg);
+		} else {
+			clearInterval(msgInterval);
+			msgInterval=null;
+		}
+	}
+
+	function dismissMessageModal(num) {
+		$(`#messageModal_${num}`).dialog("close");
+	}
+
+	function fillMessageModal(num, msg) {
+		$(`#messageModal_${num} .msgBody`).text(msg);
+		$(`#messageModal_${num}`).dialog("open");
 	}
 
 });
