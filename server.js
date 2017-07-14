@@ -115,17 +115,17 @@ passport.use(new LocalStrategy({
   //console.log("In autheitcate new local start thing"),
   //console.log(req.body, username, password);
   var loggedUser = {
-    email: username,
-    password: password
+    email: username.toLowerCase().trim(),
+    password: password.trim()
   };
 
   dbUser.findOne({email: loggedUser.email}, function(error, data) {
     if (error) {
-      console("Error, User not logged in");
+      console.log("Error, User not logged in");
       return done(null, false, {message: "No account found, check email"});
     }
     if (!data) {
-      console("No data, User not logged in");
+      console.log("No data, User not logged in");
       return done(null, false, {message: "No account found, check email"});
     }
 
