@@ -275,6 +275,8 @@ class Unit {
     obj.pilotImg = `/img/pilot/${this.name}.png`;
     obj.will = this.will;
     obj.alive = this.isAlive;
+    obj.r = this.r;
+    obj.c = this.c;
     return obj;
   }
 

@@ -256,20 +256,13 @@ $(function() {
 	$(document).on("click", "div.grid-square", function(event) {
 		var dataR = parseInt($(this).attr("data-r"));
 		var dataC = parseInt($(this).attr("data-c"));
-		globalR = dataR;
-		globalC = dataC;
-		socket.emit("get actions", {r: dataR,c: dataC}, function(response){
-			console.log(response.actions);
-			enableActions(response.actions)
-		});
+		selectTile(dataR, dataC);
+	});
 
-		$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).addClass("clickedTile");
-		$(document).one("click", "div.grid-square", function(event) {
-			// if next clicked tile is outside the one that was previously clicked on
-			if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-					$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).removeClass("clickedTile");
-			}
-		});
+	$(document).on("click", ".unitBox", function(){
+		var dataR = parseInt($(this).attr("data-r"));
+		var dataC = parseInt($(this).attr("data-c"));
+		selectTile(dataR, dataC);
 	});
 
 	$(".joinRoom").on("click", function(e){
@@ -450,7 +443,7 @@ $(function() {
 		var pos = tile.position();
 		var mapDiv = $(document.getElementById('mapContainer'));
 		var height = mapDiv.scrollHeight;
-		mapDiv.animate({scrollTop: pos.top+scrollTop-(300*0.8), scrollLeft: pos.left+scrollLeft-(400*0.8)});// = pos.top - pos2.top;
+		mapDiv.animate({scrollTop: pos.top+scrollTop-300, scrollLeft: pos.left+scrollLeft-400});// = pos.top - pos2.top;
 		// = pos.left - pos2.left;
 		// console.log("height: " + height, pos.top - pos2.top);
 		console.log(pos);
@@ -927,7 +920,7 @@ $(function() {
 				spLabel = $("<div>").addClass("spiritLabel");
 				namesAndStatus = $("<div>").addClass("namesAndStatus clearfix");
 				unit=data.players[i].units[k];
-				unitDiv=$("<div>");
+				unitDiv=$("<div>").addClass("unitBox").attr("data-r", unit.r).attr("data-c", unit.c);
 				if(!unit.alive)
 					unitDiv.addClass("dead");
 				if(unit.active)
@@ -967,6 +960,25 @@ $(function() {
 		var doc = $(document);
 		doc.off("keydown");
 		doc.keydown(func);
+	}
+
+	function selectTile(r,c) {
+		var dataR = r;
+		var dataC = c;
+		globalR = dataR;
+		globalC = dataC;
+		socket.emit("get actions", {r: dataR,c: dataC}, function(response){
+			console.log(response.actions);
+			enableActions(response.actions)
+		});
+
+		$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).addClass("clickedTile");
+		$(document).one("click", "div.grid-square, .unitBox", function(event) {
+			// if next clicked tile is outside the one that was previously clicked on
+			if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
+					$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).removeClass("clickedTile");
+			}
+		});
 	}
 
 });
