@@ -263,16 +263,11 @@ $(function() {
 			enableActions(response.actions)
 		});
 
-		$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
+		$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).addClass("clickedTile");
 		$(document).one("click", "div.grid-square", function(event) {
 			// if next clicked tile is outside the one that was previously clicked on
 			if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-					$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
-				// call this function so it's background doesn't become transparent
-				socket.emit("active unit", function(data){
-					displayActiveTile([data.r, data.c]);
-					blinkActiveTile([data.r, data.c]);
-				});
+					$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).removeClass("clickedTile");
 			}
 		});
 	});
@@ -448,6 +443,18 @@ $(function() {
 	function displayActiveTile(locate) {
 		// locates active tile where unit will be and colors in tile with green
 		$(`div.grid-style[data-r=${locate[0]}][data-c=${locate[1]}]`).css('background', "#64dd17").css('opacity', "0.5");
+		var scrollTop = document.getElementById('mapContainer').scrollTop;
+		var scrollLeft = document.getElementById('mapContainer').scrollLeft;
+		var tile = $(`div.grid-square[data-r=${locate[0]}][data-c=${locate[1]}]`);
+		var offset = tile.offset();
+		var pos = tile.position();
+		var mapDiv = $(document.getElementById('mapContainer'));
+		var height = mapDiv.scrollHeight;
+		mapDiv.animate({scrollTop: pos.top+scrollTop-(300*0.8), scrollLeft: pos.left+scrollLeft-(400*0.8)});// = pos.top - pos2.top;
+		// = pos.left - pos2.left;
+		// console.log("height: " + height, pos.top - pos2.top);
+		console.log(pos);
+		console.log(locate);
 	}
 	function blinkActiveTile(locate) {
 		// locates active tile where unit will be and blinks tile
@@ -895,30 +902,61 @@ $(function() {
 		var div;
 		var unit;
 		var unitDiv;
+		var namesAndStatus;
+		var pilotHp;
+		var pilotEn;
+		var pilotSp;
+		var hpLabel;
+		var enLabel;
+		var spLabel;
 		for(var i=0; i<data.players.length; ++i){
 			div=$("<div>");
 			if(data.players[i].defated)
 				div.addClass("defeated");
 			// if(data.players[i].active)
 			// 	div.addClass("active");
-			div.append(`${i+1}: ${data.players[i].name}`);
-			div.append(` Defeated: ${data.players[i].defeated}`);
+			div.append(`P${i+1}: ${data.players[i].name}`);
+			// div.append(` Defeated: ${data.players[i].defeated}`);
 			div.append($("<hr>"));
 			for(var k=0; k<data.players[i].units.length; ++k){
+				pilotHp = $("<div>").addClass("pilotHealthBar");
+				hpLabel = $("<div>").addClass("healthLabel");
+				pilotEn = $("<div>").addClass("pilotEnergyBar");
+				enLabel = $("<div>").addClass("energyLabel");
+				pilotSp = $("<div>").addClass("pilotSpiritBar");
+				spLabel = $("<div>").addClass("spiritLabel");
+				namesAndStatus = $("<div>").addClass("namesAndStatus clearfix");
 				unit=data.players[i].units[k];
 				unitDiv=$("<div>");
 				if(!unit.alive)
 					unitDiv.addClass("dead");
 				if(unit.active)
 					unitDiv.addClass("active");
-				unitDiv.append($("<img>").attr("src", unit.pilotImg));
-				unitDiv.append($("<p>").text(`${unit.name} (${unit.mechName})`));
-				unitDiv.append($("<p>").text(`HP: ${unit.hp}/${unit.hpMax}`));
-				unitDiv.append($("<p>").text(`EN: ${unit.en}/${unit.enMax}`));
-				unitDiv.append($("<p>").text(`SP: ${unit.sp}/${unit.spMax}`));
-				unitDiv.append($("<p>").text(`Status: ${unit.status.toString()}`));
-				unitDiv.append($("<hr>"));
+				namesAndStatus.append($("<p>").text(`${unit.name} (${unit.mechName})`));
+				namesAndStatus.append($("<p>").text(`Status: ${unit.status.toString()}`));
+				unitDiv.append(namesAndStatus);
+				unitDiv.append($("<img>").attr("src", unit.pilotImg).addClass("pilotImgStyle clearfix"));
+				// unitDiv.append("<br><br>");
+				// unitDiv.append($("<p>").text(`HP: ${unit.hp}/${unit.hpMax}`));
+				unitDiv.append(pilotHp);
+				pilotHp.append(hpLabel.text(`HP: ${unit.hp}/${unit.hpMax}`));
+				pilotHp.progressbar({
+					value: parseInt((unit.hp / unit.hpMax)*100)
+				});
+				// unitDiv.append($("<p>").text(`EN: ${unit.en}/${unit.enMax}`));
+				unitDiv.append(pilotEn);
+				pilotEn.append(enLabel.text(`EN: ${unit.en}/${unit.enMax}`));
+				pilotEn.progressbar({
+					value: parseInt((unit.en / unit.enMax)*100)
+				});
+				// unitDiv.append($("<p>").text(`SP: ${unit.sp}/${unit.spMax}`));
+				unitDiv.append(pilotSp);
+				pilotSp.append(spLabel.text(`SP: ${unit.sp}/${unit.spMax}`));
+				pilotSp.progressbar({
+					value: parseInt((unit.sp / unit.spMax)*100)
+				});
 				div.append(unitDiv);
+				div.append($("<hr>"));
 			}
 			$(`#player${i+1}`).empty().append(div);
 		}
