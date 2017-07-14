@@ -2,6 +2,11 @@ body {
     background-image: url("./../media/space.jpg");
 }
 
+.clickedTile {
+  background: #ffb300;
+  opacity: 0.5;
+}
+
 .clearfix:after {
   content: "";
   display: block;
@@ -29,12 +34,10 @@ body {
 	display: flex;
 	flex-direction: column;
 	color: white;
-	transform: scale(.75);
 }
 
 .playerBox {
 	flex: 0 1 auto;
-
 }
 
 .dead {
@@ -51,6 +54,71 @@ body {
 	border: 3px solid #64dd17;
 }
 
+.pilotHealthBar .ui-progressbar-value {
+  background-color: #64dd17;
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.pilotHealthBar {
+  height: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.healthLabel {
+  left: calc(50% - 35px);
+  font-size: 50%;
+  position: absolute;
+}
+
+.pilotEnergyBar .ui-progressbar-value {
+  background-color: #ffc400;
+}
+
+.pilotEnergyBar {
+  height: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.energyLabel {
+  left: calc(50% - 25px);
+  font-size: 50%;
+  position: absolute;
+}
+
+.pilotSpiritBar .ui-progressbar-value {
+  background-color: lightblue;
+}
+
+.pilotSpiritBar {
+  height: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.spiritLabel {
+  left: calc(50% - 25px);
+  font-size: 50%;
+  position: absolute;
+}
+
+.pilotImgStyle {
+  display: block;
+  float: right;
+}
+
+.namesAndStatus {
+  line-height: 40%;
+  font-size: 50%;
+  float: left;
+}
+
 #mapContainer {
 	flex: 0 1 auto;
 	margin: auto;
@@ -65,7 +133,7 @@ body {
 	padding: 0;
 	width: 1560px;
 	transform: scale(.8);
-	
+
 }
 
 #grid div {
@@ -83,7 +151,7 @@ body {
 
 #grid div img {
 	height: 50px;
-	padding-bottom: 5px;	
+	padding-bottom: 5px;
 }
 
 .grid-square {
@@ -102,7 +170,7 @@ body {
 }
 #messageDiv {
 	color: white;
-	
+
 }
 
 #roomMessageDiv {
@@ -118,7 +186,6 @@ body {
 	height: 300px;
 	overflow-y: scroll;
 }
-
 
 /*STATUS STYLE*/
 

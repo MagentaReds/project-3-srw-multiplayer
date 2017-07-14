@@ -23,44 +23,12 @@ $(function() {
 	rooms[3]=new Array(2);
 	rooms[4]=new Array(2);
 
-
-		// example location of where an active unit could be
+	// example location of where an active unit could be
 	var activeUnit = [];
 	activeUnit = [5,2];
 
 	var activePlayer = 3;
 	var myId = 3;
-
-	var availableWeapons = {
-		weapons: [
-			{
-				id: 1,
-				name: "Attack 1",
-				range: [1,1],
-				dmg: 2000,
-				canUse: true,
-				hit: 30,
-				ammo: "20/20"
-			},
-			{
-				id: 4,
-				name: "Attack Fulls",
-				range: [3,7],
-				dmg: 1000,
-				canUse: false,
-				hit: 40,
-				ammo: "30/30"
-			}
-		]
-	}
-
-	var availableAttackTiles = [
-		[5,4],
-		[5,6],
-		[4,5],
-		[6,5]
-	];
-
 
 	//Ajax call to get user id from logged in user.
 	$.get("/user", function(res){
@@ -288,25 +256,13 @@ $(function() {
 	$(document).on("click", "div.grid-square", function(event) {
 		var dataR = parseInt($(this).attr("data-r"));
 		var dataC = parseInt($(this).attr("data-c"));
-		globalR = dataR;
-		globalC = dataC;
-		socket.emit("get actions", {r: dataR,c: dataC}, function(response){
-			console.log(response.actions);
-			enableActions(response.actions)
-		});
+		selectTile(dataR, dataC);
+	});
 
-		$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).css('background', "#ffb300").css('opacity', "0.5");
-		$(document).one("click", "div.grid-square", function(event) {
-			// if next clicked tile is outside the one that was previously clicked on
-			if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
-					$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).css('background', "transparent").css('opacity', "1");
-				// call this function so it's background doesn't become transparent
-				socket.emit("active unit", function(data){
-					displayActiveTile([data.r, data.c]);
-					blinkActiveTile([data.r, data.c]);
-				});
-			}
-		});
+	$(document).on("click", ".unitBox", function(){
+		var dataR = parseInt($(this).attr("data-r"));
+		var dataC = parseInt($(this).attr("data-c"));
+		selectTile(dataR, dataC);
 	});
 
 	$(".joinRoom").on("click", function(e){
@@ -480,6 +436,18 @@ $(function() {
 	function displayActiveTile(locate) {
 		// locates active tile where unit will be and colors in tile with green
 		$(`div.grid-style[data-r=${locate[0]}][data-c=${locate[1]}]`).css('background', "#64dd17").css('opacity', "0.5");
+		var scrollTop = document.getElementById('mapContainer').scrollTop;
+		var scrollLeft = document.getElementById('mapContainer').scrollLeft;
+		var tile = $(`div.grid-square[data-r=${locate[0]}][data-c=${locate[1]}]`);
+		var offset = tile.offset();
+		var pos = tile.position();
+		var mapDiv = $(document.getElementById('mapContainer'));
+		var height = mapDiv.scrollHeight;
+		mapDiv.animate({scrollTop: pos.top+scrollTop-300, scrollLeft: pos.left+scrollLeft-400});// = pos.top - pos2.top;
+		// = pos.left - pos2.left;
+		// console.log("height: " + height, pos.top - pos2.top);
+		console.log(pos);
+		console.log(locate);
 	}
 	function blinkActiveTile(locate) {
 		// locates active tile where unit will be and blinks tile
@@ -623,6 +591,10 @@ $(function() {
 		$("#cancel").hide();
 		$("#cancel").unbind("click");
 		$(document).off("keydown");
+		socket.emit("active unit", function(data){
+			displayActiveTile([data.r, data.c]);
+			blinkActiveTile([data.r, data.c]);
+		});
 	}
 
 	function cancelSpiritEsc (e) {
@@ -631,6 +603,10 @@ $(function() {
 			allyTiles = [];
 			$(document).off("keydown");
 			$("#cancel").hide();
+			socket.emit("active unit", function(data){
+				displayActiveTile([data.r, data.c]);
+				blinkActiveTile([data.r, data.c]);
+			});
 		}
 	}
 
@@ -646,7 +622,7 @@ $(function() {
 	function displayAllyTiles(locate) {
 		setTimeout(function(){
 			for (var y = 0; y < locate.length; y++) {
-				$(`div.grid-square div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#d32f2f").css('opacity', "0.5").addClass('blink');
+				$(`div.grid-square div.grid-style[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).css('background', "#ffeb3b").css('opacity', "0.5").addClass('blink');
 				$(`div.grid-square[data-r=${locate[y][0]}][data-c=${locate[y][1]}]`).bind("click", castSpirit);
 			}
 		}, 5);
@@ -679,6 +655,7 @@ $(function() {
 				}
 				else if (!data.success) {
 					console.log("can't use that weapon");
+					writeMessage("You cannot use that weapon!");
 					console.log(data);
 					cancelAttack();
 				}
@@ -704,6 +681,7 @@ $(function() {
 				}
 				else if (!data.success) {
 					console.log("can't use that weapon");
+					writeMessage("You cannot use that weapon!");
 					console.log(data);
 					cancelAttack();
 				}
@@ -726,9 +704,15 @@ $(function() {
 					$("#cancel").unbind("click");
 					$(document).off("keydown");
 					cancelSpirit();
+					writeMessage(data.msg);
+					socket.emit("active unit", function(data){
+						displayActiveTile([data.r, data.c]);
+						blinkActiveTile([data.r, data.c]);
+					});
 				}
 				else if (!data.success) {
 					console.log("can't cast that spirit");
+					writeMessage("You cannot cast that spirit!");
 					console.log(data);
 					cancelSpirit();
 				}
@@ -911,30 +895,61 @@ $(function() {
 		var div;
 		var unit;
 		var unitDiv;
+		var namesAndStatus;
+		var pilotHp;
+		var pilotEn;
+		var pilotSp;
+		var hpLabel;
+		var enLabel;
+		var spLabel;
 		for(var i=0; i<data.players.length; ++i){
 			div=$("<div>");
 			if(data.players[i].defated)
 				div.addClass("defeated");
 			// if(data.players[i].active)
 			// 	div.addClass("active");
-			div.append(`${i+1}: ${data.players[i].name}`);
-			div.append(` Defeated: ${data.players[i].defeated}`);
+			div.append(`P${i+1}: ${data.players[i].name}`);
+			// div.append(` Defeated: ${data.players[i].defeated}`);
 			div.append($("<hr>"));
 			for(var k=0; k<data.players[i].units.length; ++k){
+				pilotHp = $("<div>").addClass("pilotHealthBar");
+				hpLabel = $("<div>").addClass("healthLabel");
+				pilotEn = $("<div>").addClass("pilotEnergyBar");
+				enLabel = $("<div>").addClass("energyLabel");
+				pilotSp = $("<div>").addClass("pilotSpiritBar");
+				spLabel = $("<div>").addClass("spiritLabel");
+				namesAndStatus = $("<div>").addClass("namesAndStatus clearfix");
 				unit=data.players[i].units[k];
-				unitDiv=$("<div>");
+				unitDiv=$("<div>").addClass("unitBox").attr("data-r", unit.r).attr("data-c", unit.c);
 				if(!unit.alive)
 					unitDiv.addClass("dead");
 				if(unit.active)
 					unitDiv.addClass("active");
-				unitDiv.append($("<img>").attr("src", unit.pilotImg));
-				unitDiv.append($("<p>").text(`${unit.name} (${unit.mechName})`));
-				unitDiv.append($("<p>").text(`HP: ${unit.hp}/${unit.hpMax}`));
-				unitDiv.append($("<p>").text(`EN: ${unit.en}/${unit.enMax}`));
-				unitDiv.append($("<p>").text(`SP: ${unit.sp}/${unit.spMax}`));
-				unitDiv.append($("<p>").text(`Status: ${unit.status.toString()}`));
-				unitDiv.append($("<hr>"));
+				namesAndStatus.append($("<p>").text(`${unit.name} (${unit.mechName})`));
+				namesAndStatus.append($("<p>").text(`Status: ${unit.status.toString()}`));
+				unitDiv.append(namesAndStatus);
+				unitDiv.append($("<img>").attr("src", unit.pilotImg).addClass("pilotImgStyle clearfix"));
+				// unitDiv.append("<br><br>");
+				// unitDiv.append($("<p>").text(`HP: ${unit.hp}/${unit.hpMax}`));
+				unitDiv.append(pilotHp);
+				pilotHp.append(hpLabel.text(`HP: ${unit.hp}/${unit.hpMax}`));
+				pilotHp.progressbar({
+					value: parseInt((unit.hp / unit.hpMax)*100)
+				});
+				// unitDiv.append($("<p>").text(`EN: ${unit.en}/${unit.enMax}`));
+				unitDiv.append(pilotEn);
+				pilotEn.append(enLabel.text(`EN: ${unit.en}/${unit.enMax}`));
+				pilotEn.progressbar({
+					value: parseInt((unit.en / unit.enMax)*100)
+				});
+				// unitDiv.append($("<p>").text(`SP: ${unit.sp}/${unit.spMax}`));
+				unitDiv.append(pilotSp);
+				pilotSp.append(spLabel.text(`SP: ${unit.sp}/${unit.spMax}`));
+				pilotSp.progressbar({
+					value: parseInt((unit.sp / unit.spMax)*100)
+				});
 				div.append(unitDiv);
+				div.append($("<hr>"));
 			}
 			$(`#player${i+1}`).empty().append(div);
 		}
@@ -945,6 +960,25 @@ $(function() {
 		var doc = $(document);
 		doc.off("keydown");
 		doc.keydown(func);
+	}
+
+	function selectTile(r,c) {
+		var dataR = r;
+		var dataC = c;
+		globalR = dataR;
+		globalC = dataC;
+		socket.emit("get actions", {r: dataR,c: dataC}, function(response){
+			console.log(response.actions);
+			enableActions(response.actions)
+		});
+
+		$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).addClass("clickedTile");
+		$(document).one("click", "div.grid-square, .unitBox", function(event) {
+			// if next clicked tile is outside the one that was previously clicked on
+			if (($(this).attr("data-r")!=dataR) || ($(this).attr("data-c")!=dataC)){
+					$(`div.grid-square div[data-r=${dataR}][data-c=${dataC}]`).removeClass("clickedTile");
+			}
+		});
 	}
 
 });
