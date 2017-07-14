@@ -25,6 +25,8 @@ var helpers = {
     console.log(level,percentHp);
     if(!level)
       return 0;
+    if(percentHp===1)
+      return 0;
 
     var table=new Array(10);
     table[0]=[0,0,0,0,0,0,0,0,0,0];
@@ -44,6 +46,8 @@ var helpers = {
 
   getPrevailCrit: function(level, percentHp) {
     if(!level)
+      return 0;
+    if(percentHp===1)
       return 0;
 
     var table=new Array(10);
