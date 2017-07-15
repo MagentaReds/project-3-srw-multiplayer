@@ -21,8 +21,6 @@ var helpers = {
   },
 
   getPrevailHEA: function(level, percentHp) {
-    console.log("REvail HI,EVD<ARM");
-    console.log(level,percentHp);
     if(!level)
       return 0;
     if(percentHp===1)
