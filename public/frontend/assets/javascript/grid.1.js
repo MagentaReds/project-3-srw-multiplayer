@@ -883,40 +883,42 @@ $(function() {
         duration: 1000
       }
     });
-		$( "#messageModal_1" ).dialog({
-      autoOpen: false,
-			draggable: false,
-      show: {
-        effect: "slide",
-        duration: 200
-      },
-      hide: {
-        effect: "slide",
-        duration: 200
-      },
-			position: {
-				my: "center top",
-				at: "center top",
-				of: "body"
-			}
-    });
-		$( "#messageModal_2" ).dialog({
-      autoOpen: false,
-			draggable: false,
-      show: {
-        effect: "slide",
-        duration: 200
-      },
-      hide: {
-        effect: "slide",
-        duration: 200
-      },
-			position: {
-				my: "center top",
-				at: "center top",
-				of: "body"
-			}
-    });
+		$( "#messageModal_1" ).hide().position({my: "center top", at: "center top",of: "body"});
+		$( "#messageModal_2" ).hide().position({my: "center top", at: "center top",of: "body"});;
+		// $( "#messageModal_1" ).dialog({
+    //   autoOpen: false,
+		// 	draggable: false,
+    //   show: {
+    //     effect: "slide",
+    //     duration: 200
+    //   },
+    //   hide: {
+    //     effect: "slide",
+    //     duration: 200
+    //   },
+		// 	position: {
+		// 		my: "center top",
+		// 		at: "center top",
+		// 		of: "body"
+		// 	}
+    // });
+		// $( "#messageModal_2" ).dialog({
+    //   autoOpen: false,
+		// 	draggable: false,
+    //   show: {
+    //     effect: "slide",
+    //     duration: 200
+    //   },
+    //   hide: {
+    //     effect: "slide",
+    //     duration: 200
+    //   },
+		// 	position: {
+		// 		my: "center top",
+		// 		at: "center top",
+		// 		of: "body"
+		// 	}
+    // });
 
 		// hide our JQuery UI
 		$("#menu").hide();
@@ -1049,12 +1051,12 @@ $(function() {
 	}
 
 	function dismissMessageModal(num) {
-		$(`#messageModal_${num}`).dialog("close");
+		$(`#messageModal_${num}`).hide("slide");
 	}
 
 	function fillMessageModal(num, msg) {
 		$(`#messageModal_${num} .msgBody`).text(msg);
-		$(`#messageModal_${num}`).dialog("open");
+		$(`#messageModal_${num}`).show("slide");
 	}
 
 });

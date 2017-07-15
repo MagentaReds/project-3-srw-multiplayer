@@ -17,6 +17,12 @@ body {
   display: none;
 }
 
+.messageModal {
+	position: absolute;
+	text-align: center;
+	width: 300px;
+}
+
 #roomDiv {
   display: flex;
   flex: 1;
