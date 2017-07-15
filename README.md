@@ -3,7 +3,7 @@ ___
 
 This is a fan game (strictly for non profit, educational purpose only, please don't sue us!) based off of Bandai Namco's Super Robot Taisen: Original Generation 2 video game for the Nintendo Game Boy Advance.  
 
-The app was developed using Node.js, Express.js, Mongoose, Ejs, Passport.js, and Bcrypt on the backend. And jQuery, jQuery UI, Bootstrap, and Ejs for the front end.  Socket.io is used as the main method of letting the game client and game server communicate with each other.
+The app was developed using Node.js, Express.js, Mongoose, Ejs, Passport.js, and Bcrypt on the backend. And jQuery, jQuery UI, Bootstrap, and Ejs for the front end.  Socket.io is used as the main method of enabling the game client and game server communicate with each other.
 
 Besides the above mentioned technologies and packages/libraries, the main game engine, the game interface between the engine and socket.io, and the game client has been hand coded to purpose.
 
@@ -77,10 +77,10 @@ The game engine will also emit information to game interface to send to clients 
 
 
 ___
-#### Authors
-* Jacob Wallace: Front End Game UI, back end code.
-* Zach Zador: Authentication, Front End Page Design, Express Routes.
-* Grant Daniels: Game Engine and Game Integration with Socket.io, Data collection
+#### Authors (Main Contributions/Tasks)
+* Jacob Wallace: Front End Game UI, Game Design, Server/Client Integration
+* Zach Zador: User Authentication, Front End Page Design, Express Routes.
+* Grant Daniels: Game Design, Game Engine, Server/Client Integration, Data collection, Database Management
 ___
 ##### Notes:
-All character and mech names and and their images are owned by Bandai Namco Entertainment.
+All character and mech/robot names and and their images are owned by Bandai Namco Entertainment.
