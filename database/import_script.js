@@ -143,6 +143,7 @@ function addWeaponsHelper(dataSource, mechCodeName, builtIn, outputArray){
       en: tempWpn.en,
       crit: tempWpn.crit,
       skill: tempWpn.skill,
+      will: tempWpn.will,
       properties: tempWpn.properties,
       builtIn: builtIn,
       type: tempWpn.type,
