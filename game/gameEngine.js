@@ -506,9 +506,10 @@ class Game  {
   //returns an array of all possible tiles the weapon can target, and all valid tragets within that range
   getTargets(playerId, r, c, weaponId) {
     var wepRef = this.uRef.weapons[weaponId];
-    var range, targets;
+    var range, targets, wpRange
     if(wepRef) {
-      range = this.map.getPossibleTargets(r,c,wepRef.range[0], wepRef.range[1]);
+      wpRange =  this.uRef.getRange(weaponId);
+      range = this.map.getPossibleTargets(r,c,wpRange[0], wpRange[1]);
       targets = this.map.getTargets(playerId, range);
     }
 
@@ -745,7 +746,8 @@ class Game  {
       return false;
 
     var distance = (Math.abs(r-toR)+Math.abs(c-toC));
-    if(distance<wepRef.range[0] || distance>wepRef.range[1])
+    var range = selUnit.getRange(wepId);
+    if(distance<range[0] || distance>range[1])
       return false;
     else
       return wepRef.canAttack(selUnit, selUnit.hasMoved);
@@ -902,7 +904,8 @@ class Game  {
       return 0;
 
     var distance = (Math.abs(atkRef.r-defRef.r)+Math.abs(atkRef.c-defRef.c));
-    if(distance<wep.range[0] || distance>wep.range[1])
+    var range = atkRef.getRange(wepId);
+    if(distance<range[0] || distance>range[1])
       return 0;
 
     if(defRef.status.includes(Status.alert))
@@ -942,7 +945,8 @@ class Game  {
       return 0;
 
     var distance = (Math.abs(atkRef.r-defRef.r)+Math.abs(atkRef.c-defRef.c));
-    if(distance<wep.range[0] || distance>wep.range[1])
+    var range = atkRef.getRange(wepId);
+    if(distance<range[0] || distance>range[1])
       return 0;
 
 
