@@ -183,7 +183,7 @@ class Unit {
     arr[0]=wep.range[0];
     arr[1]=wep.range[1];
 
-    if(this.status.includes(Status.snipe) && !wep.prop.includes('MAP') && wep.range[1]>1)
+    if(this.status.includes(Status.snipe) && !wep.props.includes('MAP') && wep.range[1]>1)
       arr[1]+=2;
 
     if(this.skills.has(Skill.gunfight))
@@ -518,7 +518,7 @@ class Unit {
     else if(this.will+w > 150)
       this.will=150;
     else
-      this.will
+      this.will+=w;
 
     return true;
   }
