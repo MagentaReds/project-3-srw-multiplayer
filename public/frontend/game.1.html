@@ -98,106 +98,107 @@
       <div id="grid">
       </div>
 
-      <!-- main actions menu i.e. actions === 0 -->
-      <ul id="menu" class="ui-menu-our">
-        <li id="moveLi">
-          <div class="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
-        </li>
-        <li id="attackLi"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
-          <ul class="weapons">
-          </ul>
-        </li>
-        <li id="spiritLi">
-          <div id="spirit"><span class="ui-icon ui-icon-star"></span>Spirit Commands</div>
-            <ul class="spirits">
-            </ul>
-        </li>
-        <li id="statusLi">
-          <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
-        </li>
-      </ul>
-      <!-- cancel button, gets used to cancel move and attack BEFORE a movement or attack is made -->
-      <ul id="cancel" class="ui-menu-cancel">
-        <li id="cancelLi">
-          <div><span class="ui-icon ui-icon-closethick"></span>Press Esc to Cancel Action</div>
-        </li>
-      </ul>
-      <!-- status menu i.e. actions === 4, will be used by both active and non-active players -->
-      <ul id="status" class="ui-menu-our">
-        <li id="statusLi">
-          <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
-        </li>
-      </ul>
-      <!-- this menu pops up if you are active player and you click on and empty square i.e. actions === 5 -->
-      <ul id="endSurrender" class="ui-menu-our">
-        <li>
-          <div class="standby"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
-        </li>
-        <li>
-          <div><span class="ui-icon ui-icon-alert"></span>Surrender</div>
-        </li>
-      </ul>
-      <!-- actions === 1, if active player has moved then this menu pops up (can attack not move) -->
-      <ul id="menu2" class="ui-menu-our">
-        <li><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
-          <ul class="weapons">
-          </ul>
-        </li>
-        <li>
-          <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
-        </li>
-        <li>
-          <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
-        </li>
-      </ul>
-      <!-- actions === 6, if you are not active player and click on empty square (can only surrender here)-->
-      <ul id="surrender" class="ui-menu-our">
-        <li>
-          <div class = "surrender"><span class="ui-icon ui-icon-alert"></span>Surrender</div>
-        </li>
-      </ul>
-      <!-- actions === 2, active unit has hit away and has attacked but NOT moved -->
-      <ul id="hitAwayAndHasAttacked" class="ui-menu-our">
-        <li id="moveLi">
-          <div class="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
-        </li>
-        <li>
-          <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
-        </li>
-      </ul>
-      <!-- actions === 3, active unit has hit away and has attacked AND has moved -->
-      <ul id="hitAwayAndHasAttackedHasMoved" class="ui-menu-our">
-        <li>
-          <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
-        </li>
-        <li>
-          <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
-        </li>
-      </ul>
-      <!-- defense actions menu, pops up when being attacked -->
-      <ul id="counterMenu" class="ui-menu-counter">
-        <div>
-          <span class="attacker"></span> is attacking with <span class="weapon"></span>
-          <br>
-          Hit percent: <span class="hitPercent"></span>%
-          <br>
-          Choose a defense option:
-        </div>
-        <hr/>
-        <li id="counterAttack"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
-          <ul class="weapons">
-          </ul>
-        </li>
-        <li id="counterEvade">
-          <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>Evade</div>
-            <ul><li><div id="confirmEvade">Confirm?</div></li></ul>
-        </li>
-        <li id="counterDefend">
-          <div id="spirit"><span class="ui-icon ui-icon-star"></span>Defend</div>
-            <ul><li><div id="confirmDefend">Confirm?</div></li></ul>
-        </li>
-      </ul>
     </div>
+
+        <!-- main actions menu i.e. actions === 0 -->
+    <ul id="menu" class="ui-menu-our">
+      <li id="moveLi">
+        <div class="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
+      </li>
+      <li id="attackLi"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
+        <ul class="weapons">
+        </ul>
+      </li>
+      <li id="spiritLi">
+        <div id="spirit"><span class="ui-icon ui-icon-star"></span>Spirit Commands</div>
+          <ul class="spirits">
+          </ul>
+      </li>
+      <li id="statusLi">
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
+      </li>
+    </ul>
+    <!-- cancel button, gets used to cancel move and attack BEFORE a movement or attack is made -->
+    <ul id="cancel" class="ui-menu-cancel">
+      <li id="cancelLi">
+        <div><span class="ui-icon ui-icon-closethick"></span>Press Esc to Cancel Action</div>
+      </li>
+    </ul>
+    <!-- status menu i.e. actions === 4, will be used by both active and non-active players -->
+    <ul id="status" class="ui-menu-our">
+      <li id="statusLi">
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
+      </li>
+    </ul>
+    <!-- this menu pops up if you are active player and you click on and empty square i.e. actions === 5 -->
+    <ul id="endSurrender" class="ui-menu-our">
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
+      </li>
+      <li>
+        <div><span class="ui-icon ui-icon-alert"></span>Surrender</div>
+      </li>
+    </ul>
+    <!-- actions === 1, if active player has moved then this menu pops up (can attack not move) -->
+    <ul id="menu2" class="ui-menu-our">
+      <li><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
+        <ul class="weapons">
+        </ul>
+      </li>
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+      <li>
+        <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+      </li>
+    </ul>
+    <!-- actions === 6, if you are not active player and click on empty square (can only surrender here)-->
+    <ul id="surrender" class="ui-menu-our">
+      <li>
+        <div class = "surrender"><span class="ui-icon ui-icon-alert"></span>Surrender</div>
+      </li>
+    </ul>
+    <!-- actions === 2, active unit has hit away and has attacked but NOT moved -->
+    <ul id="hitAwayAndHasAttacked" class="ui-menu-our">
+      <li id="moveLi">
+        <div class="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
+      </li>
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+    </ul>
+    <!-- actions === 3, active unit has hit away and has attacked AND has moved -->
+    <ul id="hitAwayAndHasAttackedHasMoved" class="ui-menu-our">
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+      <li>
+        <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+      </li>
+    </ul>
+    <!-- defense actions menu, pops up when being attacked -->
+    <ul id="counterMenu" class="ui-menu-counter">
+      <div>
+        <span class="attacker"></span> is attacking with <span class="weapon"></span>
+        <br>
+        Hit percent: <span class="hitPercent"></span>%
+        <br>
+        Choose a defense option:
+      </div>
+      <hr/>
+      <li id="counterAttack"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
+        <ul class="weapons">
+        </ul>
+      </li>
+      <li id="counterEvade">
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>Evade</div>
+          <ul><li><div id="confirmEvade">Confirm?</div></li></ul>
+      </li>
+      <li id="counterDefend">
+        <div id="spirit"><span class="ui-icon ui-icon-star"></span>Defend</div>
+          <ul><li><div id="confirmDefend">Confirm?</div></li></ul>
+      </li>
+    </ul>
 
     <!-- Player's 1 and 3 status -->
     <div id="player24" class="playerBar">

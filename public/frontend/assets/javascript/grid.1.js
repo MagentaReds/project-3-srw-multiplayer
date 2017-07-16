@@ -329,12 +329,13 @@ $(function() {
 
 
 	function enableActions(actions=-1) {
-		var scrollTop = document.getElementById('mapContainer').scrollTop;
-		var scrollLeft = document.getElementById('mapContainer').scrollLeft;
-		var pos = $(`div.grid-square[data-r=${globalR}][data-c=${globalC}]`).position();
+		var scrollTop = 0; // document.getElementById('mapContainer').scrollTop;
+		var scrollLeft = 0; //document.getElementById('mapContainer').scrollLeft;
+		var pos = $(`div.grid-square[data-r=${globalR}][data-c=${globalC}]`).offset();
 		//console.log(pos.top, pos.left);
 		//move menu to our grid's posiiton, adjusted by the scroll bar top/left position.
 		$(".ui-menu-our").css("top", pos.top+50+scrollTop).css("left", pos.left+scrollLeft);
+		//$(".ui-menu-our").position({my: "left top", at: "left bottom",of: `div.grid-square[data-r=${globalR}][data-c=${globalC}]`});
 
 		if (actions === -1) { // hide all menus
 			$("#menu").hide();
