@@ -1080,8 +1080,8 @@ class Game  {
 
   //emits the ascii map and real map.
   emitMap() {
-    this.inter.emitMap(this.map.getAsciiMap());
-    this.inter.emitRealMap(this.map.getRealMap());
+    //this.inter.emitMap(this.map.getAsciiMap());
+    this.inter.emitRealMap(this.map.getRealMap(this.posR, this.posC));
   }
 
   emitUpdatePlayers() {
