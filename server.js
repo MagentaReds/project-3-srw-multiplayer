@@ -30,8 +30,8 @@ var app = express();
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, "public/frontend")));
-app.set('views', path.join(__dirname, 'public/frontend'));
+app.use(express.static(path.join(__dirname, "public/assets")));
+app.set('views', path.join(__dirname, 'public/views'));
 app.set('view engine', 'ejs');
 
 

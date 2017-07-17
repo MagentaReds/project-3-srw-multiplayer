@@ -42,7 +42,7 @@ router.get('/callback',
 
 router.get("/game", function(req, res){
 	if (req.isAuthenticated()) {
-		res.sendfile('./public/frontend/game.1.html');
+		res.sendfile('./public/views/game.html');
 	} else {
 		res.redirect('/login');
 	}
