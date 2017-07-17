@@ -662,7 +662,7 @@ var r_series = {
     iWeapons: ["Gatling Gun", "T-Link Knuckle", "T-Link Sword"],
     weapons: ["Steel Knife", "G-Revolver", "Boosted Rifle"]
   },
-  R_wing: {
+  R_Wing: {
     name: "R-Wing",
     stats: [3800, 120, 125, 1100],
     upgrade: [7,7,5,9],
