@@ -206,7 +206,7 @@ class Map {
         if (this.tiles[r][c].unit) {
           tempUnit=this.tiles[r][c].unit;
           //Will need to be url to per unit later on.
-          obj={img: `img/icon/${tempUnit.color}/icon${tempUnit.order}.png`, action:1};
+          obj={img: `img/icon/${tempUnit.color}/${tempUnit.mechCodeName}.png`, action:1};
           if(curR===r && curC===c)
             obj.action=2;
           output[r][c]=obj;
