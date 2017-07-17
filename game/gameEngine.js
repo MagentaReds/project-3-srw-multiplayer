@@ -24,7 +24,7 @@ class Game  {
     this.players=[];
     for(var i = 0; i<clientList.length; ++i)
       if(clientList[i]) {
-        this.players.push(new Player(clientList[i].me));
+        this.players.push(new Player(clientList[i].me, i));
       }
 
     this.numPlayers=this.players.length;
@@ -85,6 +85,7 @@ class Game  {
 
     console.log(`It is ${this.pRef.name} Unit's ${this.uRef.name} Turn`);
     this.emitMap();
+    this.emitUpdatePlayers();
   }
 
   //Returns the player to go next;
@@ -97,6 +98,37 @@ class Game  {
     return this.players[this.currentPlayer];
   }
 
+  isDefeated(playerId) {
+    for(let i=0; i<this.players.length; ++i) 
+      if(playerId===this.players[i].id)
+        return this.players[i].isDefeated();
+
+    return true;
+  }
+
+  playerLeft(playerId) {
+    for(let i=0; i<this.players.length; ++i) {
+      if(playerId===this.players[i].id) {
+        this.players[i].surrender();
+
+        for(let k=0; k<this.players[i].units.length; ++k) {
+          if(this.players[i].units.isAlive)
+            this.map.setUnit(this.players[i].units.r, this.players[i].units.c, null);
+          this.players[i].units.isAlive=false;
+        }
+
+        if(this.currentPlayer===i) {
+          this.addFlag(Flags.turnOver);
+          this.checkFlags();
+        } else if(this.defender && this.defender.owner === playerId && this.inFlags(Flags.waitingForDef)) {
+          this.removeFlag(Flags.waitingForDef);
+          this.checkFlags();
+        }
+        return;
+      }
+    }
+  }
+
   //adds a flag to the flags array
   addFlag(flag) {
     if(!this.flags.includes(flag))
@@ -107,7 +139,7 @@ class Game  {
   removeFlag(flag) {
     var index = this.flags.indexOf(flag);
     if(index!==-1)
-      this.flags.splice(index, 0);
+      this.flags.splice(index, 1);
   }
 
   //removes all flags from the flags array
@@ -206,7 +238,7 @@ class Game  {
   //GameInterface to Game method: returns a response based on the games state and which socket called it
   //returns a response that contains the list of possible squares a unit may move to
   getMove(playerId, r, c) {
-    var sucRes = {success: true, tiles: this.map.getPossibleMovement(r, c, this.uRef.move), actions:["Cancel"]};
+    var sucRes = {success: true, tiles: this.map.getPossibleMovement(r, c, this.uRef.getMove()), actions:["Cancel"]};
     var failRes = {success: false, tiles: [], actions:[]};
     var failRes2 = {success: false, tiles: [], actions:["Cancel"]};
     var selUnit = this.map.getUnit(r,c);
@@ -235,7 +267,7 @@ class Game  {
   //GameInterface to Game method:
   //returns a list move squares that a unit at r,c can move to, no checking game state
   requestMoveTiles(playerId, r, c){
-    return this.map.getPossibleMovement(r, c, this.uRef.move);
+    return this.map.getPossibleMovement(r, c, this.uRef.getMove());
   }
 
   //GameInterface to Game method: returns a response based on the games state and which socket called it
@@ -246,9 +278,13 @@ class Game  {
     var failRes = {success: false, actions:[], msg: `Cannot move this square`};
     var failRes2 = {success: false, actions:1, msg: `${this.uRef.name} has already moved this turn`}; // ["Attack", "Standby","Cancel"]
 
-    var posMov = this.map.getPossibleMovement(r, c, this.uRef.move);
+    var posMov = this.map.getPossibleMovement(r, c, this.uRef.getMove());
 
     var selUnit = this.map.getUnit(r,c);
+
+    if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
+      return failRes2;
+    }
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -263,6 +299,7 @@ class Game  {
           this.uRef.setRC(toR, toC);
           this.uRef.hasMoved=true;
           this.emitMap();
+          this.emitUpdatePlayers();
           return sucRes;
         } else{
           return failRes;
@@ -276,8 +313,7 @@ class Game  {
           this.uRef.setRC(toR, toC);
           this.uRef.hasMoved=true;
           this.emitMap();
-          this.addFlag(Flags.turnOver);
-          this.checkFlags();
+          this.emitUpdatePlayers();
           return sucRes2;
         } else{
           return failRes;
@@ -323,8 +359,10 @@ class Game  {
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
         var didCast = selUnit.castSC(spiritId, tarUnit);
-        if(didCast)
+        if(didCast) {
+          this.emitUpdatePlayers();
           return sucRes;
+        }
         else
           return failRes2;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
@@ -342,6 +380,7 @@ class Game  {
   }
 
   doCancel(playerId, r, c) {
+    console.log(this.flags);
     var sucRes = {success: true, actions:[], msg:"You have cancel!"};
     var sucRes2 = {success: true, actions:[], msg:"Nothing to cancel"};
     var failRes = {success: false, actions:[], msg:"Cannot cancel this square"};
@@ -367,7 +406,8 @@ class Game  {
         selUnit.hasMoved=false;
         this.posR=this.oldR;
         this.posC=this.oldC;
-        this.inter.emitMap(this.map.getAsciiMap());
+        this.emitMap();
+        this.emitUpdatePlayers();
         this.emptyFlags();
         this.addFlag(Flags.newRound);
         return sucRes;
@@ -379,7 +419,8 @@ class Game  {
         selUnit.hasMoved=false;
         this.posR=this.oldR;
         this.posC=this.oldC;
-        this.inter.emitMap(this.map.getAsciiMap());
+        this.emitMap();
+        this.emitUpdatePlayers();
         this.removeFlag(Flags.hasMoved);
         return sucRes;
       }
@@ -408,13 +449,17 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
-        return failRes2;
+        this.addFlag(Flags.turnOver);
+        this.checkFlags();
+        return sucRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         this.addFlag(Flags.turnOver);
         this.checkFlags();
         return sucRes;
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
-        return failRes2;
+        this.addFlag(Flags.turnOver);
+        this.checkFlags();
+        return sucRes;
       } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         this.addFlag(Flags.turnOver);
         this.checkFlags();
@@ -505,9 +550,9 @@ class Game  {
       return {success: false, actions:[]};
     }
 
-    var sucRes = {success: true, stats: this.getAttackStats(selUnit, tarUnit, null), actions:["Stats"]};
-    var failRes = {success: false, actions:[]};
-    var failRes2 = {success: false, actions:["Cancel"]};
+    var sucRes = {success: true, target: `${tarUnit.name} (${tarUnit.mechName})`, weapon: wepRef.name, stats: this.getAttackStats(selUnit, tarUnit, weaponId), msg:"You can attack with that weapon"};
+    var failRes = {success: false, actions:[], msg: "You cannot attack with that weapon"};
+    var failRes2 = {success: false, actions:["Cancel"], msg: "You cannot attack with that weapon"};
 
 
     if(this.pRef.id===playerId){
@@ -516,9 +561,15 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
-        return sucRes;
+        if(this.canAttack(r,c,toR,toC,weaponId)) {
+          return sucRes;
+        } else
+          return failRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
-        return sucRes;
+        if(this.canAttack(r,c,toR,toC,weaponId)) {
+          return sucRes;
+        } else
+          return failRes;
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
         return failRes2;
       } else {
@@ -541,7 +592,7 @@ class Game  {
     else {
       return {success: true, weapons: selUnit.getWeapons()}
     }
-    
+
   }
 
   getStatus(playerId, r, c) {
@@ -556,13 +607,44 @@ class Game  {
 
   }
 
+  getAllies(playerId, r, c) {
+    var selUnit = this.map.getUnit(r,c);
+
+    var failRes = {success: false, msg:"Target Square is wrong"};
+
+    if(!selUnit)
+      return failres;
+
+    if(this.pRef.id===playerId){
+      if(!selUnit) {
+        return failRes;
+      } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
+        return failRes;
+      } else if(this.inFlags(Flags.newRound)) {
+        return {success: true, targets: this.players[this.currentPlayer].getUnitLocations()}
+      } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        return failRes;
+      } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
+        return failRes;
+      } else {
+        return failRes;
+      }
+    } else if(!selUnit) {
+      return failRes;
+    } else {
+      return failRes;
+    }
+  }
+
   //GameInterface to Game method: returns a response based on the games state and which socket called it
   //tries to actually attack the unit at toR, toC with the weapon, erturns true or false if the attack fails or not
   doAttack(playerId, r, c, toR, toC, weaponId) {
     var wepRef = this.uRef.weapons[weaponId];
     var range, targets;
+     
     if(wepRef) {
-      range = this.map.getPossibleTargets(r,c,wepRef.range[0], wepRef.range[1]);
+      let wepRange = this.uRef.getRange(weaponId);
+      range = this.map.getPossibleTargets(r,c,wepRange[0], wepRange[1]);
       targets = this.map.getTargets(playerId, range);
     }
 
@@ -572,6 +654,12 @@ class Game  {
 
     var selUnit = this.map.getUnit(r,c);
     var tarUnit = this.map.getUnit(toR,toC);
+
+    if(this.inFlags(Flags.waitingForDef) || this.inFlags(Flags.turnOver)){
+      return failRes2;
+    }
+    if(!selUnit || !tarUnit || tarUnit.owner===selUnit.owner)
+      return failRes;
 
     if(this.pRef.id===playerId){
       if(!selUnit) {
@@ -619,7 +707,6 @@ class Game  {
 
     var sucRes = {success: true, actions:[]};
     var failRes = {success: false, actions:[]};
-
 
     if(this.defender.owner===playerId){
       if(action==="Attack"){
@@ -675,7 +762,7 @@ class Game  {
     //set attacking weapon
     this.weapon=wepId;
     //emit message to defending unit's player about what they want to do.
-    this.getDefenseAction(def, atk);
+    this.getDefenseAction(def, atk, wepId);
   }
 
   //is called when the defender chooses a defense action
@@ -686,6 +773,7 @@ class Game  {
     if(action==="Attack")
       this.defWep=wepId;
     this.computeAttack(this.uRef ,this.weapon, this.defender, this.defWep, action);
+    this.emitUpdatePlayers();
     this.removeFlag(Flags.waitingForDef);
     this.checkFlags();
   }
@@ -714,7 +802,7 @@ class Game  {
     var damage = this.getDamage(this.uRef, this.defender, this.weapon);
     var crit = this.getCritPercent(this.uRef, this.defender, this.weapon);
 
-    if(counterType === "Evade" && !atkRef.hasStrike())
+    if(counterType === "Evade" && !this.uRef.hasStrike())
       hit = Math.floor(hit/2);
     else if(counterType === "Defend")
       damage = Math.floor(damage/2);
@@ -775,10 +863,11 @@ class Game  {
   //actioncs ["Attack", "Evade", "Defend"]
   //later on will get  also get options if there are Off.Supp and Off.Def Units around, get teir data too
   //Will also send all availb eweapons that they can Attack with.
-  getDefenseAction(def, atk) {
+  getDefenseAction(def, atk, wepId) {
     var attackStats = this.getAttackStats(def, atk);
+    
 
-    var data = {actions: ["Attack", "Evade", "Defend"], weapons:def.weapons, stats:attackStats};
+    var data = {actions: ["Attack", "Evade", "Defend"], weapons:def.weapons, stats:attackStats, attacker: `${atk.name} (${atk.mechName})`, attackWeapon: `${atk.weapons[wepId].name}`, hitPercent: this.getHitPercent(atk, def, wepId)};
     this.inter.emitGetCounter(def.owner, data);
   }
 
@@ -787,7 +876,7 @@ class Game  {
   //second in the tuple is the actualy hit percetange of that weapon against the enemy unit
   getAttackStats(atkRef, defRef, weaponId=null) {
     if(weaponId!==null) {
-      if(!atkRef.weapons[weaponId].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, weaponId))
+      if(atkRef.weapons[weaponId].isMap() || !this.canAttack(atkRef.r, atkRef.c, defRef.r, defRef.c, weaponId))
         return [false, 0];
       else
         return [true, this.getHitPercent(atkRef, defRef, weaponId)];
@@ -923,7 +1012,7 @@ class Game  {
     if(!unit.isAlive) {
       this.inter.emitMessage(`${unit.name} has been shot down!`);
       this.map.setUnit(unit.r, unit.c, null);
-      this.inter.emitMap(this.map.getAsciiMap());
+      this.emitMap();
 
       this.playerEnemyShotDown(atkUnit)
       this.playerAllyShotDown(unit);
@@ -985,21 +1074,75 @@ class Game  {
 
   }
 
-  //emits the ascrii map
+  //emits the ascii map and real map.
   emitMap() {
-    // this.inter.emitMap(this.map.getAsciiMap());
-    console.log("in game engine");
+    this.inter.emitMap(this.map.getAsciiMap());
     this.inter.emitRealMap(this.map.getRealMap());
   }
 
+  emitUpdatePlayers() {
+    var data = {msg:'Updating Player Data', players:[]};
+    var temp;
+    var plyr;
+
+    for(let i=0; i<this.players.length; ++i) {
+      temp={};
+      plyr=this.players[i];
+      temp.name=plyr.name;
+      temp.defeated = plyr.isDefeated();
+      if(plyr.id===this.players[this.currentPlayer].id)
+        temp.active = true;
+      else
+        temp.active = false;
+
+      temp.units = [];
+      for(let k=0; k<plyr.units.length; ++k) {
+        temp.units.push(plyr.units[k].getStatusSmall());
+        if(this.uRef===plyr.units[k]) {
+          temp.units[k].active=true;
+        } else
+          temp.units[k].active=false;
+      }
+      data.players.push(temp);
+    }
+
+    this.inter.emitPlayersUpdate(data);
+  }
+
+  spawnUnitHelper(unit, r, c) {
+    unit.setRC(r,c);
+    this.map.setUnit(r, c, unit);
+  }
 
   //put each player's units on the map
   //right now hard coded for just 2 playes an one unit each
   spawnUnits(){
-    this.players[0].units[0].setRC(5,2);
-    this.players[1].units[0].setRC(5,4);
-    this.map.setUnit(5, 2, this.players[0].units[0]);
-    this.map.setUnit(5, 4, this.players[1].units[0]);
+    console.log(this.players.length);
+    this.spawnUnitHelper(this.players[0].units[0], 8, 2+10);
+    this.spawnUnitHelper(this.players[0].units[1], 8, 4+10);
+    this.spawnUnitHelper(this.players[0].units[2], 7, 3+10);
+    this.spawnUnitHelper(this.players[0].units[3], 9, 3+10);
+    this.spawnUnitHelper(this.players[0].units[4], 6, 4+10);
+    this.spawnUnitHelper(this.players[0].units[5], 10, 4+10);
+    this.players[0].units[0].order=0;
+    this.players[0].units[1].order=1;
+    this.players[0].units[2].order=2;
+    this.players[0].units[3].order=3;
+    this.players[0].units[4].order=4;
+    this.players[0].units[5].order=5;
+
+    this.spawnUnitHelper(this.players[1].units[0], 8, 26-9);
+    this.spawnUnitHelper(this.players[1].units[1], 8, 24-9);
+    this.spawnUnitHelper(this.players[1].units[2], 7, 25-9);
+    this.spawnUnitHelper(this.players[1].units[3], 9, 25-9);
+    this.spawnUnitHelper(this.players[1].units[4], 6, 24-9);
+    this.spawnUnitHelper(this.players[1].units[5], 10, 24-9);
+    this.players[1].units[0].order=0;
+    this.players[1].units[1].order=1;
+    this.players[1].units[2].order=2;
+    this.players[1].units[3].order=3;
+    this.players[1].units[4].order=4;
+    this.players[1].units[5].order=5;
     console.log(this.map.getAsciiMap());
   }
 

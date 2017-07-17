@@ -1,0 +1,364 @@
+body {
+    background-image: url("./../media/space.jpg");
+}
+
+.clickedTile {
+  background: #ffb300;
+  opacity: 0.5;
+}
+
+.clearfix:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.hidden {
+  display: none;
+}
+
+.messageModal {
+	position: absolute;
+	text-align: center;
+	width: 300px;
+}
+
+#roomDiv {
+  display: flex;
+  flex: 1;
+  color: white;
+}
+
+#gameField {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.playerBar {
+	flex: 0 1 auto;
+	display: flex;
+	flex-direction: column;
+	color: white;
+}
+
+.playerBox {
+	flex: 0 1 auto;
+}
+
+.dead {
+	opacity: .5;
+	border: 3px solid grey;
+}
+
+.defeated {
+	opacity: .5;
+	border: 3px solid grey;
+}
+
+.active {
+	border: 3px solid #64dd17;
+}
+
+.pilotHealthBar .ui-progressbar-value {
+  background-color: #64dd17;
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.pilotHealthBar {
+  height: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.healthLabel {
+  left: calc(50% - 35px);
+  font-size: 50%;
+  position: absolute;
+}
+
+.pilotEnergyBar .ui-progressbar-value {
+  background-color: #ffc400;
+}
+
+.pilotEnergyBar {
+  height: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.energyLabel {
+  left: calc(50% - 25px);
+  font-size: 50%;
+  position: absolute;
+}
+
+.pilotSpiritBar .ui-progressbar-value {
+  background-color: lightblue;
+}
+
+.pilotSpiritBar {
+  height: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.spiritLabel {
+  left: calc(50% - 25px);
+  font-size: 50%;
+  position: absolute;
+}
+
+.pilotImgStyle {
+  display: block;
+  float: right;
+}
+
+.namesAndStatus {
+  line-height: 40%;
+  font-size: 50%;
+  float: left;
+}
+
+#mapContainer {
+	flex: 0 1 auto;
+	margin: auto;
+	max-width: 800px;
+	max-height: 600px;
+	overflow: auto;
+	position: relative;
+}
+
+#grid {
+	margin: 0;
+	padding: 0;
+	width: 1560px;
+	transform: scale(.8);
+
+}
+
+#grid div {
+	border-style:dashed;
+	border-width: 1px;
+	color: grey;
+	margin: 0px;
+	padding: 0px;
+	float: left;
+	width: 50px;
+	height: 50px;
+	font-size: 4em;
+	text-align: center;
+}
+
+#grid div img {
+	height: 50px;
+	padding-bottom: 5px;
+}
+
+.grid-square {
+	position: relative
+}
+.grid-style {
+	padding: 0px;
+	position: absolute;
+}
+
+#sidebar {
+	margin: auto;
+	flex: 0 1 auto;
+	color: white;
+	/*width: 400px;*/
+}
+#messageDiv {
+	color: white;
+
+}
+
+#roomMessageDiv {
+	color: white;
+	width: inherit;
+	height: 300px;
+	overflow-y: scroll;
+}
+
+#chatDisplay {
+	color: white;
+	width: inherit;
+	height: 300px;
+	overflow-y: scroll;
+}
+
+/*STATUS STYLE*/
+
+#statusModal {
+	display: flex;
+	flex-direction: column;
+}
+
+#mechData {
+	display: flex;
+	flex-direction: row;
+	flex: 2 0 auto;
+}
+
+#mechPic {
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	margin-left: 1px;
+	min-width: 100px;
+	min-height: 100px;
+	max-height: 150px;
+	max-width: 150px;
+	flex: 5 0 auto;
+}
+
+#dataBars {
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	margin-top: 1px;
+	display: flex;
+	flex-direction: column;
+	flex: 6 0 auto;
+
+}
+
+#mechName {
+	flex: 1 0 auto;
+	width: 150px;
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	padding-top: 5px;
+	align-self: center;
+}
+
+#healthBar .ui-progressbar-value {
+  background-color: #64dd17;
+}
+
+#energyBar .ui-progressbar-value {
+	 background-color: #ffc400;
+}
+
+#spBar .ui-progressbar-value {
+	 background-color: lightblue;
+}
+
+#healthBar {
+	flex: 1 0 auto;
+	height: 15px;
+	width: 145px;
+	align-self: center;
+}
+
+#energyBar {
+	flex: 1 0 auto;
+	height: 15px;
+	width: 145px;
+	align-self: center;
+}
+
+#spBar {
+	flex: 1 0 auto;
+	height: 15px;
+	width: 145px;
+	align-self: center;
+}
+
+#pilotData {
+	flex: 1 0 auto;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin: 1px;
+	border-style:solid;
+	border-width: 1px;
+}
+
+#pilotPic {
+	flex: 1 0 auto;
+	min-height: 80px;
+	min-width: 80px;
+}
+
+#pilotStats {
+	flex: 5 0 auto;
+	display: flex;
+	flex-direction: column;
+}
+
+#pilotName {
+	flex: 1 0 auto;
+	width: 150px;
+}
+
+#pilotStatus {
+	flex: 1 0 auto;
+}
+
+#pilotWill {
+	flex: 1 0 auto;
+	width: 150px;
+}
+
+#weaponFlex {
+	text-align: center;
+}
+
+#weaponColumns {
+	flex: 1 0 auto;
+	width: 450px;
+	align-self: center;
+	text-align: center;
+}
+
+#weaponData {
+	flex: 10 0 auto;
+	width: 450px;
+	font-size: 90%;
+	text-align: center;
+}
+
+#defendStyle {
+	width: 50px;
+	position: absolute;
+	left: 115px;
+}
+
+.ui-menu-our {
+	width: 150px;
+	position: absolute;
+	top: 20%;
+	left: 20%;
+}
+
+.ui-menu-cancel {
+	width: 150px;
+	position: fixed;
+	top: 5%;
+	left: 40%;
+}
+
+.ui-menu-counter {
+	width: 150px;
+	position: fixed;
+	top: 40%;
+	left: 40%;
+}
+
+
+.blink {
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0.0;
+  }
+}

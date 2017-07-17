@@ -5,6 +5,8 @@ var Promise = require("bluebird");
 var Game = require("./gameEngine.js");
 var Client = require("./client.js");
 
+var Helpers = require("../config/teamHelper.js");
+
 
 //Helper Class to contain information about game Rooms
 class GameRoom {
@@ -46,8 +48,8 @@ class GameRoom {
     socket.me.roomNum=null;
     socket.leave(this.name);
     if(this.game)
-      if(!this.game.isOver() && !this.game.isDefeated(socket.me.id))
-        this.game.reset();
+      if(!this.game.checkGameOver() && !this.game.isDefeated(socket.me.id))
+        this.game.playerLeft(socket.me.id);
   }
 
   //checks to see if all people in the room are ready.
@@ -75,7 +77,7 @@ class GameRoom {
   //Emits a 'update map' event (the ascii map) to the all sockets/clients in this room
   emitMap(map) {
     console.log(`Sending Map Update to Room ${this.roomNum}`);
-    this.nsp.to(this.name).emit("update map", {map: map, msg: "Updated map!"});
+    this.nsp.to(this.name).emit("update ascii map", {map: map, msg: "Updated map!"});
   }
 
   emitRealMap(map) {
@@ -106,6 +108,12 @@ class GameRoom {
     this.nsp.to(socketMeRef.socketId).emit("get counter", data);
   }
 
+  //Emits a 'update players' event to the all sockets/clients in this room
+  emitPlayersUpdate(data) {
+    console.log(`Sending Player Data to Room ${this.roomNum}`);
+    this.nsp.to(this.name).emit("update players", data);
+  }
+
   gameOver(playerRef) {
     console.log(`The game in Room ${this.roomNum} is over, shutting down room`);
     if(playerRef) {
@@ -133,7 +141,7 @@ class GameRoom {
 
 //This class will make and manage all socket.io namespaces/rooms and how they itneract with the Game object
 class GameInterface {
-  constructor(http, io)  {
+  constructor(http, io, testing=true)  {
     //this.test = "test YO";
     this.http = http;
     this.io=io;
@@ -150,10 +158,15 @@ class GameInterface {
     this.uniqueIdCounter = 0;
 
     //used for testing/dev work, will replace with actual user info later.
-    this.tempClientList=null;
-    require("../config/gameSetTeams.js")(10).then((clientList)=>{
-      this.tempClientList = clientList;
-    });
+    this.testing=testing;
+    if(testing) {
+      this.tempClientList=null;
+      require("../config/gameSetTeams.js")(10).then((clientList)=>{
+        this.tempClientList = clientList;
+      });
+    } else {
+      
+    }
 
     this.setNspListeners();
   }
@@ -166,21 +179,30 @@ class GameInterface {
 
       this.emitRooms();
 
-      //adding new data to the socket itself
-      socket.me = new Client(socket, this.tempClientList[this.uniqueIdCounter]);
-      this.uniqueIdCounter++,
-
       //joining/leaving the fun!
-      socket.on("new player", (cb)=>{
-        //this.bindSocketListeners1(socket);
-        // socket.join("Room Alpha");
-
-        // console.log(Object.keys(this.nsp.adapter.rooms["Room Alpha"]));
-        // console.log(this.nsp.adapter.rooms["Room Alpha"].sockets);
-        //cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.id} \n\n ${Object.keys(this.nsp.connected)}`});
-        cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.me.id}`});
+      socket.on("new player", (data, cb)=>{
+        if(this.testing) {
+          //adding new data to the socket itself
+          socket.me = new Client(socket, this.tempClientList[this.uniqueIdCounter]);
+          this.uniqueIdCounter++,
+          cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.me.id}`});
+        }
+        else {
+          console.log(data);
+          Helpers.makeUnitsFromTeam(data.id).then(function(client) {
+            socket.me = new Client(socket, client);
+            //console.log(client);
+            cb({id:socket.me.id, msg: `Hello, ${socket.me.name} with Id: ${socket.me.id}`});
+          });;
+        }
       });
-      socket.on("disconnect", ()=>{});
+      socket.on("disconnect", ()=>{
+        if(!socket.me)
+          return;
+        if(socket.me.roomNum!==null) {
+          this.rooms[socket.me.roomNum].leave(socket, socket.me.slot);
+        } 
+      });
 
       //room listeners
       socket.on("join room", (roomId, cb)=>{this.onJoinRoom(socket, roomId, cb);});
@@ -204,7 +226,8 @@ class GameInterface {
       socket.on("send chat", (data, cb)=>{this.onSendChat(socket, data)});
       socket.on("active unit", (cb)=>{this.onActiveUnit(socket, cb)});
       socket.on("get weapons", (data,cb)=>{this.onGetWeapons(socket, data, cb)});
-
+      socket.on("do surrender", (cb)=>{this.onDoSurrender(socket, cb)});
+      socket.on("get allies", (data, cb)=>{this.onGetAllies(socket, data, cb)});
     });
   }
 
@@ -447,6 +470,28 @@ class GameInterface {
     var room=this.rooms[rNum];
     if(room) {
       var response = this.rooms[rNum].game.getWeapons(socket.me.id, data.r, data.c);
+
+      cb(response);
+    }
+  }
+
+  onDoSurrender(socket, cb) {
+    console.log(`Do Surrender requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.surrender(socket.me.id);
+
+      cb(response);
+    }
+  }
+
+  onGetAllies(socket, data, cb) {
+    console.log(`Get Allies requested from ${socket.me.name} id: ${socket.me.id}`);
+    var rNum=socket.me.roomNum;
+    var room=this.rooms[rNum];
+    if(room) {
+      var response = this.rooms[rNum].game.getAllies(socket.me.id, data.r, data.c);
 
       cb(response);
     }

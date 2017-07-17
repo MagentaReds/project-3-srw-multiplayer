@@ -12,7 +12,10 @@ var Spirit = require("./statesAndFlags.js").pilot.spiritCommand;
 
 class Unit {
   constructor(playerId, pilotDb, mechDb, pilotLevel=50) {
-    this.name = pilotDb.name;
+    this.name = pilotDb.nickname;
+    this.pilotName= pilotDb.name;
+    this.mechName = mechDb.name;
+    this.mechCodeName = mechDb.mechCodeName;
     this.move = mechDb.move;
     this.pilotLevel=pilotLevel;
     this.weapons = [];
@@ -37,6 +40,9 @@ class Unit {
     this.pilotSkills = [...pilotDb.pilotSkills];
     this.abilities = [...mechDb.abilities];
     this.owner=playerId;
+    this.color="grey";
+    this.id;
+    this.order=null;
     this.willGain=pilotDb.willGain;
     this.will=100;
 
@@ -128,7 +134,7 @@ class Unit {
   }
 
   getMove(ter='Spc') {
-    if(this.stats.includes(Status.net))
+    if(this.status.includes(Status.net))
       return 0;
 
     var add=0;
@@ -185,6 +191,8 @@ class Unit {
         arr[1]+=2;
       else if(this.skills.get(Skill.gunfight)>=4)
         arr[1]+=1;
+
+    return arr;
   }
 
   skillLevel(skill) {
@@ -217,21 +225,58 @@ class Unit {
 
   getSpiritList() {
     var arr=[];
-    arr.push(`${this.sp}/${this.spMax}:SP`);
     for(let i=0; i<this.sc.length; ++i)
-      arr.push(`${i}: ${this.sc[i][0]} (${this.sc[i][1]})`);
+      arr.push(`${this.sc[i][0]} (${this.sc[i][1]})`);
+
+    arr.push(`${this.sp}/${this.spMax}:SP`);
 
     return arr;
   }
 
   getStatus() {
-    var obj = []
-    obj.push(this.name);
-    obj.push(`HP:${this.hp}/${this.hpMax}`);
-    obj.push(`EN:${this.en}/${this.enMax}`);
-    obj.push(`SP:${this.sp}/${this.spMax}`);
-    obj.push(`Status: ${this.status.toString()}`);
-    obj.push("Other stuff");
+    // var obj = []
+    // obj.push(this.name);
+    // obj.push(`HP:${this.hp}/${this.hpMax}`);
+    // obj.push(`EN:${this.en}/${this.enMax}`);
+    // obj.push(`SP:${this.sp}/${this.spMax}`);
+    // obj.push(`Status: ${this.status.toString()}`);
+    // obj.push("Other stuff");
+    // return obj;
+    var obj = {};
+    obj.name=this.name;
+    obj.pilotName = this.pilotName;
+    obj.mechName = this.mechName;
+    obj.hp = this.hp;
+    obj.hpMax = this.hpMax;
+    obj.en = this.en;
+    obj.enMax= this.enMax;
+    obj.sp = this.sp;
+    obj.spMax = this.spMax;
+    obj.weapons = this.weapons;
+    obj.status = this.status;
+    obj.mechImg = `/img/mech/${this.mechCodeName}.png`;
+    obj.pilotImg = `/img/pilot/${this.name}.png`;
+    obj.spirits = this.sc;
+    obj.will = this.will;
+    return obj;
+  }
+
+  getStatusSmall() {
+    var obj = {};
+    obj.name=this.name;
+    obj.mechName = this.mechName;
+    obj.hp = this.hp;
+    obj.hpMax = this.hpMax;
+    obj.en = this.en;
+    obj.enMax= this.en;
+    obj.sp = this.sp;
+    obj.spMax = this.spMax;
+    obj.status = this.status;
+    obj.pilotImg = `/img/pilot/${this.name}.png`;
+    obj.will = this.will;
+    obj.alive = this.isAlive;
+    obj.r = this.r;
+    obj.c = this.c;
     return obj;
   }
 
@@ -321,7 +366,7 @@ class Unit {
     if(this.status.includes(Status.focus))
       res+=30;
     if(this.skills.has(Skill.prevail));
-      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.hpMax);
     if(this.skills.has(Skill.telekinesis))
       res+=Helpers.getTKHitEvd(this.skills.get(Skill.telekinesis));
     if(this.skills.has(Skill.genius))
@@ -337,7 +382,7 @@ class Unit {
     if(this.status.includes(Status.focus))
       res+=30;
     if(this.skills.has(Skill.prevail));
-      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.hpMax);
     if(this.skills.has(Skill.telekinesis))
       res+=Helpers.getTKHitEvd(this.skills.get(Skill.telekinesis));
     if(this.skills.has(Skill.genius))
@@ -355,7 +400,7 @@ class Unit {
     if(this.skills.has(Skill.genius))
       res+=20;
     if(this.skills.has(Skill.prevail));
-      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.hpMax);
   }
 
   modDmgFlat(wepCat) {
@@ -410,24 +455,9 @@ class Unit {
   modArmScale() {
     var res=1.0;
     if(this.skills.has(Skill.prevail))
-      res+=Helpers.getPrevailHitEvdArm(this.skills.get(Skill.prevail), this.hp/this.maxHp);
+      res+=Helpers.getPrevailHEA(this.skills.get(Skill.prevail), this.hp/this.hpMax);
 
     return res;
-  }
-
-
-  //returns maximum movement in squares
-  //assume we are flying/in space for now, will make generic later
-  getMove(air=true) {
-    var result=this.move;
-    if(this.hasFlag(Flags.accel))
-      result+=2;
-
-    if(air)
-      if(this.en<result)
-        return this.en;
-
-    return result;
   }
 
   setRC(r,c) {
@@ -717,6 +747,12 @@ class Unit {
                 || this.addStatus(Status.valor)
                 || this.addStatus(Status.gain)
                 || this.addStatus(Status.luck)) {
+          this.addStatus(Status.accel);
+          this.addStatus(Status.strike);
+          this.addStatus(Status.alert);
+          this.addStatus(Status.valor);
+          this.addStatus(Status.gain);
+          this.addStatus(Status.luck);
           this.sp-=spirit[1];
           return true;
         } else

@@ -36,6 +36,7 @@ var blank =
 var pilots = [
   {
     name: "Kyosuke Nambu",
+    nickname: "Kyosuke",
     stats: {
       mel: [.8723,142], rng: [.6064,129], hit: [2,177], 
       evd: [1.6702,163], def: [.8298,124], man: [.8404,140], sp:[1.6596,46]
@@ -73,6 +74,7 @@ var pilots = [
   },
   {
     name: "Excellen Browning",
+    nickname: "Excellen",
     stats: {
       mel: [.6702,126], rng: [.8723,139], hit: [2,178], 
       evd: [2.2021,176], def: [.6064, 101], man: [.8404,136], sp:[1.6596,44]
@@ -104,6 +106,7 @@ var pilots = [
   },
   {
     name: "Lee Linjun",
+    nickname: "Lee",
     stats: {
       mel: [.6702,121], rng: [.8723,135], hit: [2,161], 
       evd: [2.2021,94], def: [.6064,113], man: [.8404,137], sp:[1.6596,46]
@@ -122,6 +125,7 @@ var pilots = [
   },
   {
     name: "Lamia Loveless",
+    nickname: "Lamia",
     stats: {
       mel: [.8,137], rng: [.7579,139], hit: [2,180], 
       evd: [2,171], def: [.7474,121], man: [.7474,138], sp:[1.6632,56]
@@ -153,6 +157,7 @@ var pilots = [
   },
   {
     name: "Brooklyn 'Bullet' Luckfield",
+    nickname: "Bullet",
     stats: {
       mel: [.8, 138], rng: [.7579, 136], hit: [2, 173], 
       evd: [2, 173], def: [.7474, 107], man: [.7474, 134], sp:[1.6632, 43]
@@ -190,6 +195,7 @@ var pilots = [
   },
   {
     name: "Sleigh Presty",
+    nickname: "Sleigh",
     stats: {
       mel: [.6737, 134], rng: [.8737, 139], hit: [2, 178], 
       evd: [2.2, 179], def: [.6, 109], man: [.8316, 140], sp:[1.6632, 48]
@@ -215,6 +221,7 @@ var pilots = [
   },
   {
     name: "Ibis Douglas",
+    nickname: "Ibis",
     stats: {
       mel: [.7368, 131], rng: [.9053, 135], hit: [2.0316, 173], 
       evd: [2.1368, 173], def: [.6316, 97], man: [.7474, 129], sp:[1.7474, 39]
@@ -240,6 +247,7 @@ var pilots = [
   },
   {
     name: "Raidese F. Branstein",
+    nickname: "Rai",
     stats: {
       mel: [.6703, 131], rng: [.8681, 140], hit: [2, 178], 
       evd: [2.1978, 175], def: [.6044, 113], man: [.8352, 138], sp:[1.6593, 44]
@@ -271,6 +279,7 @@ var pilots = [
   },
   {
     name: "Latooni Subota",
+    nickname: "Latooni",
     stats: {
       mel: [.8022, 137], rng: [.7912, 137], hit: [2.011, 177], 
       evd: [1.978, 177], def: [.7582, 95], man: [.7473, 138], sp:[2.1209, 39]
@@ -308,6 +317,7 @@ var pilots = [
   },
   {
     name: "Kai Kitamura",
+    nickname: "Kai",
     stats: {
       mel: [.8, 140], rng: [.7556, 134], hit: [2, 177], 
       evd: [1.6667, 177], def: [.8333, 136], man: [.7556, 142], sp:[1.6667, 53]
@@ -339,6 +349,7 @@ var pilots = [
   },
   {
     name: "Tetsuya Onodera",
+    nickname: "Tetsuya",
     stats: {
       mel: [.6067, 129], rng: [.7416, 128], hit: [1.6742, 154], 
       evd: [2, 96], def: [.6067, 100], man: [.6517, 128], sp:[1.6629, 36]
@@ -364,6 +375,7 @@ var pilots = [
   },
   {
     name: "Daitetsu Minase",
+    nickname: "Daitetsu",
     stats: {
       mel: [.6067, 130], rng: [.7416, 131], hit: [1.6742, 156], 
       evd: [2, 97], def: [.6067, 104], man: [.6517, 145], sp:[1.6629, 46]
@@ -382,7 +394,8 @@ var pilots = [
     ]
   },
   {
-    name: "Villeta Vadmin",
+    name: "Viletta Vadmin",
+    nickname: "Viletta",
     stats: {
       mel: [.6742, 134], rng: [.8652, 139], hit: [2, 179], 
       evd: [2.2022, 179], def: [.6067, 101], man: [.8315, 142], sp:[1.6629, 48]
@@ -408,6 +421,7 @@ var pilots = [
   },
   {
     name: "Ryusei Date",
+    nickname: "Ryusei",
     stats: {
       mel: [.8, 138], rng: [.7556, 138], hit: [2, 175], 
       evd: [2, 174], def: [.7444, 108], man: [.7444, 136], sp:[1.6667, 42]
@@ -439,6 +453,7 @@ var pilots = [
   },
   {
     name: "Irmgult Kazahara",
+    nickname: "Irm",
     stats: {
       mel: [.8764, 140], rng: [.6067, 137], hit: [2, 176], 
       evd: [1.6742, 127], def: [.8315, 127], man: [.8315, 142], sp:[1.6629, 49]
@@ -470,6 +485,7 @@ var pilots = [
   },
   {
     name: "Russel Bergman",
+    nickname: "Russel",
     stats: {
       mel: [.8621, 128], rng: [.5057, 132], hit: [2, 165], 
       evd: [1.6667, 169], def: [1, 146], man: [.6667, 124], sp:[1.6667, 72]
@@ -495,6 +511,7 @@ var pilots = [
   },
   {
     name: "Katina Tarask",
+    nickname: "Katina",
     stats: {
       mel: [.8046, 135], rng: [.8276, 133], hit: [2, 174], 
       evd: [2, 172], def: [.6322, 130], man: [.7471, 139], sp:[1.6667, 57]
@@ -520,6 +537,7 @@ var pilots = [
   },
   {
     name: "Leona Garstein",
+    nickname: "Leona",
     stats: {
       mel: [.6667, 134], rng: [.8736, 137], hit: [2, 177], 
       evd: [2.1954, 175], def: [.5977, 103], man: [.8391, 137], sp:[1.6667, 44]
@@ -557,6 +575,7 @@ var pilots = [
   },
   {
     name: "Tasuku Shinguji",
+    nickname: "Tasuku",
     stats: {
       mel: [.8621, 136], rng: [.5057, 129], hit: [2, 173], 
       evd: [1.6667, 157], def: [1, 137], man: [.6667, 127], sp:[1.6667, 45]
@@ -588,6 +607,7 @@ var pilots = [
   },
   {
     name: "Lefina Enfield",
+    nickname: "Lefina",
     stats: {
       mel: [.7586, 101], rng: [.9425, 124], hit: [2.0575, 157], 
       evd: [2.1839, 102], def: [.6322, 109], man: [.7586, 118], sp:[1.7241, 48]
@@ -619,6 +639,7 @@ var pilots = [
   },
   {
     name: "Sean Webley",
+    nickname: "Sean",
     stats: {
       mel: [.5977, 95], rng: [.7471, 124], hit: [1.6667, 152], 
       evd: [2, 95], def: [.5977, 109], man: [.6552, 139], sp:[1.6667, 49]
@@ -637,6 +658,7 @@ var pilots = [
   },
   {
     name: "Lune Zoldark",
+    nickname: "Lune",
     stats: {
       mel: [.6747, 136], rng: [.8675, 137], hit: [2, 174], 
       evd: [2.1928, 183], def: [.6024, 109], man: [.8313, 140], sp:[1.627, 45]
@@ -662,6 +684,7 @@ var pilots = [
   },
   {
     name: "Gilliam Yager",
+    nickname: "Gilliam",
     stats: {
       mel: [.8049, 137], rng: [.7561, 140], hit: [2, 180], 
       evd: [2, 181], def: [.7439, 102], man: [.7439, 143], sp:[1.6585, 43]
@@ -693,6 +716,7 @@ var pilots = [
   },
   {
     name: "Radha Byraban",
+    nickname: "Radha",
     stats: {
       mel: [.506, 117], rng: [.494, 134], hit: [1.6988, 172], 
       evd: [1.6506, 176], def: [.6024, 143], man: [.5542, 129], sp:[2, 66]
@@ -718,6 +742,7 @@ var pilots = [
   },
   {
     name: "Arado Balanga",
+    nickname: "Arado",
     stats: {
       mel: [.988, 130], rng: [.6265, 121], hit: [2.0482, 169], 
       evd: [1.8916, 168], def: [.9036, 138], man: [.7831, 114], sp:[1.7108, 70]
@@ -749,6 +774,7 @@ var pilots = [
   },
   {
     name: "Ring Mao",
+    nickname: "Ring",
     stats: {
       mel: [.8072, 136], rng: [.759, 139], hit: [2, 176], 
       evd: [2, 175], def: [.747, 118], man: [.747, 138], sp:[1.6627, 65]
@@ -780,6 +806,7 @@ var pilots = [
   },
   {
     name: "Rio Meilong",
+    nickname: "Rio",
     stats: {
       mel: [.8072, 133], rng: [.8313, 135], hit: [2, 175], 
       evd: [2, 172], def: [.6386, 124], man: [.747, 133], sp:[1.6627, 48]
@@ -811,6 +838,7 @@ var pilots = [
   },
   {
     name: "Ryoto Hikawa",
+    nickname: "Ryoto",
     stats: {
       mel: [.8072, 136], rng: [.759, 134], hit: [2, 176], 
       evd: [2, 176], def: [.747, 99], man: [.747, 136], sp:[1.6627, 41]
@@ -842,6 +870,7 @@ var pilots = [
   },
   {
     name: "Kusuha Mizuha",
+    nickname: "Kusuha",
     stats: {
       mel: [.8095, 136], rng: [.75, 137], hit: [2, 175], 
       evd: [2, 161], def: [.75, 114], man: [.75, 131], sp:[1.6667, 52]
@@ -873,6 +902,7 @@ var pilots = [
   },
   {
     name: "Ratsel Feinschmecker",
+    nickname: "Ratsel",
     stats: {
       mel: [.8049, 133], rng: [.7561, 141], hit: [2, 185], 
       evd: [2, 172], def: [.7439, 136], man: [.7439, 144], sp:[1.6585, 45]
@@ -904,6 +934,7 @@ var pilots = [
   },
   {
     name: "Masaki Andoh",
+    nickname: "Masaki",
     stats: {
       mel: [.8072, 139], rng: [.8313, 136], hit: [2, 176], 
       evd: [2, 177], def: [.6386, 107], man: [.747, 137], sp:[1.6627, 41]
@@ -929,6 +960,7 @@ var pilots = [
   },
   {
     name: "Sanger Zonvolt",
+    nickname: "Sanger",
     stats: {
       mel: [.875, 145], rng: [.6, 130], hit: [2, 177], 
       evd: [1.675, 163], def: [.8375, 129], man: [.8375, 153], sp:[1.6625, 46]
@@ -960,6 +992,7 @@ var pilots = [
   },
   {
     name: "Shine Hausen",
+    nickname: "Shine",
     stats: {
       mel: [.8667, 122], rng: [.8933, 120], hit: [2.08, 169], 
       evd: [2.0533, 170], def: [.7867, 121], man: [.7867, 115], sp:[2.1467, 59]
@@ -991,6 +1024,7 @@ var pilots = [
   },
   {
     name: "Aya Kobayashi",
+    nickname: "Aya",
     stats: {
       mel: [.6053, 125], rng: [.7368, 137], hit: [1.6711, 176], 
       evd: [2, 174], def: [.6053, 126], man: [.6447, 133], sp:[1.6579, 64]
@@ -1022,6 +1056,7 @@ var pilots = [
   },
   {
     name: "Mai Kobayashi",
+    nickname: "Mai",
     stats: {
       mel: [.8026, 124], rng: [.75, 139], hit: [2, 177], 
       evd: [2, 177], def: [.75, 114], man: [.75, 130], sp:[1.6579, 57]
@@ -1052,7 +1087,8 @@ var pilots = [
     ]
   },
   {
-    name: "Carla Borgnine",
+    name: "Ricarla Borgnine",
+    nickname: "Carla",
     stats: {
       mel: [.6667, 134], rng: [.8406, 130], hit: [2, 173], 
       evd: [2, 171], def: [.7391, 148], man: [.7536, 134], sp:[1.6667, 57]
@@ -1078,6 +1114,7 @@ var pilots = [
   },
   {
     name: "Yuuki Jaggar",
+    nickname: "Yuuki",
     stats: {
       mel: [.8088, 136], rng: [.8235, 138], hit: [2, 176], 
       evd: [2, 177], def: [.6324, 133], man: [.75, 139], sp:[1.6618, 61]
@@ -1103,6 +1140,7 @@ var pilots = [
   },
   {
     name: "Seolla Schweizer",
+    nickname: "Seolla",
     stats: {
       mel: [.597, 125], rng: [.7463, 138], hit: [1.6716, 178], 
       evd: [2, 178], def: [.597, 113], man: [.6567, 140], sp:[1.6567, 46]
@@ -1134,6 +1172,7 @@ var pilots = [
   },
   {
     name: "Ouka Nagisa",
+    nickname: "Ouka",
     stats: {
       mel: [.8033,141], rng: [.7541, 141], hit: [2, 199], 
       evd: [2, 194], def: [.7377, 145], man: [.7541, 142], sp:[1.6557, 72]
@@ -1159,6 +1198,7 @@ var pilots = [
   },
   {
     name: "Alfimi",
+    nickname: "Alfimi",
     stats: {
       mel: [.54, 145], rng: [.64, 150], hit: [1.76, 200], 
       evd: [1.74, 195], def: [.58, 124], man: [.8, 136], sp:[2, 60]
@@ -1184,6 +1224,7 @@ var pilots = [
   },
   {
     name: "Bob Johnson",
+    nickname: "Bob",
     stats: {
       mel: [.75, 130], rng: [.75, 130], hit: [2, 170], 
       evd: [2, 170], def: [.75, 120], man: [.75, 120], sp:[2, 30]

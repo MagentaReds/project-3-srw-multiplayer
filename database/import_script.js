@@ -12,18 +12,19 @@ var pilotFlags = require("../game/statesAndFlags").pilot;
 var weaponFlags = require("../game/statesAndFlags").weapon;
 var mechFlags = require("../game/statesAndFlags").mech;
 
+var Promise = require("bluebird");
+
 
 function populateDatabase() {
   //starts chain inot promise hell!
   //this then calls importWeapons
   ///which then calls importMechs;
   return new Promise(function(resolve, reject) {
-    importPilots();
-    resolve();
+    importPilots(resolve);
   });
 }
 
-function importMechs() {
+function importMechs(resolve) {
   dbMech.remove({}, function(err) {
     if(err) {
       console.log(err);
@@ -39,6 +40,7 @@ function importMechs() {
           addMechsHelper(workingSet[key], key, wpWeapons); 
       }
       console.log("Finished inserting Mechs");
+      resolve();
 
     });
   });
@@ -92,7 +94,7 @@ function addMechsHelper(dataSource, mechCodeName, wpWeapons){
   });
 }
 
-function importWeapons() {
+function importWeapons(resolve) {
   dbWeapon.remove({}, function(err) {
     if(err)
       return console.log(err);
@@ -119,7 +121,7 @@ function importWeapons() {
       if(err)
         return console.log(err);
       console.log("Finished inserting weapons");
-      importMechs();
+      importMechs(resolve);
     });
 
   });
@@ -154,7 +156,7 @@ function addWeaponsHelper(dataSource, mechCodeName, builtIn, outputArray){
 }
 
 
-function importPilots() {
+function importPilots(resolve) {
   //drop the entire collection first, then reupload from databasefile
   dbPilot.remove({}, function(err){
 
@@ -169,6 +171,7 @@ function importPilots() {
 
       var tempPilot = {
         name:pilot.name, 
+        nickname:pilot.nickname,
         stats: pilot.stats,
         terrain: pilot.terrain,
         aceBonus: pilot.aceBonus,
@@ -185,7 +188,7 @@ function importPilots() {
       if(err)
         return console.log(err);
       console.log("Finished inserting Pilots");
-      importWeapons();
+      importWeapons(resolve);
     });
     
   });

@@ -7,7 +7,7 @@
 // and referenced/edited by the Game object
 
 class Player {
-  constructor(client) {
+  constructor(client, num) {
     this.id=client.id;
     this.name=client.name;
     //will need to make a unit.clone utility to kepe things nice a seperate
@@ -17,6 +17,16 @@ class Player {
 
     this.defeated=false;
     this.hasSurrendered =false;
+
+    this.color;
+    if(num%2==0) {
+      this.color="blue";
+      this.setUnitsColor("blue")
+    }
+    else {
+      this.setUnitsColor("red")
+      this.color="red";
+    }
   }
 
   //resetting units due not deep copy
@@ -26,13 +36,37 @@ class Player {
     }
   }
 
+  getUnitLocations() {
+    var arr=[];
+    for(let i=0; i<this.units.length; ++i) {
+      if(this.units[i].isAlive)
+        arr.push([this.units[i].r,this.units[i].c]);
+    }
+    return arr;
+  }
+
+  //also set's id, is a temp measure
+  setUnitsColor(color) {
+    for(let i=0; i<this.units.length; ++i) {
+      this.units[i].color=color;
+      this.units[i].id=i;
+    }
+  }
+
   //need to expand to account for when unit is dead, but testing will ignore for now
   getNextUnit() {
-    this.currentUnit++;
-    if(this.currentUnit>=this.units.length)
-      this.currentUnit=0;
-
-    return this.units[this.currentUnit];
+    if(!this.isDefeated()) {
+      this.currentUnit++;
+      if(this.currentUnit>=this.units.length)
+          this.currentUnit=0;
+      while(!this.units[this.currentUnit].isAlive) {
+        this.currentUnit++;
+        if(this.currentUnit>=this.units.length)
+          this.currentUnit=0;
+      }
+      return this.units[this.currentUnit];
+    } else
+      return null;
   }
 
   //returns true if all units are dead
@@ -44,6 +78,11 @@ class Player {
     this.defeated=true;
     return true;
   }
+
+  surrender() {    
+    this.defeated=true;
+  }
+
   isReady() {
 
   }

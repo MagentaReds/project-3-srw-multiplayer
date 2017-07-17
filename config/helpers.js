@@ -20,11 +20,14 @@ var helpers = {
     return -1;
   },
 
-  getPrevailHitEvdArm(level, percentHp) {
+  getPrevailHEA: function(level, percentHp) {
     if(!level)
+      return 0;
+    if(percentHp===1)
       return 0;
 
     var table=new Array(10);
+    table[0]=[0,0,0,0,0,0,0,0,0,0];
     table[1]=[5,0,0,0,0,0,0,0,0,0];
     table[2]=[10,5,0,0,0,0,0,0,0,0];
     table[3]=[15,10,5,0,0,0,0,0,0,0];
@@ -39,11 +42,14 @@ var helpers = {
     return table[level][temp];
   },
 
-  getPrevailCrit(level, percentHp) {
+  getPrevailCrit: function(level, percentHp) {
     if(!level)
+      return 0;
+    if(percentHp===1)
       return 0;
 
     var table=new Array(10);
+    table[0]=[0,0,0,0,0,0,0,0,0,0];
     table[1]=[8,0,0,0,0,0,0,0,0,0];
     table[2]=[16,8,0,0,0,0,0,0,0,0];
     table[3]=[24,16,8,0,0,0,0,0,0,0];
@@ -58,22 +64,23 @@ var helpers = {
     return table[level][temp];
   },
 
-  getTKHitEvd(level) {
+  getTKHitEvd: function(level) {
     return (level-1)*3;
   },
 
-  getTKField(level) {
+  getTKField: function(level) {
     return level*200;
   },
 
-  getFightDmg(level) {
+  getFightDmg: function(level) {
     if(level>=1 && level <=3)
       return level*50;
     else if(level>=4 && level<=6)
       return (level-1)*50;
     else if(level>=6 && level<=9)
       return (level-2)*50;
-  }
+  },
+
 }
 
 module.exports = helpers;

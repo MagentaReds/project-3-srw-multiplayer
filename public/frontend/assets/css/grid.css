@@ -16,7 +16,7 @@ body {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	width: 1600px;
+	width: 1560px;
 }
 
 #grid li {
@@ -33,7 +33,8 @@ body {
 }
 
 #grid li img {
-	margin-bottom: 10px;
+	height: 55px;
+	margin-bottom: 5px;
 }
 
 .grid-style {
@@ -53,27 +54,33 @@ body {
 	top: 37px;
 }
 
+/*#surrender {
+	top: 37px;
+}*/
+
 /*STATUS STYLE*/
 
-#mechData {
-	float: left;
+#statusModal {
+	display: flex;
+	flex-direction: column;
 }
 
-#mechName {
-	width: 150px;
-	height: 20px;
-	border-style:solid;
-	border-width: 1px;
-	text-align: center;
-	padding-top: 5px;
+#mechData {
+	display: flex;
+	flex-direction: row;
+	flex: 2 0 auto;
 }
 
 #mechPic {
-	float: left;
 	border-style:solid;
 	border-width: 1px;
 	text-align: center;
 	margin-left: 1px;
+	min-width: 100px;
+	min-height: 100px;
+	max-height: 150px;
+	max-width: 150px;
+	flex: 5 0 auto;
 }
 
 #dataBars {
@@ -81,8 +88,20 @@ body {
 	border-width: 1px;
 	text-align: center;
 	margin-top: 1px;
-	height: 79px;
+	display: flex;
+	flex-direction: column;
+	flex: 6 0 auto;
 
+}
+
+#mechName {
+	flex: 1 0 auto;
+	width: 150px;
+	border-style:solid;
+	border-width: 1px;
+	text-align: center;
+	padding-top: 5px;
+	align-self: center;
 }
 
 #healthBar .ui-progressbar-value {
@@ -93,51 +112,81 @@ body {
 	 background-color: #ffc400;
 }
 
+#spBar .ui-progressbar-value {
+	 background-color: lightblue;
+}
+
 #healthBar {
+	flex: 1 0 auto;
 	height: 15px;
 	width: 145px;
+	align-self: center;
 }
 
 #energyBar {
+	flex: 1 0 auto;
 	height: 15px;
 	width: 145px;
+	align-self: center;
+}
+
+#spBar {
+	flex: 1 0 auto;
+	height: 15px;
+	width: 145px;
+	align-self: center;
 }
 
 #pilotData {
-	width: 265px;
-	float: left;
-	margin-top: 1px;
-	height: 225px;
+	flex: 1 0 auto;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin: 1px;
 	border-style:solid;
 	border-width: 1px;
 }
 
+#pilotPic {
+	flex: 1 0 auto;
+	min-height: 80px;
+	min-width: 80px;
+}
+
+#pilotStats {
+	flex: 5 0 auto;
+	display: flex;
+	flex-direction: column;
+}
+
 #pilotName {
-	position: relative;
-	bottom: 100px;
-	left: 55px;
+	flex: 1 0 auto;
 	width: 150px;
+}
+
+#pilotStatus {
+	flex: 1 0 auto;
 }
 
 #pilotWill {
-	position: relative;
-	bottom: 93px;
-	left: 55px;
+	flex: 1 0 auto;
 	width: 150px;
 }
 
+#weaponFlex {
+	text-align: center;
+}
+
 #weaponColumns {
-	position: relative;
-	bottom: 85px;
-	left: 10px;
-	width: 250px;
+	flex: 1 0 auto;
+	width: 450px;
+	align-self: center;
+	text-align: center;
 }
 
 #weaponData {
-	position: relative;
-	left: 10px;
-	width: 250px;
-	bottom: 80px;
+	flex: 10 0 auto;
+	width: 450px;
 	font-size: 90%;
 	text-align: center;
 }
@@ -160,4 +209,29 @@ body {
   50% {
     opacity: 0.0;
   }
+}
+
+
+#sidebar {
+	color: white;
+	width: 300px;
+	float: right;
+}
+#messageDiv {
+	color: white;
+	
+}
+
+#roomMessageDiv {
+	color: white;
+	width: 300px;
+	height: 300px;
+	overflow-y: scroll;
+}
+
+#chatDisplay {
+	color: white;
+	width: 300px;
+	height: 300px;
+	overflow-y: scroll;
 }

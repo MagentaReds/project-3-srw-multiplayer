@@ -34,6 +34,15 @@
     $( "#endSurrender" ).menu();
   } );
   $( function() {
+    $( "#surrender" ).menu();
+  } );
+  $( function() {
+    $( "#hitAwayAndHasAttacked" ).menu();
+  } );
+  $( function() {
+    $( "#hitAwayAndHasAttackedHasMoved" ).menu();
+  } );
+  $( function() {
     $( "#statusModal" ).dialog({
       autoOpen: false,
       show: {
@@ -43,7 +52,8 @@
       hide: {
         effect: "explode",
         duration: 1000
-      }
+      },
+      width: 500
     });
   });
   $( function() {
@@ -119,21 +129,28 @@
   </div>
 
   <!-- JQuery UI Menus below -->
+  
   <div id="gameField" class="hidden">
+    <div id="mapContainer">
     <!-- grid filled in by js file -->
-    <ol id="grid">
-    </ol>
+      <ol id="grid">
+      </ol>
     <!-- main actions menu i.e. actions === 0 -->
     <ul id="menu">
       <li id="moveLi">
-        <div id="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
+        <div class="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
       </li>
       <li id="attackLi"><div><span class="ui-icon ui-icon-gear"></span>Attack</div>
         <ul class="weapons">
         </ul>
       </li>
-      <li id="spiritLi" class="ui-state-disabled">
+      <li id="spiritLi">
         <div id="spirit"><span class="ui-icon ui-icon-star"></span>Spirit Commands</div>
+          <ul class="spirits">
+          </ul>
+      </li>
+      <li id="statusLi">
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
       </li>
     </ul>
     <!-- cancel button, gets used to cancel move and attack BEFORE a movement or attack is made -->
@@ -145,15 +162,15 @@
     <!-- status menu i.e. actions === 4, will be used by both active and non-active players -->
     <ul id="status">
       <li id="statusLi">
-        <div id="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
+        <div class="statusDiv"><span class="ui-icon ui-icon-script"></span>View Status</div>
       </li>
     </ul>
     <!-- this menu pops up if you are active player and you click on and empty square i.e. actions === 5 -->
     <ul id="endSurrender">
       <li>
-        <div class="endTurn"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>End Turn</div>
       </li>
-      <li id="Surrender">
+      <li>
         <div><span class="ui-icon ui-icon-alert"></span>Surrender</div>
       </li>
     </ul>
@@ -164,28 +181,60 @@
         </ul>
       </li>
       <li>
-        <div class="endTurn"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
       </li>
       <li>
-        <div id="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+        <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
+      </li>
+    </ul>
+    <!-- actions === 6, if you are not active player and click on empty square (can only surrender here)-->
+    <ul id="surrender">
+      <li>
+        <div class = "surrender"><span class="ui-icon ui-icon-alert"></span>Surrender</div>
+      </li>
+    </ul>
+    <!-- actions === 2, active unit has hit away and has attacked but NOT moved -->
+    <ul id="hitAwayAndHasAttacked">
+      <li id="moveLi">
+        <div class="move"><span class="ui-icon ui-icon-transferthick-e-w"></span>Move</div>
+      </li>
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+    </ul>
+    <!-- actions === 3, active unit has hit away and has attacked AND has moved -->
+    <ul id="hitAwayAndHasAttackedHasMoved">
+      <li>
+        <div class="standby"><span class="ui-icon ui-icon-flag"></span>Standby</div>
+      </li>
+      <li>
+        <div class="cancelMove"><span class="ui-icon ui-icon-seek-prev"></span>Cancel Movement</div>
       </li>
     </ul>
     <!-- Status Modal Below -->
     <div id="statusModal" title="Status">
       <div id="mechData">
-        <div id="mechName"></div>
         <div id="dataBars">
+          <div id="mechName"></div>
           <div id="healthNum"></div>
           <div id="healthBar"></div>
           <div id="energyNum"></div>
           <div id="energyBar"></div>
+          <div id="spNum"></div>
+          <div id="spBar"></div>
         </div>
+        <div id="mechPic"></div>
       </div>
-      <div id="mechPic"></div>
+      
       <div id="pilotData">
         <div id="pilotPic"></div>
-        <div id="pilotName"></div>
-        <div id="pilotWill"></div>
+        <div id= "pilotStats">
+          <div id="pilotName"></div>
+          <div id="pilotStatus"></div>
+          <div id="pilotWill"></div>
+        </div>
+      </div>
+      <div id="weaponFlex">
         <div id="weaponColumns"></div>
         <div id="weaponData"></div>
       </div>
@@ -194,8 +243,21 @@
     <div id="defendModal" title="Select An Option:">
       <div id="defendStyle">
         <button id="defendButton">Defend</button>
-        <button id="attackButton">Attack</button>
         <button id="evadeButton">Evade</button>
+        <button id="attackButton">Attack</button>
+        <div id ="defenderWeapons"></div>
+      </div>
+    </div>
+  </div>
+    <div id="sideBar">
+      <div id="messageDiv"></div>
+      <br/>
+      <div id="roomMessageDiv"></div>
+      <div id="chatDiv">
+        <div id="chatDisplay"></div>
+        <form id="chatForm">
+          <input id="chatInput" type="text" placeholder="Chat"/><button type="submit" id="chatSubmit">Send</button>
+        </form>
       </div>
     </div>
   </div>

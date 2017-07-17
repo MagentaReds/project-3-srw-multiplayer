@@ -1366,7 +1366,7 @@ var battleships_built_in = {
       skill: "",
     }
   ],
-  Hiryu: [
+  Hiryu_Custom: [
     {
       name: "Chaff Grenade",
       upgradeRate: "",
@@ -3675,7 +3675,7 @@ var srg_dgg_built_in = {
       skill: "",
     }
   ],
-  Koryuooh: [
+  Koryuoh: [
     {
       name: "Tiger Knuckle",
       upgradeRate: "M",
@@ -4519,7 +4519,7 @@ var am_built_in = {
       skill: "",
     }
   ],
-  Valsion: [
+  Valsione: [
     {
       name: "Psy-Blaster",
       upgradeRate: "VS",

@@ -33,7 +33,7 @@ $(document).ready(function(){
     $("#messageDiv").text(data.msg);
   });
 
-  socket.on("update map", function(data){
+  socket.on("update ascii map", function(data){
     console.log("Map has been updated");
     $("#mapDiv").text(data.map);
     $("#messageDiv").text(data.msg);

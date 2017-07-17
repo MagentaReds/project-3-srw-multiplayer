@@ -80,7 +80,7 @@ var battleships = {
     iWeapons: ["AA Autocannon", "Chaff Grenade", "Torpedo", "Homing Missile", "Sub Cannon", "Impact Cannon", "Titanic Drill"],
     weapons: []
   },
-  Hiyru_Custom: {
+  Hiryu_Custom: {
     name: "Hiryu Custom",
     stats: [14000, 210, 65, 1300],
     upgrade: [4,6,10,9],
@@ -171,7 +171,7 @@ var ptx = {
     fub: "HP +20% and EN +15%",
     abilities: ["AB Field"],
     iWeapons: ["Split Missile", "Mega Blaster", "Yell! Gespenst Kick!"],
-    weapons: []
+    weapons: ["M95 Machine Gun", "Plasma Sword"]
   },
   Gespenst: {
     name: "Gespenst",
