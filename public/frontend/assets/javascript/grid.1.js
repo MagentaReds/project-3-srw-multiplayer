@@ -309,6 +309,29 @@ $(function() {
 		});
 	});
 
+	$(document).on("mouseover", ".grid-square", function(e){
+		e.preventDefault();
+		var ele=$(this);
+		var dataR=ele.attr("data-r");
+		var dataC=ele.attr("data-c");
+		var action=ele.attr("data-action");
+
+		if(action==="2") {
+			globalR=dataR;
+			globalC=dataC;
+			socket.emit("get actions", {r: dataR,c: dataC}, function(response){
+				console.log(response.actions);
+				enableActions(response.actions);
+			});
+		} else if(action==='1') {
+			globalR=dataR;
+			globalC=dataC;
+			//view status
+			enableActions(4);
+		} else {
+			enableActions();
+		}
+	});
 
 	//Start of function definitions
 	//============================================
@@ -334,7 +357,7 @@ $(function() {
 		var pos = $(`div.grid-square[data-r=${globalR}][data-c=${globalC}]`).offset();
 		//console.log(pos.top, pos.left);
 		//move menu to our grid's posiiton, adjusted by the scroll bar top/left position.
-		$(".ui-menu-our").css("top", pos.top+50+scrollTop).css("left", pos.left+scrollLeft);
+		$(".ui-menu-our").css("top", pos.top+(50*.8)+scrollTop).css("left", pos.left+scrollLeft);
 		//$(".ui-menu-our").position({my: "left top", at: "left bottom",of: `div.grid-square[data-r=${globalR}][data-c=${globalC}]`});
 
 		if (actions === -1) { // hide all menus
@@ -424,15 +447,18 @@ $(function() {
 
 	// code that makes 900 grid-tiles with each row and column's data index stored
 	function buildGrid (map) {
-		$("#grid").empty();
+		var grid =$("#grid");
+		grid.empty();
 		for (var r = 0; r < map.length; r++) {
 			for (var c = 0; c < map[0].length; c++) {
-				$("#grid").append(`<div class="grid-square" data-r = "${r}" data-c = "${c}"><div class="grid-style" data-r = "${r}" data-c = "${c}"></div></div>`);
 				if (map[r][c]) {
-					$(`#grid .grid-square[data-r=${r}][data-c=${c}]`).append(`<img src=${map[r][c]}>`);
+					//$(`#grid .grid-square[data-r=${r}][data-c=${c}]`).append(`<img src=${map[r][c]}>`);
+					grid.append(`<div class="grid-square" data-r = "${r}" data-c = "${c}" data-action=${map[r][c].action}><div class="grid-style" data-r = "${r}" data-c = "${c}"></div><img src=${map[r][c].img}></div>`);
+				} else {
+					grid.append(`<div class="grid-square" data-r = "${r}" data-c = "${c}" data-action="0"><div class="grid-style" data-r = "${r}" data-c = "${c}"></div></div>`);
 				}
 			}
-			$("#grid").append("<br>");
+			grid.append("<br>");
 		}
 	}
 
