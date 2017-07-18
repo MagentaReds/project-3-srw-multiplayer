@@ -758,7 +758,7 @@ class Game  {
   resolveAttack(atk, wepId, def) {
     //This flag is set, use it to halt any other messages from being processed besides do counter from defending unit's player
     this.addFlag(Flags.waitingForDef);
-    this.addFlag(Flags.hasAttacked);
+    //this.addFlag(Flags.hasAttacked);
     //set defender unit
     this.defender=def;
     //set attacking weapon
@@ -800,18 +800,20 @@ class Game  {
   }
 
   computeAttackHelper1(counterType) {
-    var hit = this.getHitPercent(this.uRef, this.defender, this.weapon);
-    var damage = this.getDamage(this.uRef, this.defender, this.weapon);
-    var crit = this.getCritPercent(this.uRef, this.defender, this.weapon);
+    if(this.uRef.isAlive) {
+      var hit = this.getHitPercent(this.uRef, this.defender, this.weapon);
+      var damage = this.getDamage(this.uRef, this.defender, this.weapon);
+      var crit = this.getCritPercent(this.uRef, this.defender, this.weapon);
 
-    if(counterType === "Evade" && !this.uRef.hasStrike())
-      hit = Math.floor(hit/2);
-    else if(counterType === "Defend")
-      damage = Math.floor(damage/2);
+      if(counterType === "Evade" && !this.uRef.hasStrike())
+        hit = Math.floor(hit/2);
+      else if(counterType === "Defend")
+        damage = Math.floor(damage/2);
 
-    this.applyAttack(this.uRef, this.defender, this.weapon, hit, damage, crit);
-    this.checkAliveness(this.defender, false, this.uRef);
-    this.checkPlayer(this.defender.owner);
+      this.applyAttack(this.uRef, this.defender, this.weapon, hit, damage, crit);
+      this.checkAliveness(this.defender, false, this.uRef);
+      this.checkPlayer(this.defender.owner);
+    }
   }
 
   computeAttackHelper2(counterType) {
@@ -1020,11 +1022,11 @@ class Game  {
 
       this.playerEnemyShotDown(atkUnit)
       this.playerAllyShotDown(unit);
+      if(isCurrentUnit) {
+        this.addFlag(Flags.turnOver);
+      }
     }
 
-    if(isCurrentUnit) {
-      this.addFlag(Flags.turnOver);
-    }
   }
 
   //Checks the flags, and advances the game based off them.
