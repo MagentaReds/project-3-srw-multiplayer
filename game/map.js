@@ -101,15 +101,19 @@ class Map {
   //will be ertended later to arrount for diffirult terrain.
   getPossibleMovement(r,c,m) {
     //console.log(r,c,m);
-    var history = [];
-    var history2=[];
+    var visited = [];
+    var steps=[];
+    var occupied =[];
     var counter=[0];
-    this.getPMHelper(r,c,m,r,c,m,history,history2,-1,counter);
+    var unit=this.tiles[r][c].unit;
+    if(!unit)
+        return visited;
+    this.getPMHelper(r,c,m,visited,steps,occupied,-1,counter,unit);
     //console.log(history.length, counter[0]);
-    return history;
+    return visited.filter((value, index)=>{return !occupied[index];});
   }
 
-  getPMHelper(r,c,m,oR,oC,oM,history,his2,index,counter){
+  getPMHelper(r,c,m,visited,steps,occupied,index,counter,unit){
     //counter to keep track how many times this function has been called
     counter[0]++;
 
@@ -118,11 +122,15 @@ class Map {
     //or if index!=-1, then we have been here, but now we can get here in fewer steps
     //  so we update the m value in his2
     if(index===-1) {
-      history.push([r,c]);
-      his2.push(m);
+      visited.push([r,c]);
+      steps.push(m);
+      if(this.tiles[r][c].unit===null)
+          occupied.push(false);
+      else
+          occupied.push(true);
     } else {
       //console.log(`${r},${c} from ${his2[index]} to ${m}`);
-      his2[index]=m;
+      steps[index]=m;
     }
 
     //base case, if movement is 0, end recursion
@@ -130,30 +138,30 @@ class Map {
       return;
 
     var temp;
-    //if adjacent square is in bounds and is empty, then...
-    if(this.isInBounds(r,c+1) && this.tiles[r][c+1].unit===null) {
+    //if adjacent square is in bounds and is empty, or is owned by the same player, then...
+    if(this.isInBounds(r,c+1) && (this.tiles[r][c+1].unit===null || this.tiles[r][c+1].unit.owner===unit.owner)) {
       //grab index of adjacent square from history array
-      temp=Helpers.getIndexArr(history,[r, c+1]);
+      temp=Helpers.getIndexArr(visited,[r, c+1]);
       //then if adjacent square is not in the history
       //  OR it is in the history but it took more steps than current (has less movement remaining) to get to
       //then step into and recurse
-      if(temp===-1 || his2[temp]<(m-1))
-        this.getPMHelper(r,c+1,m-1,oR,oC,oM,history,his2,temp,counter);
+      if(temp===-1 || steps[temp]<(m-1))
+        this.getPMHelper(r,c+1,m-1,visited,steps,occupied,temp,counter,unit);
     }
-    if(this.isInBounds(r,c-1) && this.tiles[r][c-1].unit===null) {
-      temp=Helpers.getIndexArr(history,[r, c-1]);
-      if(temp===-1 || his2[temp]<(m-1))
-        this.getPMHelper(r,c-1,m-1,oR,oC,oM,history,his2,temp,counter);
+    if(this.isInBounds(r,c-1) && (this.tiles[r][c-1].unit===null || this.tiles[r][c-1].unit.owner===unit.owner)) {
+      temp=Helpers.getIndexArr(visited,[r, c-1]);
+      if(temp===-1 || steps[temp]<(m-1))
+        this.getPMHelper(r,c-1,m-1,visited,steps,occupied,temp,counter,unit);
     }
-    if(this.isInBounds(r+1,c) && this.tiles[r+1][c].unit===null) {
-      temp=Helpers.getIndexArr(history,[r+1, c]);
-      if(temp===-1 || his2[temp]<(m-1))
-        this.getPMHelper(r+1,c,m-1,oR,oC,oM,history,his2,temp,counter);
+    if(this.isInBounds(r+1,c) && (this.tiles[r+1][c].unit===null || this.tiles[r+1][c].unit.owner===unit.owner)) {
+      temp=Helpers.getIndexArr(visited,[r+1, c]);
+      if(temp===-1 || steps[temp]<(m-1))
+        this.getPMHelper(r+1,c,m-1,visited,steps,occupied,temp,counter,unit);
     }
-    if(this.isInBounds(r-1,c) && this.tiles[r-1][c].unit===null) {
-      temp=Helpers.getIndexArr(history,[r-1, c]);
-      if(temp===-1 || his2[temp]<(m-1))
-        this.getPMHelper(r-1,c,m-1,oR,oC,oM,history,his2,temp,counter);
+    if(this.isInBounds(r-1,c) && (this.tiles[r-1][c].unit===null || this.tiles[r-1][c].unit.owner===unit.owner)) {
+      temp=Helpers.getIndexArr(visited,[r-1, c]);
+      if(temp===-1 || steps[temp]<(m-1))
+        this.getPMHelper(r-1,c,m-1,visited,steps,occupied,temp,counter,unit);
     }
 
   }
