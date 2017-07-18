@@ -547,7 +547,7 @@ class Unit {
           return false;
       case Spirit.gain:
         if(this.addStatus(Status.gain)) {
-          this.sp-=spirit[1];
+          //this.sp-=spirit[1];
           return true;
         } else
           return false;
@@ -580,7 +580,7 @@ class Unit {
       //otherche
         if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive)
           if(tarUnit.addStatus(Status.cheer)) {
-            this.sp-=spirit[1];
+            //this.sp-=spirit[1];
             return true;
           } else
             return false;
@@ -631,7 +631,7 @@ class Unit {
           return false;
       case Spirit.luck:
         if(this.addStatus(Status.luck)) {
-        this.sp-=spirit[1];
+          //this.sp-=spirit[1];
           return true;
         } else
           return false;
@@ -668,7 +668,7 @@ class Unit {
         //do
         if(tarUnit && tarUnit.owner === this.owner && tarUnit.isAlive)
           if(tarUnit.addStatus(Status.luck)) {
-            this.sp-=spirit[1];
+            //this.sp-=spirit[1];
             return true;
           } else
             return false;
