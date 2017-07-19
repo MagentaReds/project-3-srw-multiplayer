@@ -61,6 +61,7 @@ class Game  {
   //Set's up anything else in the game that the constructor doesn't do when first made.
   gameStart(r,c,filePath=null) {
     //select first player and unit to go, set flags values as necessry, emit status to clients;
+    this.inter.emitMessage(`The game has started!`);
     this.map = new Map(r,c);
     this.spawnUnits();
     this.turn = 0;
@@ -84,6 +85,7 @@ class Game  {
     this.uRef.startTurn();
 
     console.log(`It is ${this.pRef.name} Unit's ${this.uRef.name} Turn`);
+    this.inter.emitMessage(`It is ${this.pRef.name}'s turn! ${this.uRef.name} (${this.uRef.mechName}) is the active unit!`);
     this.emitMap();
     this.emitUpdatePlayers();
   }
@@ -109,6 +111,7 @@ class Game  {
   playerLeft(playerId) {
     for(let i=0; i<this.players.length; ++i) {
       if(playerId===this.players[i].id) {
+        this.inter.emitMessage(`Has left the game ${this.players[i].name}`);
         this.players[i].surrender();
 
         for(let k=0; k<this.players[i].units.length; ++k) {
@@ -360,11 +363,13 @@ class Game  {
       } else if(this.inFlags(Flags.newRound)) {
         var didCast = selUnit.castSC(spiritId, tarUnit);
         if(didCast) {
+          this.inter.emitMessage(`${selUnit.name} (${selUnit.mechName}) has casted ${selUnit.sc[spiritId][0]}`);
           this.emitUpdatePlayers();
           return sucRes;
         }
-        else
+        else {
           return failRes2;
+        }
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         return failRes2;
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
@@ -449,18 +454,22 @@ class Game  {
       } else if(selUnit.id !== this.uRef.id || selUnit.owner !== playerId){
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
+        this.inter.emitMessage(`${selUnit.name} (${selUnit.mechName}) has stoodby!`);
         this.addFlag(Flags.turnOver);
         this.checkFlags();
         return sucRes;
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
+        this.inter.emitMessage(`${selUnit.name} (${selUnit.mechName}) has stoodby!`);
         this.addFlag(Flags.turnOver);
         this.checkFlags();
         return sucRes;
       } else if(this.inFlags(Flags.hasAttacked) && !this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
+        this.inter.emitMessage(`${selUnit.name} (${selUnit.mechName}) has stoodby!`);
         this.addFlag(Flags.turnOver);
         this.checkFlags();
         return sucRes;
       } else if(this.inFlags(Flags.hasAttacked) && this.inFlags(Flags.hasMoved) && selUnit.hasHitAndAway()) {
+        this.inter.emitMessage(`${selUnit.name} (${selUnit.mechName}) has stoodby!`);
         this.addFlag(Flags.turnOver);
         this.checkFlags();
         return sucRes;
@@ -669,6 +678,7 @@ class Game  {
         return failRes;
       } else if(this.inFlags(Flags.newRound)) {
         if(this.canAttack(r,c,toR,toC,weaponId)) {
+          this.inter.emitMessage(`${selUnit.name} (${selUnit.mechName}) has targeted ${tarUnit.name} (${tarUnit.mechName}) with ${selUnit.weapons[weaponId].name}!`);
           this.emptyFlags();
           this.addFlag(Flags.hasAttacked);
           if(this.uRef.hasHitAndAway())
@@ -682,6 +692,7 @@ class Game  {
         }
       } else if(this.inFlags(Flags.hasMoved) && !this.inFlags(Flags.hasAttacked)){
         if(this.canAttack(r,c,toR,toC,weaponId,targets)) {
+          this.inter.emitMessage(`${selUnit.name} (${selUnit.mechName}) has targeted ${tarUnit.name} (${tarUnit.mechName}) with ${selUnit.weapons[weaponId].name}!`);
           this.addFlag(Flags.hasAttacked);
           this.addFlag(Flags.turnOver);
           this.resolveAttack(selUnit, weaponId, tarUnit);
@@ -712,11 +723,13 @@ class Game  {
     if(this.defender.owner===playerId){
       if(action==="Attack"){
         if(this.canAttack(this.defender.r, this.defender.c, this.uRef.r, this.uRef.c, weaponId)) {
+          this.inter.emitMessage(`${this.defender.name} (${this.defender.mechName}) is selecting to attack ${this.uRef.name} (${this.uRef.mechName}) with ${this.defender.weapons[weaponId].name} on defense!`);
           this.resolveAttack2(action, weaponId);
           return sucRes;
         } else
           return failRes;
       } else if(action==="Defend" || action==="Evade") {
+        this.inter.emitMessage(`${this.defender.name} (${this.defender.mechName}) is selecting to ${action}`);
         this.resolveAttack2(action, weaponId);
         return sucRes;
       } else
@@ -785,8 +798,8 @@ class Game  {
   computeAttack(atkRef, wepAtk, defRef, wepDef, counterType) {
     //if we get here, everything should be copacetic, so just do the cacls, no need to check
 
-    this.inter.emitMessage(`${atkRef.name} is attacking ${defRef.name} with ${atkRef.weapons[wepAtk].name}`);
-    this.inter.emitMessage(`${defRef.name} is choosing to "${counterType}" on defense!`);
+    //this.inter.emitMessage(`${atkRef.name} is attacking ${defRef.name} with ${atkRef.weapons[wepAtk].name}`);
+    //this.inter.emitMessage(`${defRef.name} is choosing to "${counterType}" on defense!`);
 
     if(counterType==="Attack" && defRef.doesCounterAttack(atkRef)) {
       this.inter.emitMessage(`${defRef.name} Counters and attacks first!`);
