@@ -67,7 +67,7 @@ $(function() {
 	socket.on("update map", function(data){
 		console.log("Updating map");
 		buildGrid(data.map);
-		writeMessage(data.msg);
+		//writeMessage(data.msg);
 		buildWeaponUi();
 		buildSpiritUi();
 		$("#surrender").hide();
@@ -513,7 +513,7 @@ $(function() {
 						});
 					}, 50);
 				}
-				writeMessage(data.msg);
+				//writeMessage(data.msg);
 			});
 		});
 	}
@@ -556,7 +556,7 @@ $(function() {
 						blinkActiveTile([data.r, data.c]);
 					});
 				}
-				writeMessage(data.msg);
+				//writeMessage(data.msg);
 				console.log(data.actions);
 				$("#cancel").hide();
 				enableActions(data.actions);
