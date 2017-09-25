@@ -114,6 +114,13 @@ class GameRoom {
     this.nsp.to(this.name).emit("update players", data);
   }
 
+  //Emits all the information about each player's stats to everyone in the room. 
+  //Usually Done at the start of each round.
+  emitAllUnitStats(data) {
+    console.log(`Sending All Unit's Stats to Room ${this.roomNum}`);
+    this.nsp.to(this.name).emit("updater all info", data);
+  }
+
   gameOver(playerRef) {
     console.log(`The game in Room ${this.roomNum} is over, shutting down room`);
     if(playerRef) {
