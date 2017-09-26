@@ -1128,13 +1128,30 @@ class Game  {
     this.inter.emitPlayersUpdate(data);
   }
 
+  emitAllUnitStats() {
+
+    var data= {msg:'Updating all Game Info', player1: null, player2: null};
+
+    //Data I need, all unit stats, all weapon stats, map positions
+    for(let i=0; i<this.players.length; ++i) {
+      var tempUnits=[];
+      var temp, holder;
+      for(let k=0; k<this.players[i].units.length; ++k){
+        holder=this.players[i].units[k];
+        temp={name: holder.name, }
+      }
+    }
+    
+    this.inter.emitAllUnitStats(data);
+  }
+
   spawnUnitHelper(unit, r, c) {
     unit.setRC(r,c);
     this.map.setUnit(r, c, unit);
   }
 
   //put each player's units on the map
-  //right now hard coded for just 2 playes an one unit each
+  //right now hard coded for just 2 playes and 5 units each
   spawnUnits(){
     console.log(this.players.length);
     this.spawnUnitHelper(this.players[0].units[0], 8, 2+10);
